@@ -1,0 +1,14 @@
+# Dependencies
+node_modules/
+
+# OS / editor junk
+.DS_Store
+*.swp
+
+# Secrets
+.env
+.env.local
+.env.*.local
+
+# Companion starter is versioned in its own repo
+shadcn-figma-starter-batch2/
