@@ -1,0 +1,163 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+  Tokens below mirror the Figma variable export "lazyyysync-variables-v1"
+  (collection "shadcn/ui", modes "Light mode" / "Dark mode") 1:1.
+  Values are the kit's exact sRGB output, each an alias of a Tailwind-palette
+  swatch (shown in the trailing comment). Do not hand-edit values — re-export
+  from Figma and regenerate. See DESIGN.md §2.
+*/
+
+:root {
+  /* Radius — static scale; --radius is the kit default (rounded-lg = 8px),
+     kept for shadcn components that read it directly. */
+  --radius: 0.5rem;
+
+  /* shadcn/ui · Light mode */
+  --background: #ffffff; /* white */
+  --foreground: #0a0a0a; /* neutral/950 */
+  --card: #ffffff; /* white */
+  --card-foreground: #0a0a0a; /* neutral/950 */
+  --popover: #ffffff; /* white */
+  --popover-foreground: #0a0a0a; /* neutral/950 */
+  --primary: #171717; /* neutral/900 */
+  --primary-foreground: #fafafa; /* neutral/50 */
+  --secondary: #f5f5f5; /* neutral/100 */
+  --secondary-foreground: #0a0a0a; /* neutral/950 */
+  --muted: #f5f5f5; /* neutral/100 */
+  --muted-foreground: #737373; /* neutral/500 */
+  --accent: #f5f5f5; /* neutral/100 */
+  --accent-foreground: #171717; /* neutral/900 */
+  --destructive: #dc2626; /* red/600 */
+  --border: #e5e5e5; /* neutral/200 */
+  --input: #e5e5e5; /* neutral/200 */
+  --ring: #737373; /* neutral/500 */
+  --chart-1: #5eb1ef; /* blue/8 */
+  --chart-2: #0090ff; /* blue/9 */
+  --chart-3: #0588f0; /* blue/10 */
+  --chart-4: #0d74ce; /* blue/11 */
+  --chart-5: #113264; /* blue/12 */
+  --sidebar: #fafafa; /* neutral/50 */
+  --sidebar-foreground: #0a0a0a; /* neutral/950 */
+  --sidebar-primary: #171717; /* neutral/900 */
+  --sidebar-primary-foreground: #fafafa; /* neutral/50 */
+  --sidebar-accent: #f5f5f5; /* neutral/100 */
+  --sidebar-accent-foreground: #171717; /* neutral/900 */
+  --sidebar-border: #d4d4d4; /* neutral/300 */
+  --sidebar-ring: #737373; /* neutral/500 */
+
+  /* kit-specific extras (not standard shadcn — kept for 1:1 fidelity) */
+  --background-color: rgb(0 0 0 / 0.3); /* black/5 */
+  --semantic-background: #6b7280; /* gray/500 */
+  --semantic-border: #4b5563; /* gray/600 */
+  --semantic-foreground: #ffffff; /* white */
+}
+
+.dark {
+  /* shadcn/ui · Dark mode */
+  --background: #0a0a0a; /* neutral/950 */
+  --foreground: #fafafa; /* neutral/50 */
+  --card: #171717; /* neutral/900 */
+  --card-foreground: #fafafa; /* neutral/50 */
+  --popover: #262626; /* neutral/800 */
+  --popover-foreground: #fafafa; /* neutral/50 */
+  --primary: #cbd5e1; /* slate/300 */
+  --primary-foreground: #171717; /* neutral/900 */
+  --secondary: #262626; /* neutral/800 */
+  --secondary-foreground: #fafafa; /* neutral/50 */
+  --muted: #262626; /* neutral/800 */
+  --muted-foreground: #a3a3a3; /* neutral/400 */
+  --accent: #404040; /* neutral/700 */
+  --accent-foreground: #fafafa; /* neutral/50 */
+  --destructive: #f87171; /* red/400 */
+  --border: #404040; /* neutral/700 */
+  --input: #1c1917; /* stone/900 */
+  --ring: #cbd5e1; /* slate/300 */
+  --chart-1: #5eb1ef; /* blue/8 */
+  --chart-2: #0090ff; /* blue/9 */
+  --chart-3: #0588f0; /* blue/10 */
+  --chart-4: #0d74ce; /* blue/11 */
+  --chart-5: #113264; /* blue/12 */
+  --sidebar: #171717; /* neutral/900 */
+  --sidebar-foreground: #fafafa; /* neutral/50 */
+  --sidebar-primary: #0588f0; /* blue/10 */
+  --sidebar-primary-foreground: #262626; /* neutral/800 */
+  --sidebar-accent: #262626; /* neutral/800 */
+  --sidebar-accent-foreground: #fafafa; /* neutral/50 */
+  --sidebar-border: rgb(255 255 255 / 0.8); /* white/10 */
+  --sidebar-ring: #737373; /* neutral/500 */
+
+  /* kit-specific extras */
+  --background-color: rgb(0 0 0 / 0.3); /* black/5 */
+  --semantic-background: #6b7280; /* gray/500 */
+  --semantic-border: #4b5563; /* gray/600 */
+  --semantic-foreground: #ffffff; /* white */
+}
+
+@theme inline {
+  /* Radius — kit "border-radius" collection (static px → rem @16) */
+  --radius-xs: 0.125rem; /* 2px  */
+  --radius-sm: 0.25rem;  /* 4px  */
+  --radius-md: 0.375rem; /* 6px  */
+  --radius-lg: 0.5rem;   /* 8px  — kit default (var(--radius)) */
+  --radius-xl: 0.75rem;  /* 12px */
+  --radius-2xl: 1rem;    /* 16px */
+  --radius-3xl: 1.5rem;  /* 24px */
+  --radius-4xl: 2rem;    /* 32px */
+
+  /* Fonts — kit "font" collection: sans = Inter, mono = Geist Mono.
+     Loaded via next/font in app/layout.tsx, which sets --font-inter /
+     --font-geist-mono on <html>; the stacks below fall back if absent. */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* kit-specific extras */
+  --color-background-color: var(--background-color);
+  --color-semantic-background: var(--semantic-background);
+  --color-semantic-foreground: var(--semantic-foreground);
+  --color-semantic-border: var(--semantic-border);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
