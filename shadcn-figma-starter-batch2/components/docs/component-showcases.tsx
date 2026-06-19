@@ -3,6 +3,7 @@ import Image from "next/image"
 import {
   ArrowLeft,
   ArrowRight,
+  ArrowUpRight,
   AudioLines,
   Bell,
   Bold,
@@ -13,9 +14,10 @@ import {
   ChevronsUpDown,
   CircleAlert,
   CircleCheck,
+  Cloud,
   Copy,
   Ellipsis,
-  FolderOpen,
+  FolderCode,
   GitCompare,
   Home,
   Inbox,
@@ -23,10 +25,10 @@ import {
   Minus,
   Plus,
   Popcorn,
+  RefreshCcw,
   Search,
   Settings,
   Slash,
-  Star,
   TriangleAlert,
   Trash2,
   Underline,
@@ -40,7 +42,6 @@ import { ButtonGroup, ButtonGroupSeparator } from "@/components/ui/button-group"
 import { Toggle } from "@/components/ui/toggle"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { Badge } from "@/components/ui/badge"
-import { Kbd, KbdGroup } from "@/components/ui/kbd"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
@@ -63,10 +64,7 @@ import {
   InputGroupAddon,
   InputGroupButton,
   InputGroupInput,
-  InputGroupText,
 } from "@/components/ui/input-group"
-import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "@/components/ui/input-otp"
-import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Calendar } from "@/components/ui/calendar"
 import {
   Dialog,
@@ -99,57 +97,16 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuSeparator,
-  ContextMenuShortcut,
-  ContextMenuTrigger,
-} from "@/components/ui/context-menu"
-import {
-  Menubar,
-  MenubarContent,
-  MenubarItem,
-  MenubarMenu,
-  MenubarSeparator,
-  MenubarShortcut,
-  MenubarTrigger,
-} from "@/components/ui/menubar"
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-  CommandShortcut,
-} from "@/components/ui/command"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   Breadcrumb,
@@ -203,22 +160,6 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel"
-import {
-  Item,
-  ItemActions,
-  ItemContent,
-  ItemDescription,
-  ItemGroup,
-  ItemMedia,
-  ItemTitle,
-} from "@/components/ui/item"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Progress } from "@/components/ui/progress"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -235,7 +176,6 @@ import { AspectRatio } from "@/components/ui/aspect-ratio"
 import { Separator } from "@/components/ui/separator"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { ClientOnly } from "@/components/docs/client-only"
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable"
 import {
   Sidebar,
   SidebarContent,
@@ -260,8 +200,18 @@ import {
 } from "@/components/docs/demos/calendar-demos"
 import { ComboboxDemo } from "@/components/docs/demos/combobox-demo"
 import { DatePickerDemo } from "@/components/docs/demos/date-picker-demo"
-import { FormDemo } from "@/components/docs/demos/form-demo"
 import { ChartDemo } from "@/components/docs/demos/chart-demo"
+import { CarouselDemos } from "@/components/docs/demos/carousel-demos"
+import { CommandDemo } from "@/components/docs/demos/command-demo"
+import { ContextMenuDemo } from "@/components/docs/demos/context-menu-demo"
+import { DropdownMenuDemo } from "@/components/docs/demos/dropdown-menu-demo"
+import { DrawerDemo } from "@/components/docs/demos/drawer-demo"
+import { FieldDemo } from "@/components/docs/demos/field-demo"
+import { InputGroupDemo } from "@/components/docs/demos/input-group-demo"
+import { InputOTPDemo } from "@/components/docs/demos/input-otp-demo"
+import { ItemDemo } from "@/components/docs/demos/item-demo"
+import { KbdDemo } from "@/components/docs/demos/kbd-demo"
+import { MenubarDemo } from "@/components/docs/demos/menubar-demo"
 import { DataTableDemo } from "@/components/docs/demos/data-table-demo"
 import { ToastDemo } from "@/components/docs/demos/toast-demo"
 
@@ -476,31 +426,15 @@ export const showcases: Record<string, ShowcaseContent> = {
   kbd: {
     source: "components/ui/kbd.tsx",
     tokens: ["muted", "muted-foreground"],
-    content: (
-      <>
-        <KbdGroup>
-          <Kbd>⌘</Kbd>
-          <Kbd>K</Kbd>
-        </KbdGroup>
-        <span className="text-sm text-muted-foreground">to open the command menu</span>
-      </>
-    ),
+    content: <KbdDemo />,
   },
   label: {
     source: "components/ui/label.tsx",
     tokens: ["foreground", "muted-foreground", "destructive"],
     content: (
-      <div className="flex w-full max-w-sm flex-col gap-4">
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="label-email">Email</Label>
-          <Input id="label-email" type="email" placeholder="you@example.com" />
-        </div>
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="label-password">
-            Password <span className="text-destructive">*</span>
-          </Label>
-          <Input id="label-password" type="password" placeholder="Required" />
-        </div>
+      <div className="flex items-center gap-3">
+        <Checkbox id="label-terms" />
+        <Label htmlFor="label-terms">Accept terms and conditions</Label>
       </div>
     ),
   },
@@ -508,16 +442,31 @@ export const showcases: Record<string, ShowcaseContent> = {
     source: "components/ui/input.tsx",
     tokens: ["input", "foreground", "ring"],
     content: (
-      <div className="flex w-full max-w-sm flex-col gap-4">
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="email">Email</Label>
-          <Input id="email" type="email" placeholder="you@example.com" />
+      <div className="flex w-full max-w-sm flex-col gap-6">
+        <Input type="email" placeholder="Email" />
+        <Separator />
+        <div className="grid w-full max-w-sm items-center gap-2">
+          <Label htmlFor="picture">Picture</Label>
+          <Input id="picture" type="file" />
         </div>
-        <Input type="file" aria-label="Upload file" />
-        <Input placeholder="Disabled" disabled />
-        <div className="flex gap-2">
-          <Input type="email" placeholder="you@example.com" />
-          <Button variant="outline">Subscribe</Button>
+        <Separator />
+        <Input type="email" placeholder="Email" disabled />
+        <Separator />
+        <div className="grid w-full max-w-sm items-center gap-2">
+          <Label htmlFor="email-2">Email</Label>
+          <Input id="email-2" type="email" placeholder="Email" />
+        </div>
+        <Separator />
+        <div className="flex w-full max-w-sm items-center gap-2">
+          <Input type="email" placeholder="Email" />
+          <Button type="submit" variant="outline">Subscribe</Button>
+        </div>
+        <Separator />
+        <div className="grid w-full max-w-sm items-center gap-2">
+          <Label htmlFor="username-input">Username</Label>
+          <Input id="username-input" placeholder="shadcn" />
+          <p className="text-muted-foreground text-sm">This is your public display name.</p>
+          <Button type="submit" className="w-fit">Submit</Button>
         </div>
       </div>
     ),
@@ -525,47 +474,12 @@ export const showcases: Record<string, ShowcaseContent> = {
   "input-group": {
     source: "components/ui/input-group.tsx",
     tokens: ["input", "muted-foreground", "ring"],
-    content: (
-      <div className="flex w-full max-w-sm flex-col gap-4">
-        <InputGroup>
-          <InputGroupAddon><Search /></InputGroupAddon>
-          <InputGroupInput placeholder="Search…" />
-        </InputGroup>
-        <InputGroup>
-          <InputGroupAddon><InputGroupText>https://</InputGroupText></InputGroupAddon>
-          <InputGroupInput placeholder="example.com" />
-        </InputGroup>
-        <InputGroup>
-          <InputGroupInput placeholder="Search…" />
-          <InputGroupAddon align="inline-end">
-            <InputGroupButton size="sm">Go</InputGroupButton>
-          </InputGroupAddon>
-        </InputGroup>
-        <InputGroup>
-          <InputGroupInput placeholder="Loading…" />
-          <InputGroupAddon align="inline-end"><Spinner /></InputGroupAddon>
-        </InputGroup>
-      </div>
-    ),
+    content: <InputGroupDemo />,
   },
   "input-otp": {
     source: "components/ui/input-otp.tsx",
     tokens: ["input", "ring", "border"],
-    content: (
-      <InputOTP maxLength={6}>
-        <InputOTPGroup>
-          <InputOTPSlot index={0} />
-          <InputOTPSlot index={1} />
-          <InputOTPSlot index={2} />
-        </InputOTPGroup>
-        <InputOTPSeparator />
-        <InputOTPGroup>
-          <InputOTPSlot index={3} />
-          <InputOTPSlot index={4} />
-          <InputOTPSlot index={5} />
-        </InputOTPGroup>
-      </InputOTP>
-    ),
+    content: <InputOTPDemo />,
   },
   textarea: {
     source: "components/ui/textarea.tsx",
@@ -590,23 +504,57 @@ export const showcases: Record<string, ShowcaseContent> = {
     source: "components/ui/checkbox.tsx",
     tokens: ["primary", "primary-foreground", "border"],
     content: (
-      <div className="flex flex-col gap-4">
-        <div className="flex items-center gap-2"><Checkbox id="terms" defaultChecked /><Label htmlFor="terms">Accept terms and conditions</Label></div>
-        <div className="flex items-start gap-2">
-          <Checkbox id="news" defaultChecked />
-          <div className="flex flex-col gap-1">
-            <Label htmlFor="news">Subscribe to the newsletter</Label>
-            <p className="text-sm text-muted-foreground">Get product updates once a month. No spam.</p>
+      <div className="flex w-full max-w-md flex-col gap-6">
+        <div className="flex items-center gap-3">
+          <Checkbox id="terms" />
+          <Label htmlFor="terms">Accept terms and conditions</Label>
+        </div>
+        <Separator />
+        <div className="flex items-start gap-3">
+          <Checkbox id="terms-2" />
+          <div className="grid gap-1.5">
+            <Label htmlFor="terms-2">Accept terms and conditions</Label>
+            <p className="text-sm text-muted-foreground">By clicking this checkbox, you agree to the terms and conditions.</p>
           </div>
         </div>
-        <div className="flex items-center gap-2"><Checkbox id="cb-disabled" disabled /><Label htmlFor="cb-disabled">Disabled option</Label></div>
-        <Label className="flex items-start gap-3 rounded-lg border p-3 has-[[data-state=checked]]:border-primary">
-          <Checkbox id="cb-card" defaultChecked />
-          <div className="flex flex-col gap-1">
-            <span className="text-sm font-medium">Enable notifications</span>
-            <span className="text-sm text-muted-foreground">Send me alerts about account activity.</span>
+        <Separator />
+        <div className="flex items-center gap-3">
+          <Checkbox id="cb-disabled" disabled className="peer" />
+          <Label htmlFor="cb-disabled">Enable notifications</Label>
+        </div>
+        <Separator />
+        <div className="flex flex-col gap-3">
+          <Label htmlFor="cb-card-1" className="flex items-start gap-3 rounded-lg border p-3 hover:bg-accent/50">
+            <Checkbox id="cb-card-1" />
+            <div className="grid gap-1.5 font-normal">
+              <span className="text-sm font-medium leading-none">Enable notifications</span>
+              <span className="text-sm text-muted-foreground">You can enable or disable notifications at any time.</span>
+            </div>
+          </Label>
+          <Label htmlFor="cb-card-2" className="flex items-start gap-3 rounded-lg border p-3 hover:bg-accent/50 has-[[aria-checked=true]]:border-primary has-[[aria-checked=true]]:bg-muted/50">
+            <Checkbox id="cb-card-2" defaultChecked />
+            <div className="grid gap-1.5 font-normal">
+              <span className="text-sm font-medium leading-none">Enable notifications</span>
+              <span className="text-sm text-muted-foreground">You can enable or disable notifications at any time.</span>
+            </div>
+          </Label>
+        </div>
+        <Separator />
+        <div className="flex flex-col gap-4">
+          <div className="grid gap-1.5">
+            <span className="text-sm font-medium leading-none">Sidebar</span>
+            <span className="text-sm text-muted-foreground">Select the items you want to display in the sidebar.</span>
           </div>
-        </Label>
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center gap-3"><Checkbox id="sb-recents" /><Label htmlFor="sb-recents" className="font-normal">Recents</Label></div>
+            <div className="flex items-center gap-3"><Checkbox id="sb-home" /><Label htmlFor="sb-home" className="font-normal">Home</Label></div>
+            <div className="flex items-center gap-3"><Checkbox id="sb-applications" defaultChecked /><Label htmlFor="sb-applications" className="font-normal">Applications</Label></div>
+            <div className="flex items-center gap-3"><Checkbox id="sb-desktop" /><Label htmlFor="sb-desktop" className="font-normal">Desktop</Label></div>
+            <div className="flex items-center gap-3"><Checkbox id="sb-downloads" defaultChecked /><Label htmlFor="sb-downloads" className="font-normal">Downloads</Label></div>
+            <div className="flex items-center gap-3"><Checkbox id="sb-documents" /><Label htmlFor="sb-documents" className="font-normal">Documents</Label></div>
+          </div>
+          <Button className="self-start">Submit</Button>
+        </div>
       </div>
     ),
   },
@@ -652,24 +600,47 @@ export const showcases: Record<string, ShowcaseContent> = {
     source: "components/ui/native-select.tsx",
     tokens: ["input", "foreground", "ring"],
     content: (
-      <div className="flex flex-col gap-4">
-        <NativeSelect className="w-56" defaultValue="apple">
-          <NativeSelectOption value="apple">Apple</NativeSelectOption>
-          <NativeSelectOption value="banana">Banana</NativeSelectOption>
-          <NativeSelectOption value="blueberry">Blueberry</NativeSelectOption>
+      <div className="flex w-full max-w-sm flex-col gap-6">
+        <NativeSelect className="w-56" defaultValue="">
+          <NativeSelectOption value="">Select a status</NativeSelectOption>
+          <NativeSelectOption value="todo">Todo</NativeSelectOption>
+          <NativeSelectOption value="in-progress">In Progress</NativeSelectOption>
+          <NativeSelectOption value="done">Done</NativeSelectOption>
+          <NativeSelectOption value="cancelled">Cancelled</NativeSelectOption>
         </NativeSelect>
-        <NativeSelect className="w-56" defaultValue="apple">
-          <NativeSelectOptGroup label="Fruits">
-            <NativeSelectOption value="apple">Apple</NativeSelectOption>
-            <NativeSelectOption value="banana">Banana</NativeSelectOption>
+        <Separator />
+        <NativeSelect className="w-64" defaultValue="">
+          <NativeSelectOption value="">Select department</NativeSelectOption>
+          <NativeSelectOptGroup label="Engineering">
+            <NativeSelectOption value="frontend">Frontend</NativeSelectOption>
+            <NativeSelectOption value="backend">Backend</NativeSelectOption>
+            <NativeSelectOption value="devops">DevOps</NativeSelectOption>
           </NativeSelectOptGroup>
-          <NativeSelectOptGroup label="Vegetables">
-            <NativeSelectOption value="carrot">Carrot</NativeSelectOption>
-            <NativeSelectOption value="potato">Potato</NativeSelectOption>
+          <NativeSelectOptGroup label="Sales">
+            <NativeSelectOption value="sales-rep">Sales Rep</NativeSelectOption>
+            <NativeSelectOption value="account-manager">Account Manager</NativeSelectOption>
+            <NativeSelectOption value="sales-director">Sales Director</NativeSelectOption>
+          </NativeSelectOptGroup>
+          <NativeSelectOptGroup label="Operations">
+            <NativeSelectOption value="customer-support">Customer Support</NativeSelectOption>
+            <NativeSelectOption value="product-manager">Product Manager</NativeSelectOption>
+            <NativeSelectOption value="operations-manager">Operations Manager</NativeSelectOption>
           </NativeSelectOptGroup>
         </NativeSelect>
-        <NativeSelect className="w-56" defaultValue="apple" disabled>
-          <NativeSelectOption value="apple">Apple</NativeSelectOption>
+        <Separator />
+        <NativeSelect className="w-56" defaultValue="" disabled>
+          <NativeSelectOption value="">Select priority</NativeSelectOption>
+          <NativeSelectOption value="low">Low</NativeSelectOption>
+          <NativeSelectOption value="medium">Medium</NativeSelectOption>
+          <NativeSelectOption value="high">High</NativeSelectOption>
+        </NativeSelect>
+        <Separator />
+        <NativeSelect className="w-56" defaultValue="" aria-invalid>
+          <NativeSelectOption value="">Select role</NativeSelectOption>
+          <NativeSelectOption value="todo">Todo</NativeSelectOption>
+          <NativeSelectOption value="in-progress">In Progress</NativeSelectOption>
+          <NativeSelectOption value="done">Done</NativeSelectOption>
+          <NativeSelectOption value="cancelled">Cancelled</NativeSelectOption>
         </NativeSelect>
       </div>
     ),
@@ -716,55 +687,55 @@ export const showcases: Record<string, ShowcaseContent> = {
   field: {
     source: "components/ui/field.tsx",
     tokens: ["foreground", "muted-foreground", "border"],
-    content: (
-      <FieldGroup className="w-full max-w-sm">
-        <Field>
-          <FieldLabel htmlFor="project">Project name</FieldLabel>
-          <Input id="project" placeholder="Acme website" />
-          <FieldDescription>The name shown in your dashboard.</FieldDescription>
-        </Field>
-        <Field>
-          <FieldLabel htmlFor="field-bio">Bio</FieldLabel>
-          <Textarea id="field-bio" placeholder="Tell us about yourself" />
-        </Field>
-        <Field>
-          <FieldLabel htmlFor="field-plan">Plan</FieldLabel>
-          <NativeSelect id="field-plan" defaultValue="free">
-            <NativeSelectOption value="free">Free</NativeSelectOption>
-            <NativeSelectOption value="pro">Pro</NativeSelectOption>
-          </NativeSelect>
-          <FieldDescription>Change how you are billed.</FieldDescription>
-        </Field>
-        <Field orientation="horizontal">
-          <Switch id="field-notify" defaultChecked />
-          <FieldLabel htmlFor="field-notify">Email notifications</FieldLabel>
-        </Field>
-      </FieldGroup>
-    ),
-  },
-  form: {
-    source: "components/ui/form.tsx",
-    tokens: ["foreground", "muted-foreground", "destructive"],
-    content: <FormDemo />,
+    content: <FieldDemo />,
   },
   dialog: {
     source: "components/ui/dialog.tsx",
     tokens: ["popover", "background-color", "border"],
     content: (
-      <Dialog>
-        <DialogTrigger asChild><Button variant="outline">Edit profile</Button></DialogTrigger>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Edit profile</DialogTitle>
-            <DialogDescription>Make changes to your profile here.</DialogDescription>
-          </DialogHeader>
-          <div className="flex flex-col gap-2"><Label htmlFor="dn">Name</Label><Input id="dn" defaultValue="Pedro Duarte" /></div>
-          <DialogFooter>
-            <DialogClose asChild><Button variant="outline">Cancel</Button></DialogClose>
-            <DialogClose asChild><Button>Save changes</Button></DialogClose>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <div className="flex flex-wrap gap-3">
+        <Dialog>
+          <DialogTrigger asChild><Button variant="outline">Open Dialog</Button></DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Edit profile</DialogTitle>
+              <DialogDescription>Make changes to your profile here. Click save when you&apos;re done.</DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="dialog-name">Name</Label>
+                <Input id="dialog-name" defaultValue="Pedro Duarte" />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="dialog-username">Username</Label>
+                <Input id="dialog-username" defaultValue="@peduarte" />
+              </div>
+            </div>
+            <DialogFooter>
+              <DialogClose asChild><Button variant="outline">Cancel</Button></DialogClose>
+              <Button type="submit">Save Changes</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+        <Dialog>
+          <DialogTrigger asChild><Button variant="outline">Share</Button></DialogTrigger>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Share link</DialogTitle>
+              <DialogDescription>Anyone who has this link will be able to view this.</DialogDescription>
+            </DialogHeader>
+            <div className="flex items-center gap-2">
+              <div className="grid flex-1 gap-2">
+                <Label htmlFor="share-link" className="sr-only">Link</Label>
+                <Input id="share-link" defaultValue="https://ui.shadcn.com/docs/installation" readOnly />
+              </div>
+            </div>
+            <DialogFooter className="sm:justify-start">
+              <DialogClose asChild><Button type="button" variant="secondary">Close</Button></DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
     ),
   },
   "alert-dialog": {
@@ -807,23 +778,7 @@ export const showcases: Record<string, ShowcaseContent> = {
   drawer: {
     source: "components/ui/drawer.tsx",
     tokens: ["background", "border", "muted-foreground"],
-    content: (
-      <Drawer>
-        <DrawerTrigger asChild><Button variant="outline">Open drawer</Button></DrawerTrigger>
-        <DrawerContent>
-          <div className="mx-auto w-full max-w-sm">
-            <DrawerHeader>
-              <DrawerTitle>Move goal</DrawerTitle>
-              <DrawerDescription>Set your daily activity goal.</DrawerDescription>
-            </DrawerHeader>
-            <DrawerFooter>
-              <Button>Submit</Button>
-              <DrawerClose asChild><Button variant="outline">Cancel</Button></DrawerClose>
-            </DrawerFooter>
-          </div>
-        </DrawerContent>
-      </Drawer>
-    ),
+    content: <DrawerDemo />,
   },
   popover: {
     source: "components/ui/popover.tsx",
@@ -847,7 +802,17 @@ export const showcases: Record<string, ShowcaseContent> = {
       <HoverCard>
         <HoverCardTrigger asChild><Button variant="link">@nextjs</Button></HoverCardTrigger>
         <HoverCardContent className="w-80">
-          <p className="text-sm">The React Framework – created and maintained by @vercel.</p>
+          <div className="flex justify-between gap-4">
+            <Avatar>
+              <AvatarImage src="https://github.com/vercel.png" />
+              <AvatarFallback>VC</AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col gap-1">
+              <h4 className="text-sm font-semibold">@nextjs</h4>
+              <p className="text-sm">The React Framework – created and maintained by @vercel.</p>
+              <p className="text-muted-foreground text-xs">Joined December 2021</p>
+            </div>
+          </div>
         </HoverCardContent>
       </HoverCard>
     ),
@@ -865,106 +830,22 @@ export const showcases: Record<string, ShowcaseContent> = {
   "dropdown-menu": {
     source: "components/ui/dropdown-menu.tsx",
     tokens: ["popover", "accent", "border"],
-    content: (
-      <div className="flex flex-wrap gap-3">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild><Button variant="outline">Open menu</Button></DropdownMenuTrigger>
-          <DropdownMenuContent className="w-48">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Billing</DropdownMenuItem>
-            <DropdownMenuItem>Settings</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem variant="destructive">Log out</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild><Button variant="outline">Checkboxes</Button></DropdownMenuTrigger>
-          <DropdownMenuContent className="w-48">
-            <DropdownMenuLabel>Appearance</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuCheckboxItem checked>Status Bar</DropdownMenuCheckboxItem>
-            <DropdownMenuCheckboxItem>Activity Bar</DropdownMenuCheckboxItem>
-            <DropdownMenuCheckboxItem checked>Panel</DropdownMenuCheckboxItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild><Button variant="outline">Radio group</Button></DropdownMenuTrigger>
-          <DropdownMenuContent className="w-48">
-            <DropdownMenuLabel>Panel position</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuRadioGroup value="bottom">
-              <DropdownMenuRadioItem value="top">Top</DropdownMenuRadioItem>
-              <DropdownMenuRadioItem value="bottom">Bottom</DropdownMenuRadioItem>
-              <DropdownMenuRadioItem value="right">Right</DropdownMenuRadioItem>
-            </DropdownMenuRadioGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-    ),
+    content: <DropdownMenuDemo />,
   },
   "context-menu": {
     source: "components/ui/context-menu.tsx",
     tokens: ["popover", "accent", "border"],
-    content: (
-      <ContextMenu>
-        <ContextMenuTrigger className="flex h-24 w-full max-w-sm items-center justify-center rounded-md border border-dashed text-sm text-muted-foreground">
-          Right-click here
-        </ContextMenuTrigger>
-        <ContextMenuContent className="w-48">
-          <ContextMenuItem>Back<ContextMenuShortcut>⌘[</ContextMenuShortcut></ContextMenuItem>
-          <ContextMenuItem>Forward<ContextMenuShortcut>⌘]</ContextMenuShortcut></ContextMenuItem>
-          <ContextMenuSeparator />
-          <ContextMenuItem>Reload<ContextMenuShortcut>⌘R</ContextMenuShortcut></ContextMenuItem>
-        </ContextMenuContent>
-      </ContextMenu>
-    ),
+    content: <ContextMenuDemo />,
   },
   menubar: {
     source: "components/ui/menubar.tsx",
     tokens: ["background", "accent", "border"],
-    content: (
-      <Menubar>
-        <MenubarMenu>
-          <MenubarTrigger>File</MenubarTrigger>
-          <MenubarContent>
-            <MenubarItem>New Tab<MenubarShortcut>⌘T</MenubarShortcut></MenubarItem>
-            <MenubarItem>New Window<MenubarShortcut>⌘N</MenubarShortcut></MenubarItem>
-            <MenubarSeparator />
-            <MenubarItem>Print<MenubarShortcut>⌘P</MenubarShortcut></MenubarItem>
-          </MenubarContent>
-        </MenubarMenu>
-        <MenubarMenu>
-          <MenubarTrigger>Edit</MenubarTrigger>
-          <MenubarContent>
-            <MenubarItem>Undo<MenubarShortcut>⌘Z</MenubarShortcut></MenubarItem>
-            <MenubarItem>Redo<MenubarShortcut>⇧⌘Z</MenubarShortcut></MenubarItem>
-          </MenubarContent>
-        </MenubarMenu>
-      </Menubar>
-    ),
+    content: <MenubarDemo />,
   },
   command: {
     source: "components/ui/command.tsx",
     tokens: ["popover", "accent", "muted-foreground"],
-    content: (
-      <Command className="w-full max-w-md rounded-lg border">
-        <CommandInput placeholder="Type a command or search…" />
-        <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
-          <CommandGroup heading="Suggestions">
-            <CommandItem>Calendar</CommandItem>
-            <CommandItem>Search Emoji</CommandItem>
-          </CommandGroup>
-          <CommandSeparator />
-          <CommandGroup heading="Settings">
-            <CommandItem>Profile<CommandShortcut>⌘P</CommandShortcut></CommandItem>
-            <CommandItem>Settings<CommandShortcut>⌘S</CommandShortcut></CommandItem>
-          </CommandGroup>
-        </CommandList>
-      </Command>
-    ),
+    content: <CommandDemo />,
   },
   tabs: {
     source: "components/ui/tabs.tsx",
@@ -1146,14 +1027,30 @@ export const showcases: Record<string, ShowcaseContent> = {
     content: (
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle>Create project</CardTitle>
-          <CardDescription>Deploy your new project in one click.</CardDescription>
-          <CardAction><Button variant="link" size="sm">Sign up</Button></CardAction>
+          <CardTitle>Login to your account</CardTitle>
+          <CardDescription>Enter your email below to login to your account</CardDescription>
+          <CardAction><Button variant="link">Sign up</Button></CardAction>
         </CardHeader>
-        <CardContent className="text-sm text-muted-foreground">Start from a template or import an existing repository.</CardContent>
-        <CardFooter className="flex justify-between gap-2">
-          <Button variant="outline">Cancel</Button>
-          <Button>Deploy</Button>
+        <CardContent>
+          <form>
+            <div className="flex flex-col gap-6">
+              <div className="grid gap-2">
+                <Label htmlFor="card-email">Email</Label>
+                <Input id="card-email" type="email" placeholder="m@example.com" required />
+              </div>
+              <div className="grid gap-2">
+                <div className="flex items-center">
+                  <Label htmlFor="card-password">Password</Label>
+                  <a href="#" className="ml-auto inline-block text-sm underline-offset-4 hover:underline">Forgot password?</a>
+                </div>
+                <Input id="card-password" type="password" required />
+              </div>
+            </div>
+          </form>
+        </CardContent>
+        <CardFooter className="flex-col gap-2">
+          <Button type="submit" className="w-full">Login</Button>
+          <Button variant="outline" className="w-full">Login with Google</Button>
         </CardFooter>
       </Card>
     ),
@@ -1191,15 +1088,15 @@ export const showcases: Record<string, ShowcaseContent> = {
     source: "components/ui/collapsible.tsx",
     tokens: ["muted", "foreground"],
     content: (
-      <Collapsible className="w-full max-w-sm">
-        <div className="flex items-center justify-between gap-2">
-          <span className="text-sm font-medium">@peduarte starred 3 repositories</span>
-          <CollapsibleTrigger asChild><Button variant="ghost" size="icon"><ChevronsUpDown /></Button></CollapsibleTrigger>
+      <Collapsible className="flex w-full max-w-sm flex-col gap-2">
+        <div className="flex items-center justify-between gap-4 px-4">
+          <span className="text-sm font-semibold">@peduarte starred 3 repositories</span>
+          <CollapsibleTrigger asChild><Button variant="ghost" size="icon" className="size-8"><ChevronsUpDown /></Button></CollapsibleTrigger>
         </div>
-        <div className="mt-2 rounded-md border px-3 py-2 text-sm">@radix-ui/primitives</div>
+        <div className="rounded-md border px-4 py-2 font-mono text-sm">@radix-ui/primitives</div>
         <CollapsibleContent className="flex flex-col gap-2">
-          <div className="mt-2 rounded-md border px-3 py-2 text-sm">@radix-ui/colors</div>
-          <div className="rounded-md border px-3 py-2 text-sm">@stitches/react</div>
+          <div className="rounded-md border px-4 py-2 font-mono text-sm">@radix-ui/colors</div>
+          <div className="rounded-md border px-4 py-2 font-mono text-sm">@stitches/react</div>
         </CollapsibleContent>
       </Collapsible>
     ),
@@ -1207,21 +1104,7 @@ export const showcases: Record<string, ShowcaseContent> = {
   carousel: {
     source: "components/ui/carousel.tsx",
     tokens: ["card", "border", "foreground"],
-    content: (
-      <Carousel className="w-full max-w-xs">
-        <CarouselContent>
-          {Array.from({ length: 5 }).map((_, i) => (
-            <CarouselItem key={i}>
-              <div className="flex aspect-square items-center justify-center rounded-lg border bg-card text-4xl font-semibold">
-                {i + 1}
-              </div>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
-      </Carousel>
-    ),
+    content: <CarouselDemos />,
   },
   chart: {
     source: "components/ui/chart.tsx",
@@ -1231,34 +1114,7 @@ export const showcases: Record<string, ShowcaseContent> = {
   item: {
     source: "components/ui/item.tsx",
     tokens: ["card", "muted", "muted-foreground"],
-    content: (
-      <ItemGroup className="w-full max-w-sm gap-3">
-        <Item variant="outline">
-          <ItemMedia><Star className="size-5" /></ItemMedia>
-          <ItemContent>
-            <ItemTitle>Starred project</ItemTitle>
-            <ItemDescription>Updated 2 hours ago</ItemDescription>
-          </ItemContent>
-          <ItemActions><Button variant="ghost" size="icon" aria-label="More"><ChevronsUpDown /></Button></ItemActions>
-        </Item>
-        <Item variant="muted">
-          <ItemMedia variant="icon"><Bell /></ItemMedia>
-          <ItemContent>
-            <ItemTitle>Notifications</ItemTitle>
-            <ItemDescription>Muted variant</ItemDescription>
-          </ItemContent>
-        </Item>
-        <Item variant="outline" size="sm">
-          <ItemMedia>
-            <Avatar className="size-6"><AvatarFallback>CN</AvatarFallback></Avatar>
-          </ItemMedia>
-          <ItemContent>
-            <ItemTitle>Small with avatar</ItemTitle>
-          </ItemContent>
-          <ItemActions><Button variant="outline" size="sm">View</Button></ItemActions>
-        </Item>
-      </ItemGroup>
-    ),
+    content: <ItemDemo />,
   },
   alert: {
     source: "components/ui/alert.tsx",
@@ -1336,24 +1192,85 @@ export const showcases: Record<string, ShowcaseContent> = {
     source: "components/ui/empty.tsx",
     tokens: ["muted", "muted-foreground", "border"],
     content: (
-      <div className="grid w-full gap-4 sm:grid-cols-2">
+      <div className="flex w-full flex-col gap-6">
+        <Empty>
+          <EmptyHeader>
+            <EmptyMedia variant="icon"><FolderCode /></EmptyMedia>
+            <EmptyTitle>No Projects Yet</EmptyTitle>
+            <EmptyDescription>You haven&apos;t created any projects yet. Get started by creating your first project.</EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
+            <div className="flex gap-2">
+              <Button size="sm">Create Project</Button>
+              <Button variant="outline" size="sm">Import Project</Button>
+            </div>
+            <Button variant="link" size="sm" className="text-muted-foreground">
+              Learn More <ArrowUpRight />
+            </Button>
+          </EmptyContent>
+        </Empty>
+        <Separator />
         <Empty className="rounded-lg border">
           <EmptyHeader>
-            <EmptyMedia variant="icon"><FolderOpen /></EmptyMedia>
-            <EmptyTitle>No projects yet</EmptyTitle>
-            <EmptyDescription>Create your first project to get started.</EmptyDescription>
+            <EmptyMedia variant="icon"><Cloud /></EmptyMedia>
+            <EmptyTitle>Cloud Storage Empty</EmptyTitle>
+            <EmptyDescription>Upload files to your cloud storage to access them anywhere.</EmptyDescription>
           </EmptyHeader>
-          <EmptyContent><Button size="sm">Create project</Button></EmptyContent>
+          <EmptyContent><Button variant="outline" size="sm">Upload Files</Button></EmptyContent>
         </Empty>
-        <Empty className="rounded-lg border bg-muted/50">
+        <Separator />
+        <Empty className="bg-muted/50 rounded-lg">
           <EmptyHeader>
-            <EmptyMedia variant="default">
-              <Avatar className="size-12"><AvatarFallback>CN</AvatarFallback></Avatar>
-            </EmptyMedia>
-            <EmptyTitle>No members</EmptyTitle>
-            <EmptyDescription>Invite a teammate to collaborate.</EmptyDescription>
+            <EmptyMedia variant="icon"><Bell /></EmptyMedia>
+            <EmptyTitle>No Notifications</EmptyTitle>
+            <EmptyDescription>You&apos;re all caught up. New notifications will appear here.</EmptyDescription>
           </EmptyHeader>
-          <EmptyContent><Button variant="outline" size="sm"><Plus />Invite</Button></EmptyContent>
+          <EmptyContent>
+            <Button variant="outline" size="sm"><RefreshCcw />Refresh</Button>
+          </EmptyContent>
+        </Empty>
+        <Separator />
+        <Empty>
+          <EmptyHeader>
+            <EmptyMedia>
+              <Avatar className="size-12"><AvatarImage src="https://github.com/shadcn.png" /><AvatarFallback>CN</AvatarFallback></Avatar>
+            </EmptyMedia>
+            <EmptyTitle>User Offline</EmptyTitle>
+            <EmptyDescription>This user is currently offline. You can leave a message to notify them or try again later.</EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent><Button size="sm">Leave Message</Button></EmptyContent>
+        </Empty>
+        <Separator />
+        <Empty>
+          <EmptyHeader>
+            <EmptyMedia>
+              <AvatarGroup>
+                <Avatar><AvatarImage src="https://github.com/shadcn.png" /><AvatarFallback>CN</AvatarFallback></Avatar>
+                <Avatar><AvatarImage src="https://github.com/vercel.png" /><AvatarFallback>VC</AvatarFallback></Avatar>
+                <Avatar><AvatarFallback>AB</AvatarFallback></Avatar>
+              </AvatarGroup>
+            </EmptyMedia>
+            <EmptyTitle>No Team Members</EmptyTitle>
+            <EmptyDescription>Invite your team to collaborate on this project.</EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent><Button size="sm"><Plus />Invite Members</Button></EmptyContent>
+        </Empty>
+        <Separator />
+        <Empty>
+          <EmptyHeader>
+            <EmptyTitle>404 - Not Found</EmptyTitle>
+            <EmptyDescription>The page you&apos;re looking for doesn&apos;t exist. Try searching for what you need below.</EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
+            <InputGroup className="sm:w-3/4">
+              <InputGroupInput placeholder="Try searching for pages..." />
+              <InputGroupAddon><Search /></InputGroupAddon>
+              <InputGroupAddon align="inline-end"><kbd className="text-muted-foreground text-xs">/</kbd></InputGroupAddon>
+            </InputGroup>
+            <EmptyDescription>
+              Need help? <a href="#" className="underline underline-offset-4">Contact support</a>
+            </EmptyDescription>
+          </EmptyContent>
         </Empty>
       </div>
     ),
@@ -1413,21 +1330,6 @@ export const showcases: Record<string, ShowcaseContent> = {
           <ScrollBar orientation="horizontal" />
         </ScrollArea>
       </div>
-    ),
-  },
-  resizable: {
-    source: "components/ui/resizable.tsx",
-    tokens: ["border", "muted"],
-    content: (
-      <ResizablePanelGroup orientation="horizontal" className="h-40 max-w-md rounded-lg border">
-        <ResizablePanel defaultSize={50}>
-          <div className="flex h-full items-center justify-center p-4 text-sm">One</div>
-        </ResizablePanel>
-        <ResizableHandle withHandle />
-        <ResizablePanel defaultSize={50}>
-          <div className="flex h-full items-center justify-center p-4 text-sm">Two</div>
-        </ResizablePanel>
-      </ResizablePanelGroup>
     ),
   },
   sidebar: {

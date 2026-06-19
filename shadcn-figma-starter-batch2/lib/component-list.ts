@@ -37,8 +37,6 @@ const entries: { name: string; description: string }[] = [
   { name: "Dropdown Menu", description: "Displays a menu to the user — such as a set of actions or functions — triggered by a button." },
   { name: "Empty", description: "Use the Empty component to display a empty state." },
   { name: "Field", description: "Combine labels, controls, and help text to compose accessible form fields and grouped inputs." },
-  // Not present in the Figma kit — description sourced from the shadcn/ui registry.
-  { name: "Form", description: "Building forms with React Hook Form and Zod." },
   { name: "Hover Card", description: "For sighted users to preview content available behind a link." },
   { name: "Input", description: "Displays a form input field or a component that looks like an input field." },
   { name: "Input Group", description: "Display additional information or actions to an input or textarea." },
@@ -53,8 +51,6 @@ const entries: { name: string; description: string }[] = [
   { name: "Popover", description: "Displays rich content in a portal, triggered by a button." },
   { name: "Progress", description: "Displays an indicator showing the completion progress of a task, typically displayed as a progress bar." },
   { name: "Radio Group", description: "A set of checkable buttons—known as radio buttons—where no more than one of the buttons can be checked at a time." },
-  // Not present in the Figma kit — description sourced from the shadcn/ui registry.
-  { name: "Resizable", description: "Accessible resizable panel groups and layouts with keyboard support." },
   { name: "Scroll Area", description: "Augments native scroll functionality for custom, cross-browser styling." },
   { name: "Select", description: "Displays a list of options for the user to pick from—triggered by a button." },
   { name: "Separator", description: "Visually or semantically separates content." },
