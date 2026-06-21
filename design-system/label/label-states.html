@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Label — states harness</title>
+<title>Label - states harness</title>
 <link rel="stylesheet" href="../theme.css" />
 <style>
   .lbl{
     display:inline-flex;align-items:center;gap:var(--space-2);user-select:none;
-    font-size:var(--label-size);font-weight:var(--label-weight);color:var(--label-text);line-height:var(--line-tight);
+    font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);color:var(--text-primary);line-height:var(--line-tight);
   }
   .peer:disabled ~ .lbl,.peer:disabled + .lbl{cursor:not-allowed;opacity:.7}
   .field{display:flex;flex-direction:column;gap:var(--space-1-5);max-inline-size:320px}
@@ -28,7 +28,7 @@
 <body>
   <main class="stack">
     <section>
-      <p class="grp-label">Default — paired with control</p>
+      <p class="grp-label">Default - paired with control</p>
       <div class="field">
         <label class="lbl" for="l-email">Email address</label>
         <input id="l-email" class="input" type="email" placeholder="you@example.com" />

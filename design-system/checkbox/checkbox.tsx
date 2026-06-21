@@ -3,11 +3,11 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 
 /**
- * Checkbox — token-driven, thin custom control. A real <input type=checkbox>
+ * Checkbox - token-driven, thin custom control. A real <input type=checkbox>
  * sits on top (transparent, keeps native keyboard + a11y); a drawn box overlay
  * (pointer-events:none) shows the border/fill; check + indeterminate dash are two
  * <path> in ONE <svg> toggled by :checked / :indeterminate (identical stroke).
- * Control-only — pair with <Label>.
+ * Control-only - pair with <Label>.
  */
 export interface CheckboxProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type"> {

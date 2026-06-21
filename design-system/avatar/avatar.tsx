@@ -4,7 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 /**
- * Avatar — token-driven user image with initials fallback. Self-contained
+ * Avatar - token-driven user image with initials fallback. Self-contained
  * (no Radix dep): the fallback shows until the image loads, then the loaded
  * image covers it. All sizing/color from --avatar-* + sizing tokens.
  */
@@ -48,7 +48,7 @@ const Avatar = React.forwardRef<HTMLSpanElement, AvatarProps>(
 
     return (
       <span ref={ref} className={cn(avatarVariants({ size }), className)} {...props}>
-        {/* fallback layer — initials, centered */}
+        {/* fallback layer - initials, centered */}
         <span
           aria-hidden={showImg && loaded ? "true" : undefined}
           className="absolute inset-0 flex items-center justify-center text-[length:var(--font-size-sm)] font-[var(--font-weight-medium)] text-[var(--avatar-text)]"

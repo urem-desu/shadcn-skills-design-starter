@@ -5,29 +5,28 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 /**
- * Badge — token-driven status/label chip. Non-interactive by default; render as
- * a link/button via `asChild`. Colors resolve to --badge-* tokens which carry
- * dark-mode variants in theme.css (chips stay legible on dark surfaces).
+ * Badge - token-driven status/label chip matching the Figma kit (Type: Default,
+ * Secondary, Destructive, Outline). Non-interactive <span> by default; render as
+ * a link/button via `asChild`. Colors resolve to --badge-* tokens in theme.css;
+ * dark mode is handled at the semantic tier (no per-variant dark overrides).
  */
 const badgeVariants = cva(
   [
-    "inline-flex items-center gap-[var(--space-1)] whitespace-nowrap",
-    "rounded-[var(--badge-radius)] px-[var(--space-2)] py-[var(--space-0-5)]",
+    "inline-flex w-fit shrink-0 items-center justify-center gap-[var(--space-1)] overflow-hidden whitespace-nowrap",
+    "rounded-[var(--badge-radius)] border border-transparent px-[var(--space-2)] py-[var(--space-0-5)]",
     "text-[length:var(--font-size-xs)] font-[var(--badge-font-weight)] leading-[var(--line-tight)]",
-    "[&_svg]:size-[var(--icon-xs)] [&_svg]:shrink-0",
+    "[&_svg]:size-[var(--icon-xs)] [&_svg]:shrink-0 [&_svg]:pointer-events-none",
   ],
   {
     variants: {
       variant: {
-        neutral: "bg-[var(--badge-neutral-bg)] text-[var(--badge-neutral-text)]",
-        primary: "bg-[var(--badge-primary-bg)] text-[var(--badge-primary-text)]",
-        success: "bg-[var(--badge-success-bg)] text-[var(--badge-success-text)]",
-        warning: "bg-[var(--badge-warning-bg)] text-[var(--badge-warning-text)]",
-        error: "bg-[var(--badge-error-bg)] text-[var(--badge-error-text)]",
-        outline: "border border-[var(--border-strong)] text-[var(--text-primary)]",
+        default: "bg-[var(--badge-default-bg)] text-[var(--badge-default-text)]",
+        secondary: "bg-[var(--badge-secondary-bg)] text-[var(--badge-secondary-text)]",
+        destructive: "bg-[var(--badge-destructive-bg)] text-[var(--badge-destructive-text)]",
+        outline: "border-[var(--badge-outline-border)] text-[var(--badge-outline-text)]",
       },
     },
-    defaultVariants: { variant: "neutral" },
+    defaultVariants: { variant: "default" },
   }
 )
 
@@ -40,7 +39,7 @@ export interface BadgeProps
 const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
   ({ className, variant, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "span"
-    return <Comp ref={ref} className={cn(badgeVariants({ variant }), className)} {...props} />
+    return <Comp ref={ref} data-slot="badge" data-variant={variant} className={cn(badgeVariants({ variant }), className)} {...props} />
   }
 )
 Badge.displayName = "Badge"

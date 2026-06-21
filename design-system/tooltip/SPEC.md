@@ -8,10 +8,10 @@ so the bubble can render always-open for contrast gating.
 ## Token mapping
 | Component token | → Semantic | → Primitive (light) | Dark |
 |---|---|---|---|
-| `--tooltip-bg` | `surface.inverse` | `gray.900` | `gray.50` |
-| `--tooltip-text` | `text.on-inverse` | `gray.50` | `gray.900` |
-| `--tooltip-radius` | `radius.md` | 6px | — |
-| `--tooltip-size` | `typography.fontSize.xs` | 12px | — |
+| `--surface-inverse` | `surface.inverse` | `gray.900` | `gray.50` |
+| `--text-on-inverse` | `text.on-inverse` | `gray.50` | `gray.900` |
+| `--radius-md` | `radius.md` | 6px | — |
+| `--font-size-xs` | `typography.fontSize.xs` | 12px | — |
 | padding | `space.1.5 × space.2.5` | 6 × 10px | — |
 
 Contrast (`tooltip-text` on `tooltip-bg`) ≈ 16:1 in both themes.

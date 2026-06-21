@@ -3,7 +3,7 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 
 /**
- * Textarea — token-driven multi-line field. Shares --field-* tokens with Input.
+ * Textarea - token-driven multi-line field. Shares --field-* tokens with Input.
  * Error is driven by aria-invalid so visual ≡ a11y state. Vertical resize only.
  */
 export interface TextareaProps

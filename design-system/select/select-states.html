@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Select — states harness</title>
+<title>Select - states harness</title>
 <link rel="stylesheet" href="../theme.css" />
 <style>
   /* native <select> styled as a field; custom chevron overlay (pointer-events:none) */
-  .select{position:relative;display:inline-flex;inline-size:100%;max-inline-size:280px}
+  .select{position:relative;display:inline-flex;inline-size:100%;max-inline-size:var(--select-trigger-max-w)}
   .select select{
     appearance:none;-webkit-appearance:none;inline-size:100%;font-family:inherit;cursor:pointer;
     block-size:var(--control-md);padding-inline:var(--space-3);padding-inline-end:calc(var(--icon-sm) + var(--space-3) * 2);
@@ -22,7 +22,7 @@
     transform:translateY(-50%);inline-size:var(--icon-sm);block-size:var(--icon-sm);
     color:var(--text-secondary);stroke:currentColor;fill:none;stroke-width:2}
   .field{display:flex;flex-direction:column;gap:var(--space-1-5)}
-  .lbl{font-size:var(--label-size);font-weight:var(--label-weight);color:var(--label-text);line-height:var(--line-tight)}
+  .lbl{font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);color:var(--text-primary);line-height:var(--line-tight)}
   .err{font-size:var(--font-size-sm);color:var(--feedback-error-text)}
 
   *{box-sizing:border-box}

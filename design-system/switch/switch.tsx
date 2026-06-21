@@ -3,7 +3,7 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 
 /**
- * Switch — token-driven toggle. Native <input type=checkbox role="switch"> on top
+ * Switch - token-driven toggle. Native <input type=checkbox role="switch"> on top
  * (keeps native keyboard + announces as a switch); drawn track + thumb overlay
  * (pointer-events:none). Off-track uses border-strong for 3:1 non-text contrast.
  * Provide an accessible name via a paired <Label> or aria-label.

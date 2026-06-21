@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Card - states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  /* ===== Card component CSS (mirrors card.tsx) ============================ */
+  .card{
+    display:flex;flex-direction:column;gap:var(--space-4);padding-block:var(--space-6);
+    border-radius:var(--radius-lg);border:1px solid var(--border-default);
+    background:var(--surface-card);color:var(--text-primary);box-shadow:var(--shadow-sm);
+  }
+  .card-header{
+    display:grid;grid-auto-rows:min-content;grid-template-columns:1fr auto;
+    align-items:start;column-gap:var(--space-4);padding-inline:var(--space-6);
+  }
+  .card-title{font-size:var(--font-size-lg);font-weight:var(--font-weight-semibold);line-height:var(--line-tight);color:var(--text-primary)}
+  .card-desc{font-size:var(--font-size-sm);line-height:var(--line-normal);color:var(--text-secondary);margin:var(--space-1) 0 0}
+  .card-action{grid-column-start:2;grid-row:1 / span 2;align-self:start;justify-self:end}
+  .card-content{padding-inline:var(--space-6)}
+  .card-footer{display:flex;align-items:center;gap:var(--space-3);padding-inline:var(--space-6)}
+
+  /* minimal token-driven buttons just for the demo footers/actions */
+  .b{display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);
+    height:var(--control-md);padding-inline:var(--space-4);border:0;border-radius:var(--radius-md);
+    font:inherit;font-weight:var(--font-weight-medium);font-size:var(--font-size-base);cursor:pointer;outline:none}
+  .b:focus-visible{box-shadow:var(--focus-ring)}
+  .b--primary{background:var(--action-primary);color:var(--text-on-action)}
+  .b--secondary{background:var(--action-secondary);color:var(--text-primary)}
+  .b--ghost{background:transparent;color:var(--text-secondary)}
+  .b--icon{width:var(--control-md);padding:0}
+  .b .ico{width:var(--icon-md);height:var(--icon-md);stroke:currentColor;fill:none;stroke-width:2}
+  .field{display:flex;flex-direction:column;gap:var(--space-1-5)}
+  .field label{font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);color:var(--text-primary)}
+  .field input{height:var(--control-md);border:1px solid var(--field-border);border-radius:var(--field-radius);
+    background:var(--field-bg);color:var(--field-text);padding-inline:var(--space-3);font:inherit;font-size:var(--font-size-base);outline:none}
+  .field input::placeholder{color:var(--field-placeholder)}
+  .field input:focus-visible{border-color:var(--field-border-focus);box-shadow:var(--field-focus-ring)}
+
+  /* ===== harness chrome =================================================== */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);
+    font-family:Inter,system-ui,-apple-system,sans-serif;padding:32px}
+  .wrap{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:24px;max-width:1000px;margin:0 auto}
+  .grp-label{grid-column:1/-1;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+</style>
+</head>
+<body>
+  <main class="wrap">
+    <p class="grp-label">Card variants</p>
+
+    <!-- Header + Action + Content + Footer -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Project Atlas</div>
+          <p class="card-desc">Shared workspace for the design system team.</p>
+        </div>
+        <div class="card-action">
+          <button class="b b--ghost b--icon" aria-label="More options">
+            <svg class="ico" aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="card-content">
+        <p style="margin:0;color:var(--text-secondary);font-size:var(--font-size-sm);line-height:var(--line-normal)">
+          12 active members &middot; updated 2 hours ago. Tokens, components, and docs in one place.
+        </p>
+      </div>
+      <div class="card-footer">
+        <button class="b b--primary">Open</button>
+        <button class="b b--secondary">Share</button>
+      </div>
+    </div>
+
+    <!-- Form card -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Login</div>
+          <p class="card-desc">Enter your email below to sign in.</p>
+        </div>
+      </div>
+      <div class="card-content" style="display:flex;flex-direction:column;gap:var(--space-4)">
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" type="email" placeholder="m@example.com" />
+        </div>
+        <div class="field">
+          <label for="pw">Password</label>
+          <input id="pw" type="password" placeholder="••••••••" />
+        </div>
+      </div>
+      <div class="card-footer" style="flex-direction:column;align-items:stretch">
+        <button class="b b--primary" style="width:100%">Sign in</button>
+      </div>
+    </div>
+
+    <!-- Notification card -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Notifications</div>
+          <p class="card-desc">You have 3 unread messages.</p>
+        </div>
+      </div>
+      <div class="card-content">
+        <p style="margin:0;color:var(--text-secondary);font-size:var(--font-size-sm)">Push notifications are enabled for this device.</p>
+      </div>
+      <div class="card-footer">
+        <button class="b b--primary" style="width:100%">Mark all as read</button>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

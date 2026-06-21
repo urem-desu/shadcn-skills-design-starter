@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Alert Dialog - states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  /* ===== Button CSS (mirrors button.tsx buttonVariants, size md) =========== */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);
+    white-space:nowrap;height:var(--control-md);padding-inline:var(--space-4);
+    border:0;border-radius:var(--button-radius);font-family:inherit;
+    font-size:var(--font-size-base);font-weight:var(--button-font-weight);
+    line-height:var(--line-normal);cursor:pointer;outline:none;
+    transition:background-color var(--duration-fast) var(--ease-out),
+               color var(--duration-fast) var(--ease-out),
+               box-shadow var(--duration-fast) var(--ease-out);
+  }
+  .btn:focus-visible,.btn.is-focus{box-shadow:var(--button-focus-ring)}
+  .btn-primary{background:var(--button-primary-bg);color:var(--button-primary-text)}
+  .btn-primary:hover,.btn-primary.is-hover{background:var(--button-primary-bg-hover)}
+  .btn-primary:active{background:var(--button-primary-bg-active)}
+  .btn-outline{
+    background:var(--button-outline-bg);color:var(--button-outline-text);
+    border:1px solid var(--button-outline-border)}
+  .btn-outline:hover,.btn-outline.is-hover{background:var(--button-outline-bg-hover)}
+  .btn-outline:active{background:var(--button-outline-bg-active)}
+
+  /* ===== Alert Dialog CSS (mirrors alert-dialog.tsx) ====================== */
+  .ad-scene{
+    position:relative;overflow:hidden;border-radius:var(--radius-lg);
+    background:var(--surface-sunken);min-height:300px;
+    display:flex;align-items:center;justify-content:center}
+  .ad-overlay{position:absolute;inset:0;background:var(--scrim)}
+  .ad-content{
+    position:relative;display:flex;flex-direction:column;gap:var(--space-4);
+    width:100%;max-width:var(--dialog-max-w);
+    border:1px solid var(--border-default);background:var(--surface-card);
+    padding:var(--space-6);border-radius:var(--radius-lg);
+    box-shadow:var(--shadow-lg)}
+  .ad-header{display:flex;flex-direction:column;gap:var(--space-2)}
+  .ad-title{margin:0;font-size:var(--font-size-lg);font-weight:var(--font-weight-semibold);
+    line-height:var(--line-tight);color:var(--text-primary)}
+  .ad-desc{margin:0;font-size:var(--font-size-sm);
+    line-height:var(--line-normal);color:var(--text-secondary)}
+  .ad-footer{display:flex;flex-direction:row;justify-content:flex-end;gap:var(--space-2)}
+
+  /* ===== harness chrome =================================================== */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);
+    font-family:Inter,system-ui,-apple-system,sans-serif;padding:32px}
+  .stack{display:flex;flex-wrap:wrap;gap:40px;align-items:flex-start;max-width:1180px;margin:0 auto}
+  .col{display:flex;flex-direction:column;gap:12px;width:560px}
+  .col.narrow{width:320px}
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+</style>
+</head>
+<body>
+  <main class="stack">
+
+    <div class="col narrow">
+      <p class="grp-label">Trigger (closed)</p>
+      <button class="btn btn-outline" type="button" aria-haspopup="dialog">Show dialog</button>
+    </div>
+
+    <div class="col">
+      <p class="grp-label">Open - default</p>
+      <div class="ad-scene">
+        <div class="ad-overlay"></div>
+        <div class="ad-content" role="alertdialog" aria-modal="true"
+             aria-labelledby="adt1" aria-describedby="add1">
+          <div class="ad-header">
+            <h2 class="ad-title" id="adt1">Are you absolutely sure?</h2>
+            <p class="ad-desc" id="add1">This action cannot be undone. This will permanently delete your account and remove your data from our servers.</p>
+          </div>
+          <div class="ad-footer">
+            <button class="btn btn-outline" type="button">Cancel</button>
+            <button class="btn btn-primary" type="button">Continue</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <p class="grp-label">Action focus / Cancel hover</p>
+      <div class="ad-scene">
+        <div class="ad-overlay"></div>
+        <div class="ad-content" role="alertdialog" aria-modal="true"
+             aria-labelledby="adt2" aria-describedby="add2">
+          <div class="ad-header">
+            <h2 class="ad-title" id="adt2">Delete this project?</h2>
+            <p class="ad-desc" id="add2">Removing the project deletes all of its files and history. This cannot be recovered later.</p>
+          </div>
+          <div class="ad-footer">
+            <button class="btn btn-outline is-hover" type="button">Cancel</button>
+            <button class="btn btn-primary is-focus" type="button">Continue</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</body>
+</html>

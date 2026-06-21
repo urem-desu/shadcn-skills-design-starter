@@ -6,7 +6,7 @@ import { Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 /**
- * Button — token-driven (3-tier): every visual value resolves to a CSS variable
+ * Button - token-driven (3-tier): every visual value resolves to a CSS variable
  * from theme.css (component → semantic → primitive). No hardcoded colors, px,
  * radii, durations, or font values.
  *
@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils"
  *   control/spacing/font/radius/motion CSS vars directly.
  */
 const buttonVariants = cva(
-  // base: layout, type, radius, motion, focus ring, disabled — all tokenized
+  // base: layout, type, radius, motion, focus ring, disabled - all tokenized
   [
     "inline-flex items-center justify-center gap-[var(--space-2)] whitespace-nowrap align-middle",
     "rounded-[var(--button-radius)] font-[var(--button-font-weight)]",
@@ -35,6 +35,8 @@ const buttonVariants = cva(
           "bg-button-primary text-button-primary-foreground hover:bg-button-primary-hover active:bg-button-primary-active",
         secondary:
           "bg-button-secondary text-button-secondary-foreground hover:bg-button-secondary-hover active:bg-button-secondary-active",
+        outline:
+          "border border-[var(--button-outline-border)] bg-[var(--button-outline-bg)] text-[var(--button-outline-text)] hover:bg-[var(--button-outline-bg-hover)] active:bg-[var(--button-outline-bg-active)]",
         ghost:
           "bg-transparent text-button-ghost-foreground hover:bg-button-ghost-hover active:bg-button-ghost-active",
         destructive:
@@ -56,7 +58,7 @@ const buttonVariants = cva(
     compoundVariants: [
       {
         selected: true,
-        variant: ["primary", "secondary", "ghost", "destructive"],
+        variant: ["primary", "secondary", "outline", "ghost", "destructive"],
         class:
           "bg-button-selected text-button-selected-foreground border border-button-selected-border hover:bg-button-selected",
       },
@@ -76,7 +78,7 @@ type ButtonBaseProps = {
   loading?: boolean
   /** Optional label announced/shown while loading (defaults to children). */
   loadingText?: string
-  /** Toggle/segmented selected state — sets aria-pressed + selected tokens. */
+  /** Toggle/segmented selected state - sets aria-pressed + selected tokens. */
   selected?: boolean
 }
 

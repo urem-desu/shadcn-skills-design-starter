@@ -4,7 +4,7 @@ import { ChevronDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 /**
- * Select — token-driven native <select> styled as a field (shares --field-*
+ * Select - token-driven native <select> styled as a field (shares --field-*
  * tokens with Input/Textarea). Native select = full keyboard + mobile pickers
  * for free. A custom chevron overlays the control (pointer-events:none).
  * Error is driven by aria-invalid. For a richly-styled listbox, compose Radix
@@ -17,7 +17,7 @@ export interface SelectProps
 
 const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
   ({ className, error, children, "aria-invalid": ariaInvalid, ...props }, ref) => (
-    <div className="relative inline-flex w-full max-w-[280px]">
+    <div className="relative inline-flex w-full max-w-[var(--select-trigger-max-w)]">
       <select
         ref={ref}
         aria-invalid={error || ariaInvalid || undefined}
