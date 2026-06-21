@@ -369,36 +369,60 @@ export const showcases: Record<string, ShowcaseContent> = {
     source: "components/ui/toggle.tsx",
     tokens: ["accent", "accent-foreground", "muted-foreground"],
     content: (
-      <>
-        <Toggle aria-label="Bold"><Bold /></Toggle>
-        <Toggle aria-label="Italic" defaultPressed><Italic /></Toggle>
-        <Toggle aria-label="Underline" variant="outline"><Underline /></Toggle>
-        <Toggle aria-label="Italic with text"><Italic />Italic</Toggle>
-        <Toggle aria-label="Small" size="sm"><Bold /></Toggle>
-        <Toggle aria-label="Large" size="lg"><Bold /></Toggle>
-        <Toggle aria-label="Disabled" disabled><Underline /></Toggle>
-      </>
+      <div className="flex w-full max-w-sm flex-col items-start gap-6">
+        <Toggle aria-label="Toggle bold"><Bold /></Toggle>
+        <Separator />
+        <Toggle variant="outline" aria-label="Toggle italic"><Italic /></Toggle>
+        <Separator />
+        <Toggle aria-label="Toggle italic"><Italic />Italic</Toggle>
+        <Separator />
+        <Toggle size="sm" aria-label="Toggle italic"><Italic /></Toggle>
+        <Separator />
+        <Toggle size="lg" aria-label="Toggle italic"><Italic /></Toggle>
+        <Separator />
+        <Toggle disabled aria-label="Toggle underline"><Underline /></Toggle>
+      </div>
     ),
   },
   "toggle-group": {
     source: "components/ui/toggle-group.tsx",
     tokens: ["accent", "accent-foreground", "border"],
     content: (
-      <div className="flex flex-col gap-4">
-        <ToggleGroup type="multiple" defaultValue={["bold"]}>
-          <ToggleGroupItem value="bold" aria-label="Bold"><Bold /></ToggleGroupItem>
-          <ToggleGroupItem value="italic" aria-label="Italic"><Italic /></ToggleGroupItem>
-          <ToggleGroupItem value="underline" aria-label="Underline"><Underline /></ToggleGroupItem>
+      <div className="flex w-full max-w-sm flex-col items-start gap-6">
+        <ToggleGroup type="multiple">
+          <ToggleGroupItem value="bold" aria-label="Toggle bold"><Bold /></ToggleGroupItem>
+          <ToggleGroupItem value="italic" aria-label="Toggle italic"><Italic /></ToggleGroupItem>
+          <ToggleGroupItem value="underline" aria-label="Toggle underline"><Underline /></ToggleGroupItem>
         </ToggleGroup>
-        <ToggleGroup type="multiple" defaultValue={["bold"]} variant="outline">
-          <ToggleGroupItem value="bold" aria-label="Bold"><Bold /></ToggleGroupItem>
-          <ToggleGroupItem value="italic" aria-label="Italic"><Italic /></ToggleGroupItem>
-          <ToggleGroupItem value="underline" aria-label="Underline"><Underline /></ToggleGroupItem>
+        <Separator />
+        <ToggleGroup type="multiple" variant="outline">
+          <ToggleGroupItem value="bold" aria-label="Toggle bold"><Bold /></ToggleGroupItem>
+          <ToggleGroupItem value="italic" aria-label="Toggle italic"><Italic /></ToggleGroupItem>
+          <ToggleGroupItem value="underline" aria-label="Toggle underline"><Underline /></ToggleGroupItem>
         </ToggleGroup>
-        <ToggleGroup type="multiple" defaultValue={["bold"]} variant="outline" size="sm">
-          <ToggleGroupItem value="bold" aria-label="Bold"><Bold /></ToggleGroupItem>
-          <ToggleGroupItem value="italic" aria-label="Italic"><Italic /></ToggleGroupItem>
-          <ToggleGroupItem value="underline" aria-label="Underline"><Underline /></ToggleGroupItem>
+        <Separator />
+        <ToggleGroup type="single">
+          <ToggleGroupItem value="bold" aria-label="Toggle bold"><Bold /></ToggleGroupItem>
+          <ToggleGroupItem value="italic" aria-label="Toggle italic"><Italic /></ToggleGroupItem>
+          <ToggleGroupItem value="underline" aria-label="Toggle underline"><Underline /></ToggleGroupItem>
+        </ToggleGroup>
+        <Separator />
+        <ToggleGroup type="multiple" size="sm">
+          <ToggleGroupItem value="bold" aria-label="Toggle bold"><Bold /></ToggleGroupItem>
+          <ToggleGroupItem value="italic" aria-label="Toggle italic"><Italic /></ToggleGroupItem>
+          <ToggleGroupItem value="underline" aria-label="Toggle underline"><Underline /></ToggleGroupItem>
+        </ToggleGroup>
+        <Separator />
+        <ToggleGroup type="multiple" size="lg">
+          <ToggleGroupItem value="bold" aria-label="Toggle bold"><Bold /></ToggleGroupItem>
+          <ToggleGroupItem value="italic" aria-label="Toggle italic"><Italic /></ToggleGroupItem>
+          <ToggleGroupItem value="underline" aria-label="Toggle underline"><Underline /></ToggleGroupItem>
+        </ToggleGroup>
+        <Separator />
+        <ToggleGroup type="multiple" disabled>
+          <ToggleGroupItem value="bold" aria-label="Toggle bold"><Bold /></ToggleGroupItem>
+          <ToggleGroupItem value="italic" aria-label="Toggle italic"><Italic /></ToggleGroupItem>
+          <ToggleGroupItem value="underline" aria-label="Toggle underline"><Underline /></ToggleGroupItem>
         </ToggleGroup>
       </div>
     ),
@@ -980,7 +1004,7 @@ export const showcases: Record<string, ShowcaseContent> = {
     tokens: ["primary", "primary-foreground"],
     content: (
       <Tooltip>
-        <TooltipTrigger asChild><Button variant="outline">Hover me</Button></TooltipTrigger>
+        <TooltipTrigger asChild><Button variant="outline">Hover</Button></TooltipTrigger>
         <TooltipContent>Add to library</TooltipContent>
       </Tooltip>
     ),
