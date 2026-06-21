@@ -577,7 +577,41 @@ export const showcases: Record<string, ShowcaseContent> = {
   switch: {
     source: "components/ui/switch.tsx",
     tokens: ["primary", "input"],
-    content: <div className="flex items-center gap-2"><Switch id="airplane" defaultChecked /><Label htmlFor="airplane">Airplane mode</Label></div>,
+    content: (
+      <div className="flex w-full max-w-sm flex-col gap-6">
+        <div className="flex items-center gap-2">
+          <Switch id="airplane" defaultChecked />
+          <Label htmlFor="airplane">Airplane mode</Label>
+        </div>
+        <Separator />
+        <form className="flex flex-col gap-6">
+          <div>
+            <h3 className="mb-4 text-lg font-medium">Email Notifications</h3>
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-row items-center justify-between rounded-lg border p-4">
+                <div className="flex flex-col gap-0.5">
+                  <Label htmlFor="marketing" className="text-base">Marketing emails</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Receive emails about new products, features, and more.
+                  </p>
+                </div>
+                <Switch id="marketing" defaultChecked />
+              </div>
+              <div className="flex flex-row items-center justify-between rounded-lg border p-4">
+                <div className="flex flex-col gap-0.5">
+                  <Label htmlFor="security" className="text-base">Security emails</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Receive emails about your account security.
+                  </p>
+                </div>
+                <Switch id="security" />
+              </div>
+            </div>
+          </div>
+          <Button type="submit" className="w-fit">Submit</Button>
+        </form>
+      </div>
+    ),
   },
   slider: {
     source: "components/ui/slider.tsx",
