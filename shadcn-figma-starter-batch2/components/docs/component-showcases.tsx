@@ -481,18 +481,33 @@ export const showcases: Record<string, ShowcaseContent> = {
     source: "components/ui/textarea.tsx",
     tokens: ["input", "foreground", "ring"],
     content: (
-      <div className="flex w-full max-w-sm flex-col gap-4">
+      <div className="flex w-full max-w-sm flex-col gap-6">
         <Textarea placeholder="Type your message here." />
+        <Separator />
+        <Textarea placeholder="Type your message here." disabled />
+        <Separator />
         <div className="flex flex-col gap-2">
           <Label htmlFor="ta-message">Your message</Label>
           <Textarea id="ta-message" placeholder="Type your message here." />
+        </div>
+        <Separator />
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="ta-message-2">Your message</Label>
+          <Textarea id="ta-message-2" placeholder="Type your message here." />
           <p className="text-sm text-muted-foreground">Your message will be copied to the support team.</p>
         </div>
-        <Textarea placeholder="Disabled" disabled />
+        <Separator />
         <div className="flex flex-col gap-2">
           <Textarea placeholder="Type your message here." />
-          <Button className="self-end">Send message</Button>
+          <Button className="w-full">Send message</Button>
         </div>
+        <Separator />
+        <form className="flex flex-col gap-2">
+          <Label htmlFor="ta-bio">Bio</Label>
+          <Textarea id="ta-bio" placeholder="Tell us a bit about yourself" />
+          <p className="text-sm text-muted-foreground">You can @mention other users and organizations.</p>
+          <Button type="submit" className="w-fit">Submit</Button>
+        </form>
       </div>
     ),
   },
