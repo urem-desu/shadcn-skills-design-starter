@@ -1,5 +1,8 @@
 {
   "dependencies": {
     "ux-ui-agent-skills": "^2.3.1"
+  },
+  "devDependencies": {
+    "playwright": "^1.61.0"
   }
 }

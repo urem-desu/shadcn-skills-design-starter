@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tooltip — states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  /* trigger (button) + bubble on inverse surface; CSS reveals on hover/focus.
+     One bubble is rendered always-open so its contrast is gate-measured. */
+  .tt{position:relative;display:inline-flex}
+  .tt__trigger{
+    display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);
+    block-size:var(--control-md);padding-inline:var(--space-4);font-family:inherit;cursor:pointer;
+    border-radius:var(--button-radius);font-weight:var(--button-font-weight);font-size:var(--font-size-base);
+    background:transparent;color:var(--button-ghost-text);border:1px solid var(--border-strong);outline:none}
+  .tt__trigger:hover{background:var(--button-ghost-bg-hover)}
+  .tt__trigger:focus-visible{box-shadow:var(--focus-ring)}
+  .tt__bubble{
+    position:absolute;inset-block-end:calc(100% + var(--space-2));inset-inline-start:50%;transform:translateX(-50%);
+    background:var(--tooltip-bg);color:var(--tooltip-text);border-radius:var(--tooltip-radius);
+    padding:var(--space-1-5) var(--space-2-5);font-size:var(--tooltip-size);line-height:var(--line-tight);white-space:nowrap;
+    opacity:0;visibility:hidden;transition:opacity var(--transition-micro);z-index:10}
+  .tt__bubble::after{content:"";position:absolute;inset-block-start:100%;inset-inline-start:50%;transform:translateX(-50%);
+    border:4px solid transparent;border-block-start-color:var(--tooltip-bg)}
+  .tt:hover .tt__bubble,.tt:focus-within .tt__bubble,.tt__bubble--open{opacity:1;visibility:visible}
+  @media (prefers-reduced-motion:reduce){.tt__bubble{transition:none}}
+
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);font-family:Inter,system-ui,sans-serif;padding:64px 32px}
+  .stack{display:flex;flex-direction:column;gap:48px;max-width:680px;margin:0 auto}
+  .row{display:flex;flex-wrap:wrap;gap:24px;align-items:center}
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0 0 8px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+</style>
+</head>
+<body>
+  <main class="stack">
+    <section>
+      <p class="grp-label">Open (default reveal)</p>
+      <div class="row">
+        <span class="tt">
+          <button class="tt__trigger" aria-describedby="tt-1">Hover</button>
+          <span class="tt__bubble tt__bubble--open" role="tooltip" id="tt-1">Add to library</span>
+        </span>
+      </div>
+    </section>
+    <section>
+      <p class="grp-label">Interactive (hover / focus to reveal)</p>
+      <div class="row">
+        <span class="tt">
+          <button class="tt__trigger" aria-describedby="tt-2">Settings</button>
+          <span class="tt__bubble" role="tooltip" id="tt-2">Open settings</span>
+        </span>
+        <span class="tt">
+          <button class="tt__trigger" aria-describedby="tt-3">Keyboard focusable</button>
+          <span class="tt__bubble" role="tooltip" id="tt-3">Shows on focus too</span>
+        </span>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

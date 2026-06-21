@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Radio — states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  /* same thin pattern as checkbox; circular box + filled dot on :checked */
+  .rdo{display:inline-flex;align-items:center;gap:var(--space-2);cursor:pointer;
+    font-size:var(--font-size-sm);color:var(--text-primary);line-height:var(--line-tight)}
+  .rdo__ctrl{position:relative;display:inline-grid;place-items:center;flex:none;
+    inline-size:var(--control-box-size);block-size:var(--control-box-size)}
+  .rdo__ctrl input{position:absolute;inset:0;margin:0;opacity:0;cursor:pointer}
+  .rdo__ctrl input:disabled{cursor:not-allowed}
+  .rdo__box{pointer-events:none;inline-size:100%;block-size:100%;display:grid;place-items:center;
+    border:1.5px solid var(--control-box-border);border-radius:var(--radio-radius);background:var(--control-box-bg);
+    transition:border-color var(--transition-micro),box-shadow var(--transition-micro)}
+  .rdo__dot{inline-size:.5rem;block-size:.5rem;border-radius:var(--radius-full);background:var(--control-checked-bg);
+    opacity:0;transition:opacity var(--transition-micro)}
+  .rdo__ctrl input:checked + .rdo__box{border-color:var(--control-checked-bg)}
+  .rdo__ctrl input:checked + .rdo__box .rdo__dot{opacity:1}
+  .rdo__ctrl input:focus-visible + .rdo__box{box-shadow:var(--focus-ring)}
+  .rdo:has(input:disabled){opacity:.5;cursor:not-allowed}
+
+  fieldset{border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:var(--space-3)}
+  legend{font-size:var(--label-size);font-weight:var(--label-weight);color:var(--label-text);padding:0;margin-block-end:var(--space-1)}
+
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);font-family:Inter,system-ui,sans-serif;padding:32px}
+  .stack{display:flex;flex-direction:column;gap:24px;max-width:560px;margin:0 auto}
+  .row{display:flex;flex-wrap:wrap;gap:24px;align-items:center}
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0 0 8px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+</style>
+</head>
+<body>
+  <main class="stack">
+    <section>
+      <p class="grp-label">Group</p>
+      <fieldset>
+        <legend>Notify me about…</legend>
+        <label class="rdo"><span class="rdo__ctrl"><input type="radio" name="n" checked /><span class="rdo__box"><span class="rdo__dot"></span></span></span>All new messages</label>
+        <label class="rdo"><span class="rdo__ctrl"><input type="radio" name="n" /><span class="rdo__box"><span class="rdo__dot"></span></span></span>Direct messages and mentions</label>
+        <label class="rdo"><span class="rdo__ctrl"><input type="radio" name="n" /><span class="rdo__box"><span class="rdo__dot"></span></span></span>Nothing</label>
+      </fieldset>
+    </section>
+    <section>
+      <p class="grp-label">States</p>
+      <div class="row">
+        <label class="rdo"><span class="rdo__ctrl"><input type="radio" name="s" /><span class="rdo__box"><span class="rdo__dot"></span></span></span>Unselected</label>
+        <label class="rdo"><span class="rdo__ctrl"><input type="radio" name="s" checked /><span class="rdo__box"><span class="rdo__dot"></span></span></span>Selected</label>
+        <label class="rdo"><span class="rdo__ctrl"><input type="radio" name="s2" disabled /><span class="rdo__box"><span class="rdo__dot"></span></span></span>Disabled</label>
+        <label class="rdo"><span class="rdo__ctrl"><input type="radio" name="s2" checked disabled /><span class="rdo__box"><span class="rdo__dot"></span></span></span>Disabled selected</label>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

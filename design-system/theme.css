@@ -1,0 +1,154 @@
+/* =============================================================================
+   Design System — shared token layer (DTCG-derived, mirrors tokens/*.json 1:1)
+
+   Tier 1 PRIMITIVE  → raw palette + scales (never referenced by components)
+   Tier 2 SEMANTIC   → purpose aliases (THE dark-mode switch layer)
+   Tier 3 COMPONENT  → component-scoped tokens (consumed by *.tsx + harnesses)
+
+   Every component in design-system/<name>/ links this file for tokens and adds
+   only its own CSS classes. Dark mode swaps at the SEMANTIC tier via
+   [data-theme="dark"]; primitives and the component tier never change.
+   ============================================================================= */
+
+:root {
+  /* ---- Tier 1: PRIMITIVE ------------------------------------------------- */
+  --blue-50:#eff6ff;  --blue-100:#dbeafe; --blue-200:#bfdbfe; --blue-300:#93c5fd;
+  --blue-400:#60a5fa; --blue-500:#3b82f6; --blue-600:#2563eb; --blue-700:#1d4ed8; --blue-800:#1e40af;
+  --red-50:#fef2f2;   --red-100:#fee2e2;  --red-300:#fca5a5;  --red-500:#ef4444;
+  --red-600:#dc2626;  --red-700:#b91c1c;  --red-800:#991b1b;
+  --green-50:#f0fdf4; --green-100:#dcfce7;--green-300:#86efac;--green-600:#16a34a;--green-700:#15803d;--green-800:#166534;
+  --amber-50:#fffbeb; --amber-100:#fef3c7;--amber-300:#fcd34d;--amber-600:#d97706;--amber-700:#b45309;--amber-800:#92400e;
+  --gray-50:#f9fafb;  --gray-100:#f3f4f6; --gray-200:#e5e7eb; --gray-300:#d1d5db; --gray-400:#9ca3af;
+  --gray-500:#6b7280; --gray-600:#4b5563; --gray-700:#374151; --gray-800:#1f2937; --gray-900:#111827; --gray-950:#030712;
+  --white:#ffffff;    --black:#000000;
+
+  /* radius / spacing / type / size / motion primitives */
+  --radius-sm:4px; --radius-md:6px; --radius-lg:8px; --radius-full:9999px;
+  --space-0-5:2px; --space-1:4px; --space-1-5:6px; --space-2:8px; --space-2-5:10px; --space-3:12px;
+  --space-4:16px; --space-5:20px; --space-6:24px; --space-9:36px;
+  --font-size-xs:12px; --font-size-sm:14px; --font-size-base:16px; --font-size-lg:18px;
+  --font-weight-regular:400; --font-weight-medium:500; --font-weight-semibold:600;
+  --line-tight:1.25; --line-normal:1.5;
+  --control-xs:24px; --control-sm:32px; --control-md:40px; --control-lg:48px;
+  --icon-xs:12px; --icon-sm:16px; --icon-md:20px; --icon-lg:24px;
+  --duration-fast:100ms; --duration-base:200ms;
+  --ease-out:cubic-bezier(0,0,.2,1); --ease-in-out:cubic-bezier(.4,0,.2,1);
+
+  /* ---- Tier 2: SEMANTIC -------------------------------------------------- */
+  --action-primary:var(--blue-600); --action-primary-hover:var(--blue-700); --action-primary-active:var(--blue-800);
+  --action-secondary:var(--gray-100); --action-secondary-hover:var(--gray-200); --action-secondary-active:var(--gray-300);
+  --action-destructive:var(--red-600); --action-destructive-hover:var(--red-700); --action-destructive-active:var(--red-800);
+
+  --text-primary:var(--gray-900); --text-secondary:var(--gray-600); --text-tertiary:var(--gray-400);
+  --text-on-action:var(--white); --text-disabled:var(--gray-400);
+  --text-link:var(--blue-600); --text-link-hover:var(--blue-800);
+
+  --surface-page:var(--white); --surface-card:var(--white); --surface-sunken:var(--gray-50);
+  --surface-disabled:var(--gray-100); --surface-inverse:var(--gray-900);
+  --text-on-inverse:var(--gray-50);
+
+  --border-default:var(--gray-200); --border-strong:var(--gray-500); --border-focus:var(--blue-500); --border-error:var(--red-500);
+
+  --interactive-hover-overlay:rgba(0,0,0,.04); --interactive-active-overlay:rgba(0,0,0,.08);
+  --interactive-selected-bg:var(--blue-50); --interactive-selected-border:var(--blue-200); --interactive-selected-text:var(--blue-700);
+
+  --feedback-success-bg:var(--green-100); --feedback-success-text:var(--green-800);
+  --feedback-warning-bg:var(--amber-100); --feedback-warning-text:var(--amber-800);
+  --feedback-error-bg:var(--red-100);     --feedback-error-text:var(--red-700);
+  --feedback-info-bg:var(--blue-100);     --feedback-info-text:var(--blue-700);
+
+  /* ---- Tier 3: COMPONENT ------------------------------------------------- */
+  /* shared interactive primitives */
+  --focus-ring:0 0 0 2px var(--surface-page),0 0 0 4px var(--border-focus);
+  --transition-micro:var(--duration-fast) var(--ease-out);
+
+  /* Button */
+  --button-radius:var(--radius-md); --button-font-weight:var(--font-weight-medium);
+  --button-focus-ring:var(--focus-ring);
+  --button-primary-bg:var(--action-primary); --button-primary-bg-hover:var(--action-primary-hover); --button-primary-bg-active:var(--action-primary-active); --button-primary-text:var(--text-on-action);
+  --button-secondary-bg:var(--action-secondary); --button-secondary-bg-hover:var(--action-secondary-hover); --button-secondary-bg-active:var(--action-secondary-active); --button-secondary-text:var(--text-primary);
+  --button-ghost-bg:transparent; --button-ghost-bg-hover:var(--action-secondary); --button-ghost-bg-active:var(--action-secondary-hover); --button-ghost-text:var(--text-primary);
+  --button-destructive-bg:var(--action-destructive); --button-destructive-bg-hover:var(--action-destructive-hover); --button-destructive-bg-active:var(--action-destructive-active); --button-destructive-text:var(--text-on-action);
+  --button-link-text:var(--text-link); --button-link-text-hover:var(--text-link-hover);
+  --button-selected-bg:var(--interactive-selected-bg); --button-selected-border:var(--interactive-selected-border); --button-selected-text:var(--interactive-selected-text);
+
+  /* Input / Textarea / Select (shared field tokens) */
+  --field-bg:var(--surface-card); --field-bg-disabled:var(--surface-disabled);
+  --field-border:var(--border-default); --field-border-hover:var(--border-strong);
+  --field-border-focus:var(--border-focus); --field-border-error:var(--border-error);
+  --field-text:var(--text-primary); --field-placeholder:var(--text-tertiary);
+  --field-radius:var(--radius-md); --field-focus-ring:var(--focus-ring);
+  --field-focus-ring-error:0 0 0 2px var(--surface-page),0 0 0 4px var(--border-error);
+
+  /* Label */
+  --label-text:var(--text-primary); --label-weight:var(--font-weight-medium); --label-size:var(--font-size-sm);
+
+  /* Badge */
+  --badge-radius:var(--radius-full); --badge-font-weight:var(--font-weight-medium);
+  --badge-neutral-bg:var(--gray-100);  --badge-neutral-text:var(--gray-700);
+  --badge-primary-bg:var(--blue-100);  --badge-primary-text:var(--blue-700);
+  --badge-success-bg:var(--green-100); --badge-success-text:var(--green-800);
+  --badge-warning-bg:var(--amber-100); --badge-warning-text:var(--amber-800);
+  --badge-error-bg:var(--red-100);     --badge-error-text:var(--red-700);
+
+  /* Avatar */
+  --avatar-bg:var(--gray-200); --avatar-text:var(--gray-700); --avatar-border:var(--surface-card); --avatar-radius:var(--radius-full);
+
+  /* Checkbox / Radio (thin custom-control pattern) */
+  --control-box-size:var(--space-4); --control-box-border:var(--border-strong);
+  --control-box-bg:var(--surface-card); --control-checked-bg:var(--action-primary);
+  --control-checked-mark:var(--text-on-action); --control-disabled-bg:var(--surface-disabled);
+  --checkbox-radius:var(--radius-sm); --radio-radius:var(--radius-full);
+
+  /* Switch */
+  --switch-track-off:var(--border-strong); --switch-track-on:var(--action-primary);
+  --switch-thumb:var(--white); --switch-track-w:var(--space-9); --switch-track-h:var(--space-5); --switch-thumb-size:var(--space-4);
+
+  /* Tooltip (inverse surface) */
+  --tooltip-bg:var(--surface-inverse); --tooltip-text:var(--text-on-inverse); --tooltip-radius:var(--radius-md); --tooltip-size:var(--font-size-xs);
+}
+
+/* ---- Dark mode: SEMANTIC overrides only -------------------------------- */
+[data-theme="dark"] {
+  --action-secondary:var(--gray-800); --action-secondary-hover:var(--gray-700); --action-secondary-active:var(--gray-500);
+
+  --text-primary:var(--gray-50); --text-secondary:var(--gray-400); --text-tertiary:var(--gray-500);
+  --text-disabled:var(--gray-500); --text-link:var(--blue-400); --text-link-hover:var(--blue-300);
+
+  --surface-page:var(--gray-950); --surface-card:var(--gray-900); --surface-sunken:var(--black);
+  --surface-disabled:var(--gray-800); --surface-inverse:var(--gray-50); --text-on-inverse:var(--gray-900);
+
+  --border-default:var(--gray-800); --border-strong:var(--gray-500); --border-error:var(--red-500);
+
+  --interactive-hover-overlay:rgba(255,255,255,.08); --interactive-active-overlay:rgba(255,255,255,.12);
+  --interactive-selected-bg:var(--gray-800); --interactive-selected-border:var(--blue-400); --interactive-selected-text:var(--blue-300);
+
+  /* feedback badges: lift text for contrast on dark-tinted chips */
+  --feedback-success-bg:var(--green-800); --feedback-success-text:var(--green-100);
+  --feedback-warning-bg:var(--amber-800); --feedback-warning-text:var(--amber-100);
+  --feedback-error-bg:var(--red-800);     --feedback-error-text:var(--red-100);
+  --feedback-info-bg:var(--blue-800);     --feedback-info-text:var(--blue-100);
+
+  /* badge dark variants (mirror feedback so chips stay legible) */
+  --badge-neutral-bg:var(--gray-800);  --badge-neutral-text:var(--gray-100);
+  --badge-primary-bg:var(--blue-800);  --badge-primary-text:var(--blue-100);
+  --badge-success-bg:var(--green-800); --badge-success-text:var(--green-100);
+  --badge-warning-bg:var(--amber-800); --badge-warning-text:var(--amber-100);
+  --badge-error-bg:var(--red-800);     --badge-error-text:var(--red-100);
+
+  --avatar-bg:var(--gray-700); --avatar-text:var(--gray-100); --avatar-border:var(--surface-card);
+}
+
+/* -----------------------------------------------------------------------------
+   Tailwind v4 (app globals.css):
+     @import "tailwindcss";
+     @import "./design-system/theme.css";
+     @theme inline {
+       --color-button-primary: var(--button-primary-bg);  ... (per component token)
+       --color-field-border:   var(--field-border);
+       --color-badge-success:  var(--badge-success-bg);   ... etc
+       --radius-field: var(--field-radius);
+     }
+   Each design-system/<name>/<name>.tsx consumes those utilities + reads geometry
+   tokens via arbitrary values (h-[var(--control-md)], rounded-[var(--field-radius)]).
+   ----------------------------------------------------------------------------- */

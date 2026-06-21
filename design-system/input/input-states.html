@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Input — states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  /* ---- Input component CSS (mirrors input.tsx) ---- */
+  .input{
+    display:flex;inline-size:100%;font-family:inherit;
+    border-radius:var(--field-radius);background:var(--field-bg);color:var(--field-text);
+    border:1px solid var(--field-border);
+    transition:color var(--transition-micro),border-color var(--transition-micro),box-shadow var(--transition-micro);
+    outline:none;
+  }
+  .input::placeholder{color:var(--field-placeholder)}
+  .input:hover{border-color:var(--field-border-hover)}
+  .input:focus-visible{border-color:var(--field-border-focus);box-shadow:var(--field-focus-ring)}
+  .input:disabled{cursor:not-allowed;opacity:.5;background:var(--field-bg-disabled)}
+  .input:read-only{background:var(--field-bg-disabled)}
+  .input[aria-invalid="true"]{border-color:var(--field-border-error)}
+  .input[aria-invalid="true"]:focus-visible{box-shadow:var(--field-focus-ring-error)}
+  .input--sm{block-size:var(--control-sm);padding-inline:var(--space-3);font-size:var(--font-size-sm)}
+  .input--md{block-size:var(--control-md);padding-inline:var(--space-3);font-size:var(--font-size-base)}
+  .input--lg{block-size:var(--control-lg);padding-inline:var(--space-4);font-size:var(--font-size-lg)}
+
+  /* field group + label/helper (shared Label tokens) */
+  .field{display:flex;flex-direction:column;gap:var(--space-1-5);max-inline-size:320px}
+  .lbl{font-size:var(--label-size);font-weight:var(--label-weight);color:var(--label-text);line-height:var(--line-tight)}
+  .help{font-size:var(--font-size-sm);color:var(--text-secondary)}
+  .err{font-size:var(--font-size-sm);color:var(--feedback-error-text)}
+
+  /* harness chrome */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);
+    font-family:Inter,system-ui,sans-serif;padding:32px}
+  .stack{display:flex;flex-direction:column;gap:24px;max-width:760px;margin:0 auto}
+  .row{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end}
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0 0 8px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+</style>
+</head>
+<body>
+  <main class="stack">
+    <section>
+      <p class="grp-label">Sizes</p>
+      <div class="row">
+        <div class="field"><label class="lbl" for="i-sm">Small</label><input id="i-sm" class="input input--sm" placeholder="Small" /></div>
+        <div class="field"><label class="lbl" for="i-md">Medium</label><input id="i-md" class="input input--md" placeholder="Medium" /></div>
+        <div class="field"><label class="lbl" for="i-lg">Large</label><input id="i-lg" class="input input--lg" placeholder="Large" /></div>
+      </div>
+    </section>
+
+    <section>
+      <p class="grp-label">States</p>
+      <div class="row">
+        <div class="field"><label class="lbl" for="i-default">Default</label><input id="i-default" class="input input--md" placeholder="you@example.com" /></div>
+        <div class="field"><label class="lbl" for="i-filled">Filled</label><input id="i-filled" class="input input--md" value="Pedro Duarte" /></div>
+        <div class="field"><label class="lbl" for="i-disabled">Disabled</label><input id="i-disabled" class="input input--md" placeholder="Disabled" disabled /></div>
+        <div class="field"><label class="lbl" for="i-ro">Read-only</label><input id="i-ro" class="input input--md" value="read-only" readonly /></div>
+      </div>
+    </section>
+
+    <section>
+      <p class="grp-label">Error</p>
+      <div class="row">
+        <div class="field">
+          <label class="lbl" for="i-err">Email</label>
+          <input id="i-err" class="input input--md" type="email" value="not-an-email" aria-invalid="true" aria-describedby="i-err-msg" />
+          <p class="err" id="i-err-msg">Enter a valid email address.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <p class="grp-label">With label &amp; helper</p>
+      <div class="row">
+        <div class="field">
+          <label class="lbl" for="i-user">Username</label>
+          <input id="i-user" class="input input--md" placeholder="shadcn" aria-describedby="i-user-help" />
+          <p class="help" id="i-user-help">This is your public display name.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <p class="grp-label">Types</p>
+      <div class="row">
+        <div class="field"><label class="lbl" for="i-search">Search</label><input id="i-search" class="input input--md" type="search" placeholder="Search…" /></div>
+        <div class="field"><label class="lbl" for="i-pw">Password</label><input id="i-pw" class="input input--md" type="password" value="secret123" /></div>
+        <div class="field"><label class="lbl" for="i-file">Picture</label><input id="i-file" class="input input--md" type="file" /></div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

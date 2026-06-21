@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Label — states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  .lbl{
+    display:inline-flex;align-items:center;gap:var(--space-2);user-select:none;
+    font-size:var(--label-size);font-weight:var(--label-weight);color:var(--label-text);line-height:var(--line-tight);
+  }
+  .peer:disabled ~ .lbl,.peer:disabled + .lbl{cursor:not-allowed;opacity:.7}
+  .field{display:flex;flex-direction:column;gap:var(--space-1-5);max-inline-size:320px}
+  .input{display:flex;inline-size:100%;border-radius:var(--field-radius);background:var(--field-bg);
+    color:var(--field-text);border:1px solid var(--field-border);block-size:var(--control-md);
+    padding-inline:var(--space-3);font-size:var(--font-size-base);font-family:inherit;outline:none}
+  .input:focus-visible{border-color:var(--field-border-focus);box-shadow:var(--field-focus-ring)}
+
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);font-family:Inter,system-ui,sans-serif;padding:32px}
+  .stack{display:flex;flex-direction:column;gap:24px;max-width:680px;margin:0 auto}
+  .row{display:flex;flex-wrap:wrap;gap:20px;align-items:center}
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0 0 8px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+</style>
+</head>
+<body>
+  <main class="stack">
+    <section>
+      <p class="grp-label">Default — paired with control</p>
+      <div class="field">
+        <label class="lbl" for="l-email">Email address</label>
+        <input id="l-email" class="input" type="email" placeholder="you@example.com" />
+      </div>
+    </section>
+    <section>
+      <p class="grp-label">Inline (checkbox)</p>
+      <div class="row">
+        <label class="lbl"><input type="checkbox" class="peer" /> Accept terms and conditions</label>
+      </div>
+    </section>
+    <section>
+      <p class="grp-label">Disabled control dims label</p>
+      <div class="field">
+        <input id="l-dis" class="peer input" placeholder="Disabled" disabled />
+        <label class="lbl" for="l-dis">Disabled field</label>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

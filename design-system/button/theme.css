@@ -1,0 +1,178 @@
+/* =============================================================================
+   Button — 3-tier token layer (DTCG-derived)
+   Primitive  → raw palette (never used directly in components)
+   Semantic   → purpose aliases (theme-switchable at this layer)
+   Component  → button-scoped tokens (consumed by button.tsx / Tailwind @theme)
+   Values mirror tokens/*.json 1:1. Dark mode swaps at the SEMANTIC layer only.
+   ============================================================================= */
+
+:root {
+  /* ---- Tier 1: PRIMITIVE (palette) ---------------------------------------- */
+  --blue-50: #eff6ff;
+  --blue-100: #dbeafe;
+  --blue-200: #bfdbfe;
+  --blue-300: #93c5fd;
+  --blue-400: #60a5fa;
+  --blue-500: #3b82f6;
+  --blue-600: #2563eb;
+  --blue-700: #1d4ed8;
+  --blue-800: #1e40af;
+  --red-600: #dc2626;
+  --red-700: #b91c1c;
+  --red-800: #991b1b;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+  --gray-950: #030712;
+  --white: #ffffff;
+
+  /* scale / radius / motion primitives (from spacing.json, borders.json, motion.json) */
+  --radius-md: 6px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-2: 8px;
+  --font-size-sm: 14px;
+  --font-size-base: 16px;
+  --font-size-lg: 18px;
+  --font-weight-medium: 500;
+  --control-sm: 32px;
+  --control-md: 40px;
+  --control-lg: 48px;
+  --icon-sm: 16px;
+  --icon-md: 20px;
+  --icon-lg: 24px;
+  --duration-fast: 100ms;
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+
+  /* ---- Tier 2: SEMANTIC (purpose; this is the theme-switch layer) --------- */
+  --action-primary: var(--blue-600);
+  --action-primary-hover: var(--blue-700);
+  --action-primary-active: var(--blue-800);
+  --action-secondary: var(--gray-100);
+  --action-secondary-hover: var(--gray-200);
+  --action-secondary-active: var(--gray-300);
+  --action-destructive: var(--red-600);
+  --action-destructive-hover: var(--red-700);
+  --action-destructive-active: var(--red-800);
+
+  --text-primary: var(--gray-900);
+  --text-on-action: var(--white);
+  --text-disabled: var(--gray-400);
+  --text-link: var(--blue-600);
+  --text-link-hover: var(--blue-800);
+
+  --surface-disabled: var(--gray-100);
+  --border-strong: var(--gray-500);
+  --border-focus: var(--blue-500);
+  --surface-page: var(--white);
+
+  --interactive-hover-overlay: rgba(0, 0, 0, 0.04);
+  --interactive-active-overlay: rgba(0, 0, 0, 0.08);
+  --interactive-selected-bg: var(--blue-50);
+  --interactive-selected-border: var(--blue-200);
+  --interactive-selected-text: var(--blue-700);
+
+  /* ---- Tier 3: COMPONENT (button-scoped) --------------------------------- */
+  --button-radius: var(--radius-md);
+  --button-font-weight: var(--font-weight-medium);
+  --button-transition-duration: var(--duration-fast);
+  --button-transition-ease: var(--ease-out);
+  /* double-ring focus = 2px page-colored spacer + 2px focus color (shadow.focus-ring) */
+  --button-focus-ring: 0 0 0 2px var(--surface-page), 0 0 0 4px var(--border-focus);
+
+  --button-primary-bg: var(--action-primary);
+  --button-primary-bg-hover: var(--action-primary-hover);
+  --button-primary-bg-active: var(--action-primary-active);
+  --button-primary-text: var(--text-on-action);
+
+  --button-secondary-bg: var(--action-secondary);
+  --button-secondary-bg-hover: var(--action-secondary-hover);
+  --button-secondary-bg-active: var(--action-secondary-active);
+  --button-secondary-text: var(--text-primary);
+
+  --button-ghost-bg: transparent;
+  /* solid hover/active (action.secondary) — opaque so contrast is deterministic
+     in both themes; the translucent --interactive-*-overlay tokens remain
+     available for surfaces where layering over arbitrary content is required. */
+  --button-ghost-bg-hover: var(--action-secondary);
+  --button-ghost-bg-active: var(--action-secondary-hover);
+  --button-ghost-text: var(--text-primary);
+
+  --button-destructive-bg: var(--action-destructive);
+  --button-destructive-bg-hover: var(--action-destructive-hover);
+  --button-destructive-bg-active: var(--action-destructive-active);
+  --button-destructive-text: var(--text-on-action);
+
+  --button-link-text: var(--text-link);
+  --button-link-text-hover: var(--text-link-hover);
+
+  --button-selected-bg: var(--interactive-selected-bg);
+  --button-selected-border: var(--interactive-selected-border);
+  --button-selected-text: var(--interactive-selected-text);
+
+  --button-disabled-bg: var(--surface-disabled);
+  --button-disabled-text: var(--text-disabled);
+}
+
+/* ---- Dark mode: override the SEMANTIC tier only (primitives unchanged) ---- */
+[data-theme="dark"] {
+  --action-secondary: var(--gray-800);
+  --action-secondary-hover: var(--gray-700);
+  --action-secondary-active: var(--gray-500);
+
+  --text-primary: var(--gray-50);
+  --text-disabled: var(--gray-500);
+  --text-link: var(--blue-400);
+  --text-link-hover: var(--blue-300);
+
+  --surface-disabled: var(--gray-800);
+  --surface-page: var(--gray-950);
+  --border-strong: var(--gray-500);
+
+  --interactive-hover-overlay: rgba(255, 255, 255, 0.08);
+  --interactive-active-overlay: rgba(255, 255, 255, 0.12);
+  --interactive-selected-bg: var(--gray-800);
+  --interactive-selected-border: var(--blue-400);
+  --interactive-selected-text: var(--blue-300);
+  /* primary + destructive intentionally keep their hue/contrast in dark */
+}
+
+/* -----------------------------------------------------------------------------
+   Tailwind CSS v4 — expose component tokens to utilities (bg-button-primary…).
+   In a real app this lives in globals.css; included here so the mapping is
+   explicit. Tailwind generates `--color-*` utilities from these.
+   -----------------------------------------------------------------------------
+@import "tailwindcss";
+@theme inline {
+  --color-button-primary: var(--button-primary-bg);
+  --color-button-primary-hover: var(--button-primary-bg-hover);
+  --color-button-primary-active: var(--button-primary-bg-active);
+  --color-button-primary-foreground: var(--button-primary-text);
+  --color-button-secondary: var(--button-secondary-bg);
+  --color-button-secondary-hover: var(--button-secondary-bg-hover);
+  --color-button-secondary-active: var(--button-secondary-bg-active);
+  --color-button-secondary-foreground: var(--button-secondary-text);
+  --color-button-ghost-hover: var(--button-ghost-bg-hover);
+  --color-button-ghost-active: var(--button-ghost-bg-active);
+  --color-button-ghost-foreground: var(--button-ghost-text);
+  --color-button-destructive: var(--button-destructive-bg);
+  --color-button-destructive-hover: var(--button-destructive-bg-hover);
+  --color-button-destructive-active: var(--button-destructive-bg-active);
+  --color-button-destructive-foreground: var(--button-destructive-text);
+  --color-button-link: var(--button-link-text);
+  --color-button-link-hover: var(--button-link-text-hover);
+  --color-button-selected: var(--button-selected-bg);
+  --color-button-selected-border: var(--button-selected-border);
+  --color-button-selected-foreground: var(--button-selected-text);
+  --color-button-disabled: var(--button-disabled-bg);
+  --color-button-disabled-foreground: var(--button-disabled-text);
+  --radius-button: var(--button-radius);
+}
+*/

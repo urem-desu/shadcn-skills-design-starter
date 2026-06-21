@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Button — states harness</title>
+<style>
+  /* ===== Tier 1–3 token layer (mirrors theme.css 1:1) ====================== */
+  :root {
+    --blue-50:#eff6ff;--blue-100:#dbeafe;--blue-200:#bfdbfe;--blue-300:#93c5fd;
+    --blue-400:#60a5fa;--blue-500:#3b82f6;--blue-600:#2563eb;--blue-700:#1d4ed8;--blue-800:#1e40af;
+    --red-600:#dc2626;--red-700:#b91c1c;--red-800:#991b1b;
+    --gray-50:#f9fafb;--gray-100:#f3f4f6;--gray-200:#e5e7eb;--gray-300:#d1d5db;--gray-400:#9ca3af;
+    --gray-500:#6b7280;--gray-700:#374151;--gray-800:#1f2937;--gray-900:#111827;--gray-950:#030712;--white:#fff;
+
+    --radius-md:6px;--space-2:8px;--space-3:12px;--space-4:16px;--space-6:24px;
+    --font-size-sm:14px;--font-size-base:16px;--font-size-lg:18px;--font-weight-medium:500;
+    --control-sm:32px;--control-md:40px;--control-lg:48px;
+    --icon-sm:16px;--icon-md:20px;--icon-lg:24px;
+    --duration-fast:100ms;--ease-out:cubic-bezier(0,0,.2,1);
+
+    /* semantic */
+    --action-primary:var(--blue-600);--action-primary-hover:var(--blue-700);--action-primary-active:var(--blue-800);
+    --action-secondary:var(--gray-100);--action-secondary-hover:var(--gray-200);--action-secondary-active:var(--gray-300);
+    --action-destructive:var(--red-600);--action-destructive-hover:var(--red-700);--action-destructive-active:var(--red-800);
+    --text-primary:var(--gray-900);--text-on-action:var(--white);--text-disabled:var(--gray-400);
+    --text-link:var(--blue-600);--text-link-hover:var(--blue-800);
+    --surface-disabled:var(--gray-100);--surface-page:var(--white);
+    --border-focus:var(--blue-500);
+    --interactive-selected-bg:var(--blue-50);--interactive-selected-border:var(--blue-200);--interactive-selected-text:var(--blue-700);
+
+    /* component */
+    --button-radius:var(--radius-md);--button-font-weight:var(--font-weight-medium);
+    --button-transition-duration:var(--duration-fast);--button-transition-ease:var(--ease-out);
+    --button-focus-ring:0 0 0 2px var(--surface-page),0 0 0 4px var(--border-focus);
+    --button-primary-bg:var(--action-primary);--button-primary-bg-hover:var(--action-primary-hover);--button-primary-bg-active:var(--action-primary-active);--button-primary-text:var(--text-on-action);
+    --button-secondary-bg:var(--action-secondary);--button-secondary-bg-hover:var(--action-secondary-hover);--button-secondary-bg-active:var(--action-secondary-active);--button-secondary-text:var(--text-primary);
+    --button-ghost-bg:transparent;--button-ghost-bg-hover:var(--action-secondary);--button-ghost-bg-active:var(--action-secondary-hover);--button-ghost-text:var(--text-primary);
+    --button-destructive-bg:var(--action-destructive);--button-destructive-bg-hover:var(--action-destructive-hover);--button-destructive-bg-active:var(--action-destructive-active);--button-destructive-text:var(--text-on-action);
+    --button-link-text:var(--text-link);--button-link-text-hover:var(--text-link-hover);
+    --button-selected-bg:var(--interactive-selected-bg);--button-selected-border:var(--interactive-selected-border);--button-selected-text:var(--interactive-selected-text);
+    --button-disabled-bg:var(--surface-disabled);--button-disabled-text:var(--text-disabled);
+  }
+  [data-theme="dark"]{
+    --action-secondary:var(--gray-800);--action-secondary-hover:var(--gray-700);--action-secondary-active:var(--gray-500);
+    --text-primary:var(--gray-50);--text-disabled:var(--gray-500);--text-link:var(--blue-400);--text-link-hover:var(--blue-300);
+    --surface-disabled:var(--gray-800);--surface-page:var(--gray-950);
+    --interactive-selected-bg:var(--gray-800);--interactive-selected-border:var(--blue-400);--interactive-selected-text:var(--blue-300);
+  }
+
+  /* ===== Button component CSS (mirrors button.tsx cva) ===================== */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);
+    border:0;cursor:pointer;white-space:nowrap;font-family:inherit;
+    border-radius:var(--button-radius);font-weight:var(--button-font-weight);
+    transition:background-color var(--button-transition-duration) var(--button-transition-ease),
+               color var(--button-transition-duration) var(--button-transition-ease),
+               box-shadow var(--button-transition-duration) var(--button-transition-ease);
+    outline:none;-webkit-user-select:none;user-select:none;
+  }
+  .btn:focus-visible{box-shadow:var(--button-focus-ring)}
+  .btn:disabled,.btn[aria-disabled="true"]{opacity:.5;pointer-events:none;cursor:not-allowed}
+  .btn .ico{width:var(--icon-md);height:var(--icon-md);stroke:currentColor;fill:none;stroke-width:2;flex:none}
+
+  /* sizes */
+  .btn--sm{height:var(--control-sm);padding-inline:var(--space-3);font-size:var(--font-size-sm)}
+  .btn--sm .ico{width:var(--icon-sm);height:var(--icon-sm)}
+  .btn--md{height:var(--control-md);padding-inline:var(--space-4);font-size:var(--font-size-base)}
+  .btn--lg{height:var(--control-lg);padding-inline:var(--space-6);font-size:var(--font-size-lg)}
+  .btn--lg .ico{width:var(--icon-lg);height:var(--icon-lg)}
+  .btn--icon{height:var(--control-md);width:var(--control-md);padding:0}
+
+  /* variants */
+  .btn--primary{background:var(--button-primary-bg);color:var(--button-primary-text)}
+  .btn--primary:hover{background:var(--button-primary-bg-hover)}
+  .btn--primary:active{background:var(--button-primary-bg-active)}
+  .btn--secondary{background:var(--button-secondary-bg);color:var(--button-secondary-text)}
+  .btn--secondary:hover{background:var(--button-secondary-bg-hover)}
+  .btn--secondary:active{background:var(--button-secondary-bg-active)}
+  .btn--ghost{background:var(--button-ghost-bg);color:var(--button-ghost-text)}
+  .btn--ghost:hover{background:var(--button-ghost-bg-hover)}
+  .btn--ghost:active{background:var(--button-ghost-bg-active)}
+  .btn--destructive{background:var(--button-destructive-bg);color:var(--button-destructive-text)}
+  .btn--destructive:hover{background:var(--button-destructive-bg-hover)}
+  .btn--destructive:active{background:var(--button-destructive-bg-active)}
+  .btn--link{background:transparent;color:var(--button-link-text);text-underline-offset:4px}
+  .btn--link:hover{color:var(--button-link-text-hover);text-decoration:underline}
+
+  /* selected (toggle) — overrides bg per the compoundVariant in button.tsx */
+  .btn.is-selected{background:var(--button-selected-bg);color:var(--button-selected-text);
+    border:1px solid var(--button-selected-border)}
+  .btn.is-selected:hover{background:var(--button-selected-bg)}
+
+  .spin{animation:spin 1s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @media (prefers-reduced-motion:reduce){.spin{animation:none}}
+
+  /* ===== harness chrome (not part of the component) ======================= */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);
+    font-family:Inter,system-ui,-apple-system,sans-serif;padding:32px}
+  .stack{display:flex;flex-direction:column;gap:24px;max-width:880px;margin:0 auto}
+  .row{display:flex;flex-wrap:wrap;align-items:center;gap:16px}
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;
+    color:var(--gray-500);margin:0 0 8px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+</style>
+</head>
+<body>
+  <main class="stack">
+    <section>
+      <p class="grp-label">Variants (default)</p>
+      <div class="row">
+        <button class="btn btn--primary btn--md">Primary</button>
+        <button class="btn btn--secondary btn--md">Secondary</button>
+        <button class="btn btn--ghost btn--md">Ghost</button>
+        <button class="btn btn--destructive btn--md">Destructive</button>
+        <button class="btn btn--link btn--md">Link</button>
+      </div>
+    </section>
+
+    <section>
+      <p class="grp-label">Sizes (primary)</p>
+      <div class="row">
+        <button class="btn btn--primary btn--sm">Small</button>
+        <button class="btn btn--primary btn--md">Medium</button>
+        <button class="btn btn--primary btn--lg">Large</button>
+        <button class="btn btn--primary btn--icon" aria-label="Add">
+          <svg class="ico" aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+        </button>
+      </div>
+    </section>
+
+    <section>
+      <p class="grp-label">With icon</p>
+      <div class="row">
+        <button class="btn btn--primary btn--md">
+          <svg class="ico" aria-hidden="true" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
+          Download
+        </button>
+        <button class="btn btn--secondary btn--md">
+          <svg class="ico" aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+          New
+        </button>
+      </div>
+    </section>
+
+    <section>
+      <p class="grp-label">States — primary</p>
+      <div class="row">
+        <button class="btn btn--primary btn--md">Default</button>
+        <button class="btn btn--primary btn--md" disabled>Disabled</button>
+        <button class="btn btn--primary btn--md" aria-busy="true" disabled>
+          <svg class="ico spin" aria-hidden="true" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+          Loading
+        </button>
+        <button class="btn btn--primary btn--md is-selected" aria-pressed="true">Selected</button>
+      </div>
+    </section>
+
+    <section>
+      <p class="grp-label">States — secondary</p>
+      <div class="row">
+        <button class="btn btn--secondary btn--md">Default</button>
+        <button class="btn btn--secondary btn--md" disabled>Disabled</button>
+        <button class="btn btn--secondary btn--md" aria-busy="true" disabled>
+          <svg class="ico spin" aria-hidden="true" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+          Loading
+        </button>
+        <button class="btn btn--secondary btn--md is-selected" aria-pressed="true">Selected</button>
+      </div>
+    </section>
+
+    <section>
+      <p class="grp-label">States — destructive</p>
+      <div class="row">
+        <button class="btn btn--destructive btn--md">Delete</button>
+        <button class="btn btn--destructive btn--md" disabled>Delete</button>
+        <button class="btn btn--destructive btn--md" aria-busy="true" disabled>
+          <svg class="ico spin" aria-hidden="true" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+          Deleting
+        </button>
+      </div>
+    </section>
+
+    <section>
+      <p class="grp-label">States — ghost &amp; link</p>
+      <div class="row">
+        <button class="btn btn--ghost btn--md">Ghost</button>
+        <button class="btn btn--ghost btn--md" disabled>Ghost</button>
+        <button class="btn btn--ghost btn--md is-selected" aria-pressed="true">Selected</button>
+        <button class="btn btn--link btn--md">Link</button>
+        <button class="btn btn--link btn--md" disabled>Link</button>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

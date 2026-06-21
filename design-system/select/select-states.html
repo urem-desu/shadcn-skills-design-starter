@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Select — states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  /* native <select> styled as a field; custom chevron overlay (pointer-events:none) */
+  .select{position:relative;display:inline-flex;inline-size:100%;max-inline-size:280px}
+  .select select{
+    appearance:none;-webkit-appearance:none;inline-size:100%;font-family:inherit;cursor:pointer;
+    block-size:var(--control-md);padding-inline:var(--space-3);padding-inline-end:calc(var(--icon-sm) + var(--space-3) * 2);
+    border-radius:var(--field-radius);background:var(--field-bg);color:var(--field-text);
+    border:1px solid var(--field-border);font-size:var(--font-size-base);outline:none;
+    transition:border-color var(--transition-micro),box-shadow var(--transition-micro)}
+  .select select:hover{border-color:var(--field-border-hover)}
+  .select select:focus-visible{border-color:var(--field-border-focus);box-shadow:var(--field-focus-ring)}
+  .select select:disabled{opacity:.5;cursor:not-allowed;background:var(--field-bg-disabled)}
+  .select select[aria-invalid="true"]{border-color:var(--field-border-error)}
+  .select .chev{pointer-events:none;position:absolute;inset-inline-end:var(--space-3);inset-block-start:50%;
+    transform:translateY(-50%);inline-size:var(--icon-sm);block-size:var(--icon-sm);
+    color:var(--text-secondary);stroke:currentColor;fill:none;stroke-width:2}
+  .field{display:flex;flex-direction:column;gap:var(--space-1-5)}
+  .lbl{font-size:var(--label-size);font-weight:var(--label-weight);color:var(--label-text);line-height:var(--line-tight)}
+  .err{font-size:var(--font-size-sm);color:var(--feedback-error-text)}
+
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);font-family:Inter,system-ui,sans-serif;padding:32px}
+  .stack{display:flex;flex-direction:column;gap:24px;max-width:680px;margin:0 auto}
+  .row{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end}
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0 0 8px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+</style>
+</head>
+<body>
+  <main class="stack">
+    <section>
+      <p class="grp-label">States</p>
+      <div class="row">
+        <div class="field"><label class="lbl" for="s-d">Default</label>
+          <span class="select"><select id="s-d"><option value="">Select a fruit</option><option>Apple</option><option>Banana</option></select>
+          <svg class="chev" aria-hidden="true" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></span></div>
+        <div class="field"><label class="lbl" for="s-v">Selected</label>
+          <span class="select"><select id="s-v"><option>Apple</option><option>Banana</option></select>
+          <svg class="chev" aria-hidden="true" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></span></div>
+        <div class="field"><label class="lbl" for="s-dis">Disabled</label>
+          <span class="select"><select id="s-dis" disabled><option>Disabled</option></select>
+          <svg class="chev" aria-hidden="true" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></span></div>
+      </div>
+    </section>
+    <section>
+      <p class="grp-label">Error</p>
+      <div class="field" style="max-width:280px">
+        <label class="lbl" for="s-e">Country</label>
+        <span class="select"><select id="s-e" aria-invalid="true" aria-describedby="s-e-msg"><option value="">Select a country</option><option>United States</option></select>
+        <svg class="chev" aria-hidden="true" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></span>
+        <p class="err" id="s-e-msg">Please select a country.</p>
+      </div>
+    </section>
+    <section>
+      <p class="grp-label">With option groups</p>
+      <div class="field" style="max-width:280px">
+        <label class="lbl" for="s-g">Timezone</label>
+        <span class="select"><select id="s-g">
+          <optgroup label="North America"><option>EST</option><option>PST</option></optgroup>
+          <optgroup label="Europe"><option>GMT</option><option>CET</option></optgroup>
+        </select>
+        <svg class="chev" aria-hidden="true" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></span>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

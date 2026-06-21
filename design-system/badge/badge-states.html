@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Badge — states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  .badge{
+    display:inline-flex;align-items:center;gap:var(--space-1);white-space:nowrap;
+    border-radius:var(--badge-radius);padding:var(--space-0-5) var(--space-2);
+    font-size:var(--font-size-xs);font-weight:var(--badge-font-weight);line-height:var(--line-tight);
+  }
+  .badge .ico{width:var(--icon-xs);height:var(--icon-xs);stroke:currentColor;fill:none;stroke-width:2}
+  .badge--neutral{background:var(--badge-neutral-bg);color:var(--badge-neutral-text)}
+  .badge--primary{background:var(--badge-primary-bg);color:var(--badge-primary-text)}
+  .badge--success{background:var(--badge-success-bg);color:var(--badge-success-text)}
+  .badge--warning{background:var(--badge-warning-bg);color:var(--badge-warning-text)}
+  .badge--error{background:var(--badge-error-bg);color:var(--badge-error-text)}
+  .badge--outline{border:1px solid var(--border-strong);color:var(--text-primary)}
+
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);font-family:Inter,system-ui,sans-serif;padding:32px}
+  .stack{display:flex;flex-direction:column;gap:24px;max-width:680px;margin:0 auto}
+  .row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0 0 8px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+</style>
+</head>
+<body>
+  <main class="stack">
+    <section>
+      <p class="grp-label">Variants</p>
+      <div class="row">
+        <span class="badge badge--neutral">Neutral</span>
+        <span class="badge badge--primary">Primary</span>
+        <span class="badge badge--success">Success</span>
+        <span class="badge badge--warning">Warning</span>
+        <span class="badge badge--error">Error</span>
+        <span class="badge badge--outline">Outline</span>
+      </div>
+    </section>
+    <section>
+      <p class="grp-label">With icon &amp; numerals</p>
+      <div class="row">
+        <span class="badge badge--success"><svg class="ico" aria-hidden="true" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Verified</span>
+        <span class="badge badge--error"><svg class="ico" aria-hidden="true" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>Failed</span>
+        <span class="badge badge--primary">99+</span>
+        <span class="badge badge--neutral">v1.2.0</span>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
