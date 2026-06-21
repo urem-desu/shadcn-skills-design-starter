@@ -8,13 +8,13 @@ export function ToastDemo() {
     <Button
       variant="outline"
       onClick={() =>
-        toast("Event created", {
-          description: "Sunday, June 4 at 9:00 AM",
+        toast("Event has been created", {
+          description: "Sunday, December 03, 2023 at 9:00 AM",
           action: { label: "Undo", onClick: () => {} },
         })
       }
     >
-      Show toast
+      Show Toast
     </Button>
   )
 }

@@ -1,8 +1,10 @@
+import { Fragment } from "react"
 import type { ReactNode } from "react"
 import Image from "next/image"
 import {
   ArrowLeft,
   ArrowRight,
+  ArrowUp,
   ArrowUpRight,
   AudioLines,
   Bell,
@@ -19,15 +21,12 @@ import {
   Ellipsis,
   FolderCode,
   GitCompare,
-  Home,
-  Inbox,
   Italic,
   Minus,
   Plus,
   Popcorn,
   RefreshCcw,
   Search,
-  Settings,
   Slash,
   TriangleAlert,
   Trash2,
@@ -64,7 +63,18 @@ import {
   InputGroupAddon,
   InputGroupButton,
   InputGroupInput,
+  InputGroupText,
+  InputGroupTextarea,
 } from "@/components/ui/input-group"
+import {
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemDescription,
+  ItemHeader,
+  ItemMedia,
+  ItemTitle,
+} from "@/components/ui/item"
 import { Calendar } from "@/components/ui/calendar"
 import {
   Dialog,
@@ -126,14 +136,6 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu"
 import { Avatar, AvatarFallback, AvatarGroup, AvatarImage } from "@/components/ui/avatar"
 import {
   Card,
@@ -176,20 +178,6 @@ import { AspectRatio } from "@/components/ui/aspect-ratio"
 import { Separator } from "@/components/ui/separator"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { ClientOnly } from "@/components/docs/client-only"
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarInset,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar"
 
 import {
   DateTimePickerDemo,
@@ -212,6 +200,8 @@ import { InputOTPDemo } from "@/components/docs/demos/input-otp-demo"
 import { ItemDemo } from "@/components/docs/demos/item-demo"
 import { KbdDemo } from "@/components/docs/demos/kbd-demo"
 import { MenubarDemo } from "@/components/docs/demos/menubar-demo"
+import { NavigationMenuDemo } from "@/components/docs/demos/navigation-menu-demo"
+import { SidebarDemo } from "@/components/docs/demos/sidebar-demo"
 import { DataTableDemo } from "@/components/docs/demos/data-table-demo"
 import { ToastDemo } from "@/components/docs/demos/toast-demo"
 
@@ -223,13 +213,14 @@ const invoices = [
   { invoice: "INV003", status: "Unpaid", method: "Bank Transfer", amount: "$350.00" },
 ]
 
-const tags = Array.from({ length: 12 }).map((_, i) => `Tag ${i + 1}`)
+const tags = Array.from({ length: 50 }).map(
+  (_, i, a) => `v1.2.0-beta.${a.length - i}`
+)
 
-const sidebarItems = [
-  { title: "Home", icon: Home },
-  { title: "Inbox", icon: Inbox },
-  { title: "Search", icon: Search },
-  { title: "Settings", icon: Settings },
+const works = [
+  { artist: "Ornella Binni", art: "https://images.unsplash.com/photo-1465869185982-5a1a7522cbcb?w=300&dpr=2&q=80" },
+  { artist: "Tom Byrom", art: "https://images.unsplash.com/photo-1548516173-3cabfa4607e9?w=300&dpr=2&q=80" },
+  { artist: "Vladimir Malyavko", art: "https://images.unsplash.com/photo-1494337480532-3725c85fd2ab?w=300&dpr=2&q=80" },
 ]
 
 /** Live preview + source + token chips for every component, keyed by slug. */
@@ -562,11 +553,25 @@ export const showcases: Record<string, ShowcaseContent> = {
     source: "components/ui/radio-group.tsx",
     tokens: ["primary", "border", "ring"],
     content: (
-      <RadioGroup defaultValue="comfortable">
-        <div className="flex items-center gap-2"><RadioGroupItem value="default" id="r1" /><Label htmlFor="r1">Default</Label></div>
-        <div className="flex items-center gap-2"><RadioGroupItem value="comfortable" id="r2" /><Label htmlFor="r2">Comfortable</Label></div>
-        <div className="flex items-center gap-2"><RadioGroupItem value="compact" id="r3" /><Label htmlFor="r3">Compact</Label></div>
-      </RadioGroup>
+      <div className="flex w-full max-w-md flex-col gap-6">
+        <RadioGroup defaultValue="default">
+          <div className="flex items-center gap-3"><RadioGroupItem value="default" id="r1" /><Label htmlFor="r1">Default</Label></div>
+          <div className="flex items-center gap-3"><RadioGroupItem value="comfortable" id="r2" /><Label htmlFor="r2">Comfortable</Label></div>
+          <div className="flex items-center gap-3"><RadioGroupItem value="compact" id="r3" /><Label htmlFor="r3">Compact</Label></div>
+        </RadioGroup>
+        <Separator />
+        <form className="flex flex-col gap-6">
+          <div className="flex flex-col gap-3">
+            <Label>Notify me about...</Label>
+            <RadioGroup defaultValue="all">
+              <div className="flex items-center gap-3"><RadioGroupItem value="all" id="r-all" /><Label htmlFor="r-all" className="font-normal">All new messages</Label></div>
+              <div className="flex items-center gap-3"><RadioGroupItem value="mentions" id="r-mentions" /><Label htmlFor="r-mentions" className="font-normal">Direct messages and mentions</Label></div>
+              <div className="flex items-center gap-3"><RadioGroupItem value="none" id="r-none" /><Label htmlFor="r-none" className="font-normal">Nothing</Label></div>
+            </RadioGroup>
+          </div>
+          <Button type="submit" className="w-fit">Submit</Button>
+        </form>
+      </div>
     ),
   },
   switch: {
@@ -577,23 +582,91 @@ export const showcases: Record<string, ShowcaseContent> = {
   slider: {
     source: "components/ui/slider.tsx",
     tokens: ["primary", "muted", "ring"],
-    content: <Slider defaultValue={[50]} max={100} step={1} className="w-full max-w-sm" />,
+    content: <Slider defaultValue={[31]} max={100} step={1} className="w-full max-w-sm" />,
   },
   select: {
     source: "components/ui/select.tsx",
     tokens: ["popover", "accent", "input"],
     content: (
-      <Select>
-        <SelectTrigger className="w-[220px]"><SelectValue placeholder="Select a fruit" /></SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            <SelectLabel>Fruits</SelectLabel>
-            <SelectItem value="apple">Apple</SelectItem>
-            <SelectItem value="banana">Banana</SelectItem>
-            <SelectItem value="blueberry">Blueberry</SelectItem>
-          </SelectGroup>
-        </SelectContent>
-      </Select>
+      <div className="flex w-full max-w-sm flex-col gap-6">
+        <Select>
+          <SelectTrigger className="w-[180px]"><SelectValue placeholder="Select a fruit" /></SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>Fruits</SelectLabel>
+              <SelectItem value="apple">Apple</SelectItem>
+              <SelectItem value="banana">Banana</SelectItem>
+              <SelectItem value="blueberry">Blueberry</SelectItem>
+              <SelectItem value="grapes">Grapes</SelectItem>
+              <SelectItem value="pineapple">Pineapple</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+        <Separator />
+        <Select>
+          <SelectTrigger className="w-[280px]"><SelectValue placeholder="Select a timezone" /></SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>North America</SelectLabel>
+              <SelectItem value="est">Eastern Standard Time (EST)</SelectItem>
+              <SelectItem value="cst">Central Standard Time (CST)</SelectItem>
+              <SelectItem value="mst">Mountain Standard Time (MST)</SelectItem>
+              <SelectItem value="pst">Pacific Standard Time (PST)</SelectItem>
+              <SelectItem value="akst">Alaska Standard Time (AKST)</SelectItem>
+              <SelectItem value="hst">Hawaii Standard Time (HST)</SelectItem>
+            </SelectGroup>
+            <SelectGroup>
+              <SelectLabel>Europe &amp; Africa</SelectLabel>
+              <SelectItem value="gmt">Greenwich Mean Time (GMT)</SelectItem>
+              <SelectItem value="cet">Central European Time (CET)</SelectItem>
+              <SelectItem value="eet">Eastern European Time (EET)</SelectItem>
+              <SelectItem value="west">Western European Summer Time (WEST)</SelectItem>
+              <SelectItem value="cat">Central Africa Time (CAT)</SelectItem>
+              <SelectItem value="eat">East Africa Time (EAT)</SelectItem>
+            </SelectGroup>
+            <SelectGroup>
+              <SelectLabel>Asia</SelectLabel>
+              <SelectItem value="msk">Moscow Time (MSK)</SelectItem>
+              <SelectItem value="ist">India Standard Time (IST)</SelectItem>
+              <SelectItem value="cst_china">China Standard Time (CST)</SelectItem>
+              <SelectItem value="jst">Japan Standard Time (JST)</SelectItem>
+              <SelectItem value="kst">Korea Standard Time (KST)</SelectItem>
+              <SelectItem value="ist_indonesia">Indonesia Central Standard Time (WITA)</SelectItem>
+            </SelectGroup>
+            <SelectGroup>
+              <SelectLabel>Australia &amp; Pacific</SelectLabel>
+              <SelectItem value="awst">Australian Western Standard Time (AWST)</SelectItem>
+              <SelectItem value="acst">Australian Central Standard Time (ACST)</SelectItem>
+              <SelectItem value="aest">Australian Eastern Standard Time (AEST)</SelectItem>
+              <SelectItem value="nzst">New Zealand Standard Time (NZST)</SelectItem>
+              <SelectItem value="fjt">Fiji Time (FJT)</SelectItem>
+            </SelectGroup>
+            <SelectGroup>
+              <SelectLabel>South America</SelectLabel>
+              <SelectItem value="art">Argentina Time (ART)</SelectItem>
+              <SelectItem value="bot">Bolivia Time (BOT)</SelectItem>
+              <SelectItem value="brt">Brasilia Time (BRT)</SelectItem>
+              <SelectItem value="clt">Chile Standard Time (CLT)</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+        <Separator />
+        <form className="flex flex-col gap-6">
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="select-email">Username</Label>
+            <Select>
+              <SelectTrigger id="select-email" className="w-[280px]"><SelectValue placeholder="Select a verified email to display" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="m@example.com">m@example.com</SelectItem>
+                <SelectItem value="m@google.com">m@google.com</SelectItem>
+                <SelectItem value="m@support.com">m@support.com</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-sm text-muted-foreground">You can manage email addresses in your email settings.</p>
+          </div>
+          <Button type="submit" className="w-fit">Submit</Button>
+        </form>
+      </div>
     ),
   },
   "native-select": {
@@ -762,14 +835,25 @@ export const showcases: Record<string, ShowcaseContent> = {
     tokens: ["background", "border", "muted-foreground"],
     content: (
       <Sheet>
-        <SheetTrigger asChild><Button variant="outline">Open sheet</Button></SheetTrigger>
+        <SheetTrigger asChild><Button variant="outline">Open</Button></SheetTrigger>
         <SheetContent>
           <SheetHeader>
             <SheetTitle>Edit profile</SheetTitle>
             <SheetDescription>Make changes to your profile here. Click save when you&apos;re done.</SheetDescription>
           </SheetHeader>
+          <div className="grid flex-1 auto-rows-min gap-6 px-4">
+            <div className="grid gap-3">
+              <Label htmlFor="sheet-demo-name">Name</Label>
+              <Input id="sheet-demo-name" defaultValue="Pedro Duarte" />
+            </div>
+            <div className="grid gap-3">
+              <Label htmlFor="sheet-demo-username">Username</Label>
+              <Input id="sheet-demo-username" defaultValue="@peduarte" />
+            </div>
+          </div>
           <SheetFooter>
-            <SheetClose asChild><Button>Save changes</Button></SheetClose>
+            <Button type="submit">Save changes</Button>
+            <SheetClose asChild><Button variant="outline">Close</Button></SheetClose>
           </SheetFooter>
         </SheetContent>
       </Sheet>
@@ -787,9 +871,29 @@ export const showcases: Record<string, ShowcaseContent> = {
       <Popover>
         <PopoverTrigger asChild><Button variant="outline">Open popover</Button></PopoverTrigger>
         <PopoverContent className="w-80">
-          <div className="flex flex-col gap-2">
-            <h4 className="font-medium">Dimensions</h4>
-            <p className="text-sm text-muted-foreground">Set the dimensions for the layer.</p>
+          <div className="grid gap-4">
+            <div className="grid gap-2">
+              <h4 className="leading-none font-medium">Dimensions</h4>
+              <p className="text-muted-foreground text-sm">Set the dimensions for the layer.</p>
+            </div>
+            <div className="grid gap-2">
+              <div className="grid grid-cols-3 items-center gap-4">
+                <Label htmlFor="width">Width</Label>
+                <Input id="width" defaultValue="100%" className="col-span-2 h-8" />
+              </div>
+              <div className="grid grid-cols-3 items-center gap-4">
+                <Label htmlFor="maxWidth">Max. width</Label>
+                <Input id="maxWidth" defaultValue="320px" className="col-span-2 h-8" />
+              </div>
+              <div className="grid grid-cols-3 items-center gap-4">
+                <Label htmlFor="height">Height</Label>
+                <Input id="height" defaultValue="25px" className="col-span-2 h-8" />
+              </div>
+              <div className="grid grid-cols-3 items-center gap-4">
+                <Label htmlFor="maxHeight">Max. height</Label>
+                <Input id="maxHeight" defaultValue="none" className="col-span-2 h-8" />
+              </div>
+            </div>
           </div>
         </PopoverContent>
       </Popover>
@@ -948,25 +1052,7 @@ export const showcases: Record<string, ShowcaseContent> = {
   "navigation-menu": {
     source: "components/ui/navigation-menu.tsx",
     tokens: ["popover", "accent", "muted-foreground"],
-    content: (
-      <NavigationMenu>
-        <NavigationMenuList>
-          <NavigationMenuItem>
-            <NavigationMenuTrigger>Getting started</NavigationMenuTrigger>
-            <NavigationMenuContent>
-              <ul className="grid w-[300px] gap-1 p-2">
-                <li><NavigationMenuLink href="#" className="block rounded-md p-2 text-sm">Introduction</NavigationMenuLink></li>
-                <li><NavigationMenuLink href="#" className="block rounded-md p-2 text-sm">Installation</NavigationMenuLink></li>
-                <li><NavigationMenuLink href="#" className="block rounded-md p-2 text-sm">Typography</NavigationMenuLink></li>
-              </ul>
-            </NavigationMenuContent>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <NavigationMenuLink href="#" className="px-3 py-2 text-sm">Docs</NavigationMenuLink>
-          </NavigationMenuItem>
-        </NavigationMenuList>
-      </NavigationMenu>
-    ),
+    content: <NavigationMenuDemo />,
   },
   table: {
     source: "components/ui/table.tsx",
@@ -1148,17 +1234,26 @@ export const showcases: Record<string, ShowcaseContent> = {
   progress: {
     source: "components/ui/progress.tsx",
     tokens: ["primary", "muted"],
-    content: <Progress value={60} className="w-full max-w-sm" />,
+    content: <Progress value={44} className="w-full max-w-sm" />,
   },
   skeleton: {
     source: "components/ui/skeleton.tsx",
     tokens: ["muted", "accent"],
     content: (
-      <div className="flex items-center gap-4">
-        <Skeleton className="size-12 rounded-full" />
-        <div className="flex flex-col gap-2">
-          <Skeleton className="h-4 w-[200px]" />
-          <Skeleton className="h-4 w-[160px]" />
+      <div className="flex flex-col gap-8">
+        <div className="flex items-center gap-4">
+          <Skeleton className="size-12 rounded-full" />
+          <div className="flex flex-col gap-2">
+            <Skeleton className="h-4 w-[250px]" />
+            <Skeleton className="h-4 w-[200px]" />
+          </div>
+        </div>
+        <div className="flex flex-col gap-3">
+          <Skeleton className="h-[125px] w-[250px] rounded-xl" />
+          <div className="flex flex-col gap-2">
+            <Skeleton className="h-4 w-[250px]" />
+            <Skeleton className="h-4 w-[200px]" />
+          </div>
         </div>
       </div>
     ),
@@ -1167,19 +1262,82 @@ export const showcases: Record<string, ShowcaseContent> = {
     source: "components/ui/spinner.tsx",
     tokens: ["muted-foreground", "primary"],
     content: (
-      <div className="flex flex-wrap items-center gap-6">
+      <div className="flex w-full max-w-md flex-col gap-6">
+        <Item variant="muted">
+          <ItemMedia><Spinner /></ItemMedia>
+          <ItemContent><ItemTitle className="line-clamp-1">Processing payment...</ItemTitle></ItemContent>
+          <ItemContent className="flex-none justify-end"><ItemTitle>$100.00</ItemTitle></ItemContent>
+        </Item>
+        <Separator />
+        <Spinner />
+        <Separator />
         <div className="flex items-center gap-4">
           <Spinner className="size-3" />
           <Spinner className="size-4" />
           <Spinner className="size-6" />
           <Spinner className="size-8" />
         </div>
-        <Button disabled><Spinner />Loading…</Button>
-        <Badge variant="secondary"><Spinner className="size-3" />Syncing</Badge>
-        <InputGroup className="w-48">
-          <InputGroupInput placeholder="Loading…" />
-          <InputGroupAddon align="inline-end"><Spinner /></InputGroupAddon>
-        </InputGroup>
+        <Separator />
+        <div className="flex items-center gap-4">
+          <Spinner className="text-red-500" />
+          <Spinner className="text-green-500" />
+          <Spinner className="text-blue-500" />
+          <Spinner className="text-yellow-500" />
+        </div>
+        <Separator />
+        <div className="flex flex-col items-start gap-3">
+          <Button disabled><Spinner />Loading...</Button>
+          <Button variant="outline" disabled><Spinner />Loading...</Button>
+          <Button variant="secondary" disabled><Spinner />Loading...</Button>
+        </div>
+        <Separator />
+        <div className="flex flex-wrap items-center gap-2">
+          <Badge><Spinner className="size-3" />Syncing</Badge>
+          <Badge variant="secondary"><Spinner className="size-3" />Updating</Badge>
+          <Badge variant="outline"><Spinner className="size-3" />Processing</Badge>
+        </div>
+        <Separator />
+        <div className="flex flex-col gap-4">
+          <InputGroup>
+            <InputGroupInput placeholder="Send a message..." />
+            <InputGroupAddon align="inline-end"><Spinner /></InputGroupAddon>
+          </InputGroup>
+          <InputGroup>
+            <InputGroupTextarea placeholder="Send a message..." />
+            <InputGroupAddon align="block-end">
+              <Spinner />
+              <InputGroupText>Validating...</InputGroupText>
+              <InputGroupButton variant="default" className="ml-auto rounded-full" size="icon-xs" aria-label="Send">
+                <ArrowUp />
+              </InputGroupButton>
+            </InputGroupAddon>
+          </InputGroup>
+        </div>
+        <Separator />
+        <Empty className="w-full">
+          <EmptyHeader>
+            <EmptyMedia variant="icon"><Spinner /></EmptyMedia>
+            <EmptyTitle>Processing your request</EmptyTitle>
+            <EmptyDescription>Please wait while we process your request. Do not refresh the page.</EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
+            <Button variant="outline" size="sm">Cancel</Button>
+          </EmptyContent>
+        </Empty>
+        <Separator />
+        <Item variant="outline" className="flex-col items-stretch">
+          <ItemHeader>
+            <ItemMedia><Spinner /></ItemMedia>
+            <ItemContent>
+              <ItemTitle>Downloading...</ItemTitle>
+              <ItemDescription>129 MB / 1000 MB</ItemDescription>
+            </ItemContent>
+            <ItemActions>
+              <Button variant="outline" size="sm">Cancel</Button>
+            </ItemActions>
+          </ItemHeader>
+          <Progress value={43} />
+        </Item>
       </div>
     ),
   },
@@ -1295,15 +1453,18 @@ export const showcases: Record<string, ShowcaseContent> = {
     source: "components/ui/separator.tsx",
     tokens: ["border"],
     content: (
-      <div className="flex flex-col gap-3">
-        <p className="text-sm font-medium">Radix Primitives</p>
-        <Separator />
-        <div className="flex h-5 items-center gap-3 text-sm">
-          <span>Blog</span>
+      <div>
+        <div className="flex flex-col gap-1">
+          <h4 className="text-sm leading-none font-medium">Radix Primitives</h4>
+          <p className="text-sm text-muted-foreground">An open-source UI component library.</p>
+        </div>
+        <Separator className="my-4" />
+        <div className="flex h-5 items-center gap-4 text-sm">
+          <div>Blog</div>
           <Separator orientation="vertical" />
-          <span>Docs</span>
+          <div>Docs</div>
           <Separator orientation="vertical" />
-          <span>Source</span>
+          <div>Source</div>
         </div>
       </div>
     ),
@@ -1312,19 +1473,37 @@ export const showcases: Record<string, ShowcaseContent> = {
     source: "components/ui/scroll-area.tsx",
     tokens: ["border", "muted-foreground"],
     content: (
-      <div className="flex flex-wrap gap-6">
-        <ScrollArea className="h-48 w-64 rounded-md border">
-          <div className="flex flex-col gap-2 p-4">
-            <p className="text-sm font-medium">Tags</p>
-            {tags.map((t) => (
-              <div key={t} className="text-sm text-muted-foreground">{t}</div>
+      <div className="flex flex-col gap-6">
+        <ScrollArea className="h-72 w-48 rounded-md border">
+          <div className="p-4">
+            <h4 className="mb-4 text-sm leading-none font-medium">Tags</h4>
+            {tags.map((tag) => (
+              <Fragment key={tag}>
+                <div className="text-sm">{tag}</div>
+                <Separator className="my-2" />
+              </Fragment>
             ))}
           </div>
         </ScrollArea>
-        <ScrollArea className="w-72 rounded-md border whitespace-nowrap">
-          <div className="flex gap-3 p-4">
-            {tags.map((t) => (
-              <div key={t} className="flex size-24 shrink-0 items-center justify-center rounded-md border bg-muted text-sm text-muted-foreground">{t}</div>
+        <Separator />
+        <ScrollArea className="w-96 rounded-md border whitespace-nowrap">
+          <div className="flex w-max gap-4 p-4">
+            {works.map((artwork) => (
+              <figure key={artwork.artist} className="shrink-0">
+                <div className="overflow-hidden rounded-md">
+                  <Image
+                    src={artwork.art}
+                    alt={`Photo by ${artwork.artist}`}
+                    className="aspect-3/4 h-fit w-fit object-cover"
+                    width={150}
+                    height={200}
+                  />
+                </div>
+                <figcaption className="text-muted-foreground pt-2 text-xs">
+                  Photo by{" "}
+                  <span className="text-foreground font-semibold">{artwork.artist}</span>
+                </figcaption>
+              </figure>
             ))}
           </div>
           <ScrollBar orientation="horizontal" />
@@ -1335,39 +1514,7 @@ export const showcases: Record<string, ShowcaseContent> = {
   sidebar: {
     source: "components/ui/sidebar.tsx",
     tokens: ["sidebar", "sidebar-foreground", "sidebar-accent", "sidebar-border"],
-    content: (
-      <div className="h-[320px] w-full overflow-hidden rounded-lg border">
-        <SidebarProvider className="min-h-0 h-full items-stretch">
-          <Sidebar collapsible="none" className="border-r">
-            <SidebarHeader className="px-3 py-2 text-sm font-semibold">Acme Inc</SidebarHeader>
-            <SidebarContent>
-              <SidebarGroup>
-                <SidebarGroupLabel>Application</SidebarGroupLabel>
-                <SidebarGroupContent>
-                  <SidebarMenu>
-                    {sidebarItems.map((item) => (
-                      <SidebarMenuItem key={item.title}>
-                        <SidebarMenuButton isActive={item.title === "Home"}>
-                          <item.icon />
-                          <span>{item.title}</span>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    ))}
-                  </SidebarMenu>
-                </SidebarGroupContent>
-              </SidebarGroup>
-            </SidebarContent>
-          </Sidebar>
-          <SidebarInset className="min-h-0">
-            <header className="flex h-12 items-center gap-2 border-b px-3">
-              <SidebarTrigger />
-              <span className="text-sm font-medium">Dashboard</span>
-            </header>
-            <div className="p-4 text-sm text-muted-foreground">Main content area</div>
-          </SidebarInset>
-        </SidebarProvider>
-      </div>
-    ),
+    content: <SidebarDemo />,
   },
 }
 
