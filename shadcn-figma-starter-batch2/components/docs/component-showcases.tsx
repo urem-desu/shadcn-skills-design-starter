@@ -994,13 +994,57 @@ export const showcases: Record<string, ShowcaseContent> = {
     source: "components/ui/tabs.tsx",
     tokens: ["muted", "background", "foreground"],
     content: (
-      <Tabs defaultValue="account" className="w-full max-w-md">
+      <Tabs defaultValue="account" className="w-full max-w-[400px]">
         <TabsList>
           <TabsTrigger value="account">Account</TabsTrigger>
           <TabsTrigger value="password">Password</TabsTrigger>
         </TabsList>
-        <TabsContent value="account" className="pt-3 text-sm text-muted-foreground">Make changes to your account here.</TabsContent>
-        <TabsContent value="password" className="pt-3 text-sm text-muted-foreground">Change your password here.</TabsContent>
+        <TabsContent value="account">
+          <Card>
+            <CardHeader>
+              <CardTitle>Account</CardTitle>
+              <CardDescription>
+                Make changes to your profile here. Click save when you&apos;re done.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-6">
+              <div className="grid gap-3">
+                <Label htmlFor="tabs-name">Name</Label>
+                <Input id="tabs-name" defaultValue="Pedro Duarte" />
+              </div>
+              <div className="grid gap-3">
+                <Label htmlFor="tabs-username">Username</Label>
+                <Input id="tabs-username" defaultValue="@peduarte" />
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button>Save changes</Button>
+            </CardFooter>
+          </Card>
+        </TabsContent>
+        <TabsContent value="password">
+          <Card>
+            <CardHeader>
+              <CardTitle>Password</CardTitle>
+              <CardDescription>
+                Change your password here. After saving, you&apos;ll be logged out.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-6">
+              <div className="grid gap-3">
+                <Label htmlFor="tabs-current">Current password</Label>
+                <Input id="tabs-current" type="password" />
+              </div>
+              <div className="grid gap-3">
+                <Label htmlFor="tabs-new">New password</Label>
+                <Input id="tabs-new" type="password" />
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button>Save password</Button>
+            </CardFooter>
+          </Card>
+        </TabsContent>
       </Tabs>
     ),
   },
