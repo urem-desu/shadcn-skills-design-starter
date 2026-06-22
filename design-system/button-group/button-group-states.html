@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Button Group - states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  /* === Button (subset of button.tsx, just what the group needs) ============= */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);
+    border:0;cursor:pointer;white-space:nowrap;font-family:inherit;
+    border-radius:var(--button-radius);font-weight:var(--button-font-weight);
+    transition:background-color var(--duration-fast) var(--ease-out),
+               color var(--duration-fast) var(--ease-out),
+               box-shadow var(--duration-fast) var(--ease-out);
+    outline:none;-webkit-user-select:none;user-select:none;
+    height:var(--control-md);padding-inline:var(--space-4);font-size:var(--font-size-base);
+  }
+  .btn:focus-visible{box-shadow:var(--button-focus-ring)}
+  .btn:disabled,.btn[aria-disabled="true"]{opacity:.5;pointer-events:none;cursor:not-allowed}
+  .btn--sm{height:var(--control-sm);padding-inline:var(--space-3);font-size:var(--font-size-sm)}
+  .btn--icon{width:var(--control-md);padding:0}
+  .btn--outline{
+    background:var(--button-outline-bg);color:var(--button-outline-text);
+    border:1px solid var(--button-outline-border);
+  }
+  .btn--outline:hover{background:var(--button-outline-bg-hover)}
+  .btn--outline:active{background:var(--button-outline-bg-active)}
+  .btn .ico{width:var(--icon-md);height:var(--icon-md);stroke:currentColor;fill:none;stroke-width:2;flex:none}
+  .btn--sm .ico{width:var(--icon-sm);height:var(--icon-sm)}
+
+  /* === ButtonGroup ========================================================= */
+  .bg{display:flex;inline-size:fit-content;align-items:stretch}
+  .bg.h > *:not(:first-child){border-start-start-radius:0;border-end-start-radius:0;border-inline-start:0}
+  .bg.h > *:not(:last-child){border-start-end-radius:0;border-end-end-radius:0}
+  .bg.v{flex-direction:column}
+  .bg.v > *:not(:first-child){border-start-start-radius:0;border-start-end-radius:0;border-block-start:0}
+  .bg.v > *:not(:last-child){border-end-start-radius:0;border-end-end-radius:0}
+  .bg > input{flex:1}
+  /* focus-stacking so the ring isn't clipped by neighbours */
+  .bg > *:focus-visible,.bg > *.s-focus{position:relative;z-index:10}
+  /* group of groups: 8px gap between fused units */
+  .bg:has(> .bg){gap:var(--space-2)}
+
+  /* === ButtonGroupText (addon slot) ======================================= */
+  .bg-text{
+    display:inline-flex;align-items:center;gap:var(--space-2);
+    border:1px solid var(--border-default);background:var(--action-secondary);color:var(--text-primary);
+    border-radius:var(--radius-md);padding-inline:var(--space-4);
+    font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);
+    box-shadow:var(--shadow-sm);
+    height:var(--control-md);
+  }
+  .bg-text svg{inline-size:var(--icon-sm);block-size:var(--icon-sm)}
+
+  /* === ButtonGroupSeparator =============================================== */
+  .bg-sep{align-self:stretch;background:var(--border-default);margin:0}
+  .bg-sep[data-orientation="vertical"]{inline-size:1px;block-size:auto}
+  .bg-sep[data-orientation="horizontal"]{block-size:1px;inline-size:auto}
+
+  /* === Inline text input (for the addon demo) ============================= */
+  .ti{
+    background:var(--field-bg);color:var(--field-text);
+    border:1px solid var(--field-border);border-radius:var(--field-radius);
+    height:var(--control-md);padding-inline:var(--space-3);
+    font-size:var(--font-size-base);font-family:inherit;outline:none;
+    min-inline-size:0;
+  }
+  .ti:focus-visible{border-color:var(--field-border-focus);box-shadow:var(--field-focus-ring)}
+
+  /* === Harness chrome ===================================================== */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);font-family:Inter,system-ui,sans-serif;padding:32px}
+  .stack{display:flex;flex-direction:column;gap:24px;max-width:680px;margin:0 auto}
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0 0 8px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+  .demo{padding:16px;border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--surface-card)}
+</style>
+</head>
+<body>
+  <main class="stack">
+    <!-- shared icon defs -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <symbol id="i-chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></symbol>
+      <symbol id="i-bold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 12a4 4 0 0 0 0-8H6v8"/><path d="M15 20a4 4 0 0 0 0-8H6v8Z"/></symbol>
+      <symbol id="i-italic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" x2="10" y1="4" y2="4"/><line x1="14" x2="5" y1="20" y2="20"/><line x1="15" x2="9" y1="4" y2="20"/></symbol>
+      <symbol id="i-underline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4v6a6 6 0 0 0 12 0V4"/><line x1="4" x2="20" y1="20" y2="20"/></symbol>
+      <symbol id="i-align-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" x2="3" y1="6" y2="6"/><line x1="15" x2="3" y1="12" y2="12"/><line x1="17" x2="3" y1="18" y2="18"/></symbol>
+      <symbol id="i-align-center" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" x2="3" y1="6" y2="6"/><line x1="18" x2="6" y1="12" y2="12"/><line x1="19" x2="5" y1="18" y2="18"/></symbol>
+      <symbol id="i-align-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" x2="3" y1="6" y2="6"/><line x1="21" x2="9" y1="12" y2="12"/><line x1="21" x2="7" y1="18" y2="18"/></symbol>
+      <symbol id="i-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></symbol>
+    </svg>
+
+    <section class="demo">
+      <p class="grp-label">Horizontal - segmented action</p>
+      <div class="bg h" role="group" aria-label="Document actions" data-orientation="horizontal">
+        <button type="button" class="btn btn--outline">Save</button>
+        <button type="button" class="btn btn--outline">Publish</button>
+        <button type="button" class="btn btn--outline btn--icon" aria-label="More save options"><svg class="ico"><use href="#i-chevron-down"/></svg></button>
+      </div>
+    </section>
+
+    <section class="demo">
+      <p class="grp-label">Vertical - sidebar stack</p>
+      <div class="bg v" role="group" aria-label="Mail folders" data-orientation="vertical">
+        <button type="button" class="btn btn--outline">Inbox</button>
+        <button type="button" class="btn btn--outline">Drafts</button>
+        <button type="button" class="btn btn--outline">Sent</button>
+        <button type="button" class="btn btn--outline">Archive</button>
+      </div>
+    </section>
+
+    <section class="demo">
+      <p class="grp-label">Input with addon (text + input + button)</p>
+      <div class="bg h" role="group" aria-label="Site URL" data-orientation="horizontal" style="inline-size:100%;min-inline-size:0">
+        <span class="bg-text">https://</span>
+        <input class="ti" type="text" value="acme.com" aria-label="URL" />
+        <button type="button" class="btn btn--outline">Copy</button>
+      </div>
+    </section>
+
+    <section class="demo">
+      <p class="grp-label">Text addon with leading icon</p>
+      <div class="bg h" role="group" aria-label="Shared link" data-orientation="horizontal" style="inline-size:100%;min-inline-size:0">
+        <span class="bg-text"><svg><use href="#i-link"/></svg> Link</span>
+        <input class="ti" type="text" value="example.com/abc" aria-label="Link" />
+      </div>
+    </section>
+
+    <section class="demo">
+      <p class="grp-label">Group of groups (8px gap auto-inserted between nested groups)</p>
+      <div class="bg h" role="group" aria-label="Text formatting toolbar" data-orientation="horizontal">
+        <div class="bg h" role="group" aria-label="Style" data-orientation="horizontal">
+          <button type="button" class="btn btn--outline btn--icon" aria-label="Bold"><svg class="ico"><use href="#i-bold"/></svg></button>
+          <button type="button" class="btn btn--outline btn--icon" aria-label="Italic"><svg class="ico"><use href="#i-italic"/></svg></button>
+        </div>
+        <div class="bg h" role="group" aria-label="Alignment" data-orientation="horizontal">
+          <button type="button" class="btn btn--outline btn--icon" aria-label="Align left"><svg class="ico"><use href="#i-align-left"/></svg></button>
+          <button type="button" class="btn btn--outline btn--icon" aria-label="Align center"><svg class="ico"><use href="#i-align-center"/></svg></button>
+        </div>
+      </div>
+    </section>
+
+    <section class="demo">
+      <p class="grp-label">Explicit separator between fused buttons</p>
+      <div class="bg h" role="group" aria-label="View" data-orientation="horizontal">
+        <button type="button" class="btn btn--outline btn--sm">Day</button>
+        <div class="bg-sep" role="presentation" aria-hidden="true" data-orientation="vertical"></div>
+        <button type="button" class="btn btn--outline btn--sm">Week</button>
+        <div class="bg-sep" role="presentation" aria-hidden="true" data-orientation="vertical"></div>
+        <button type="button" class="btn btn--outline btn--sm">Month</button>
+      </div>
+    </section>
+
+    <section class="demo">
+      <p class="grp-label">States - focused (forced) keeps full ring above neighbours</p>
+      <div class="bg h" role="group" aria-label="States preview" data-orientation="horizontal">
+        <button type="button" class="btn btn--outline btn--sm">Default</button>
+        <button type="button" class="btn btn--outline btn--sm s-focus">Focused</button>
+        <button type="button" class="btn btn--outline btn--sm" disabled>Off</button>
+      </div>
+    </section>
+
+    <section class="demo">
+      <p class="grp-label">Narrow container (220px) - vertical preferred for tight space</p>
+      <div style="inline-size:220px;max-inline-size:100%">
+        <div class="bg v" role="group" aria-label="Inbox actions" data-orientation="vertical">
+          <button type="button" class="btn btn--outline">Mark as read</button>
+          <button type="button" class="btn btn--outline">Archive</button>
+          <button type="button" class="btn btn--outline">Mute thread</button>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

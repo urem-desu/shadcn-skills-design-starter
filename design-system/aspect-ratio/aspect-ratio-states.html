@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Aspect Ratio - states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  /* component: geometry-only wrapper, no color/type/spacing tokens */
+  .ar{position:relative;inline-size:100%}
+  .ar > *{position:absolute;inset:0;inline-size:100%;block-size:100%}
+  .ar--1{aspect-ratio:1}
+  .ar--4-3{aspect-ratio:4/3}
+  .ar--16-9{aspect-ratio:16/9}
+  .ar--9-16{aspect-ratio:9/16}
+
+  /* demo medium: uses semantic tokens so the harness paints something visible
+     in both themes. The component itself does NOT ship these styles. */
+  .medium{
+    background:var(--surface-sunken);border:1px solid var(--border-default);
+    border-radius:var(--radius-lg);
+    display:flex;align-items:center;justify-content:center;
+    color:var(--text-secondary);font-size:var(--font-size-sm);font-family:Inter,system-ui,sans-serif;
+    overflow:hidden;
+  }
+  .medium img{inline-size:100%;block-size:100%;object-fit:cover}
+
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);font-family:Inter,system-ui,sans-serif;padding:32px}
+  .stack{display:flex;flex-direction:column;gap:24px;max-width:680px;margin:0 auto}
+  .row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;align-items:start}
+  .col{display:flex;flex-direction:column;gap:8px}
+  .label{font-size:var(--font-size-xs);color:var(--text-secondary)}
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0 0 8px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+</style>
+</head>
+<body>
+  <main class="stack">
+    <section>
+      <p class="grp-label">Ratios</p>
+      <div class="row">
+        <div class="col">
+          <div class="ar ar--1"><div class="medium">1 : 1</div></div>
+          <span class="label">Square (1)</span>
+        </div>
+        <div class="col">
+          <div class="ar ar--4-3"><div class="medium">4 : 3</div></div>
+          <span class="label">Classic (4/3)</span>
+        </div>
+        <div class="col">
+          <div class="ar ar--16-9"><div class="medium">16 : 9</div></div>
+          <span class="label">Widescreen (16/9)</span>
+        </div>
+        <div class="col">
+          <div class="ar ar--9-16"><div class="medium">9 : 16</div></div>
+          <span class="label">Portrait (9/16)</span>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <p class="grp-label">With image (object-cover, no layout shift)</p>
+      <div class="row" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">
+        <div class="ar ar--16-9">
+          <div class="medium">
+            <img src="https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=600&q=70" alt="Sunset over the ridge" />
+          </div>
+        </div>
+        <div class="ar ar--4-3">
+          <div class="medium">
+            <img src="https://images.unsplash.com/photo-1493246507139-91e8fad9978e?w=600&q=70" alt="Forest path at dawn" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <p class="grp-label">Responsive (box scales with parent width)</p>
+      <div style="display:flex;flex-direction:column;gap:12px;align-items:flex-start">
+        <div style="inline-size:280px;max-inline-size:100%"><div class="ar ar--16-9"><div class="medium">280px wide</div></div></div>
+        <div style="inline-size:480px;max-inline-size:100%"><div class="ar ar--16-9"><div class="medium">480px wide</div></div></div>
+        <div style="inline-size:100%"><div class="ar ar--16-9"><div class="medium">100% wide</div></div></div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

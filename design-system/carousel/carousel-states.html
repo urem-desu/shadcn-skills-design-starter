@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Carousel - states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  /* === Carousel (mirrors carousel.tsx) =================================== */
+  .car{position:relative;inline-size:100%}
+  .car__viewport{overflow:hidden}
+  .car__track{display:flex;margin-inline-start:calc(var(--space-4) * -1)}
+  .car--v .car__track{flex-direction:column;margin-inline-start:0;margin-block-start:calc(var(--space-4) * -1)}
+  .car__item{
+    min-inline-size:0;flex:0 0 100%;
+    padding-inline-start:var(--space-4);
+  }
+  .car--v .car__item{padding-inline-start:0;padding-block-start:var(--space-4)}
+  /* multi-up basis modifiers */
+  .car__item--half{flex-basis:50%}
+  .car__item--third{flex-basis:33.3333%}
+
+  /* nav buttons (mirrors CarouselPrevious/Next) */
+  .nav{
+    position:absolute;inline-size:var(--control-sm);block-size:var(--control-sm);
+    padding:0;border-radius:var(--radius-full);cursor:pointer;
+    display:inline-flex;align-items:center;justify-content:center;
+    background:var(--button-outline-bg);color:var(--button-outline-text);
+    border:1px solid var(--button-outline-border);
+    transition:background-color var(--duration-fast) var(--ease-out),
+               color var(--duration-fast) var(--ease-out),
+               box-shadow var(--duration-fast) var(--ease-out);
+    outline:none;
+  }
+  .nav:hover{background:var(--button-outline-bg-hover)}
+  .nav:active{background:var(--button-outline-bg-active)}
+  .nav:focus-visible,.nav.s-focus{box-shadow:var(--button-focus-ring)}
+  .nav:disabled,.nav[aria-disabled="true"]{opacity:.5;pointer-events:none;cursor:not-allowed}
+  .nav svg{inline-size:var(--icon-sm);block-size:var(--icon-sm);stroke:currentColor;fill:none;stroke-width:2}
+
+  /* horizontal positions: 48px = control-sm + space-4 */
+  .nav--prev-h{top:50%;transform:translateY(-50%);inset-inline-start:calc((var(--control-sm) + var(--space-4)) * -1)}
+  .nav--next-h{top:50%;transform:translateY(-50%);inset-inline-end:calc((var(--control-sm) + var(--space-4)) * -1)}
+  /* vertical positions: above/below, rotate the icon to keep "previous = up" */
+  .nav--prev-v{left:50%;transform:translateX(-50%) rotate(90deg);top:calc((var(--control-sm) + var(--space-4)) * -1)}
+  .nav--next-v{left:50%;transform:translateX(-50%) rotate(90deg);bottom:calc((var(--control-sm) + var(--space-4)) * -1)}
+
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+  /* === Demo slide content (uses semantic tokens for the painted medium) === */
+  .slide{
+    aspect-ratio:3/2;display:flex;align-items:center;justify-content:center;
+    background:var(--surface-sunken);border:1px solid var(--border-default);
+    border-radius:var(--radius-lg);color:var(--text-primary);
+    font-size:var(--font-size-lg);font-weight:var(--font-weight-semibold);
+  }
+  .car--v .slide{aspect-ratio:auto;block-size:120px}
+
+  /* === Harness chrome ==================================================== */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);font-family:Inter,system-ui,sans-serif;padding:32px}
+  .stack{display:flex;flex-direction:column;gap:48px;max-width:680px;margin:0 auto}
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0 0 8px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+  /* leave room for the off-viewport nav buttons (48px each side + 8px breath) */
+  .demo-h{margin-inline:calc(var(--control-sm) + var(--space-4) + var(--space-2))}
+  .demo-v{margin-block:calc(var(--control-sm) + var(--space-4) + var(--space-2))}
+</style>
+</head>
+<body>
+  <main class="stack">
+    <!-- shared icon defs -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <symbol id="i-arrow-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></symbol>
+      <symbol id="i-arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+    </svg>
+
+    <section>
+      <p class="grp-label">Horizontal - one slide visible at a time</p>
+      <div class="demo-h">
+        <div class="car" role="region" aria-roledescription="carousel" aria-label="Photo carousel">
+          <div class="car__viewport">
+            <div class="car__track">
+              <div class="car__item" role="group" aria-roledescription="slide" aria-label="1 of 3"><div class="slide">Slide 1</div></div>
+              <div class="car__item" role="group" aria-roledescription="slide" aria-label="2 of 3"><div class="slide">Slide 2</div></div>
+              <div class="car__item" role="group" aria-roledescription="slide" aria-label="3 of 3"><div class="slide">Slide 3</div></div>
+            </div>
+          </div>
+          <button type="button" class="nav nav--prev-h"><svg><use href="#i-arrow-left"/></svg><span class="sr-only">Previous slide</span></button>
+          <button type="button" class="nav nav--next-h"><svg><use href="#i-arrow-right"/></svg><span class="sr-only">Next slide</span></button>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <p class="grp-label">Horizontal - first slide (Previous disabled)</p>
+      <div class="demo-h">
+        <div class="car" role="region" aria-roledescription="carousel" aria-label="Photo carousel, boundary">
+          <div class="car__viewport">
+            <div class="car__track">
+              <div class="car__item" role="group" aria-roledescription="slide" aria-label="1 of 3"><div class="slide">Slide 1</div></div>
+              <div class="car__item" role="group" aria-roledescription="slide" aria-label="2 of 3"><div class="slide">Slide 2</div></div>
+              <div class="car__item" role="group" aria-roledescription="slide" aria-label="3 of 3"><div class="slide">Slide 3</div></div>
+            </div>
+          </div>
+          <button type="button" class="nav nav--prev-h" disabled aria-label="Previous slide"><svg><use href="#i-arrow-left"/></svg></button>
+          <button type="button" class="nav nav--next-h s-focus" aria-label="Next slide"><svg><use href="#i-arrow-right"/></svg></button>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <p class="grp-label">Horizontal - multi-up (2 slides per page)</p>
+      <div class="demo-h">
+        <div class="car" role="region" aria-roledescription="carousel" aria-label="Feature highlights">
+          <div class="car__viewport">
+            <div class="car__track">
+              <div class="car__item car__item--half" role="group" aria-roledescription="slide" aria-label="1 of 4"><div class="slide">A</div></div>
+              <div class="car__item car__item--half" role="group" aria-roledescription="slide" aria-label="2 of 4"><div class="slide">B</div></div>
+              <div class="car__item car__item--half" role="group" aria-roledescription="slide" aria-label="3 of 4"><div class="slide">C</div></div>
+              <div class="car__item car__item--half" role="group" aria-roledescription="slide" aria-label="4 of 4"><div class="slide">D</div></div>
+            </div>
+          </div>
+          <button type="button" class="nav nav--prev-h" aria-label="Previous slide"><svg><use href="#i-arrow-left"/></svg></button>
+          <button type="button" class="nav nav--next-h" aria-label="Next slide"><svg><use href="#i-arrow-right"/></svg></button>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <p class="grp-label">Vertical - sidebar stack</p>
+      <div class="demo-v" style="max-inline-size:240px">
+        <div class="car car--v" role="region" aria-roledescription="carousel" aria-label="What's new">
+          <div class="car__viewport">
+            <div class="car__track">
+              <div class="car__item" role="group" aria-roledescription="slide" aria-label="1 of 3"><div class="slide">Update 1</div></div>
+              <div class="car__item" role="group" aria-roledescription="slide" aria-label="2 of 3"><div class="slide">Update 2</div></div>
+              <div class="car__item" role="group" aria-roledescription="slide" aria-label="3 of 3"><div class="slide">Update 3</div></div>
+            </div>
+          </div>
+          <button type="button" class="nav nav--prev-v" aria-label="Previous slide"><svg><use href="#i-arrow-left"/></svg></button>
+          <button type="button" class="nav nav--next-v" aria-label="Next slide"><svg><use href="#i-arrow-right"/></svg></button>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

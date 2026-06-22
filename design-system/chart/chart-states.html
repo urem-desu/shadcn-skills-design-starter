@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Chart - states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  /* === Palette swatches - shows the 5 categorical chart tokens ============= */
+  /* auto-fit so the row wraps on narrow viewports (5 chips need ~85px each) */
+  .swatches{display:grid;grid-template-columns:repeat(auto-fit,minmax(72px,1fr));gap:var(--space-2)}
+  .sw{
+    display:flex;flex-direction:column;align-items:center;gap:var(--space-2);
+    padding:var(--space-3);border:1px solid var(--border-default);
+    border-radius:var(--radius-md);background:var(--surface-card);
+  }
+  .sw__chip{
+    inline-size:100%;block-size:48px;border-radius:var(--radius-sm);
+  }
+  .sw__c1{background:var(--chart-1)}
+  .sw__c2{background:var(--chart-2)}
+  .sw__c3{background:var(--chart-3)}
+  .sw__c4{background:var(--chart-4)}
+  .sw__c5{background:var(--chart-5)}
+  .sw__name{font-size:var(--font-size-xs);font-weight:var(--font-weight-medium);color:var(--text-primary)}
+  .sw__var{font-size:var(--font-size-xs);color:var(--text-secondary);font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+
+  /* === Bar chart mockup (inline SVG, colored from chart tokens) =========== */
+  .chart{
+    inline-size:100%;display:flex;flex-direction:column;
+    background:var(--surface-card);border:1px solid var(--border-default);
+    border-radius:var(--radius-md);padding:var(--space-4);
+    color:var(--text-primary);font-size:var(--font-size-xs);
+  }
+  .chart__viewport{inline-size:100%;aspect-ratio:16/9;position:relative}
+  .chart__title{font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);color:var(--text-primary);margin:0 0 var(--space-3)}
+  .chart__axis-text{fill:var(--text-secondary);font-size:var(--font-size-xs)}
+  .chart__grid{stroke:var(--border-default);stroke-opacity:.5}
+  .chart__series-1{fill:var(--chart-1)}
+  .chart__series-2{fill:var(--chart-2)}
+  .chart__series-3{fill:var(--chart-3)}
+  .chart__series-4{fill:var(--chart-4)}
+  .chart__series-5{fill:var(--chart-5)}
+
+  /* === Legend mockup (mirrors ChartLegendContent) ========================= */
+  .legend{
+    display:flex;align-items:center;justify-content:center;gap:var(--space-4);
+    padding-block-start:var(--space-3);
+    font-size:var(--font-size-xs);color:var(--text-primary);
+  }
+  .legend__item{display:flex;align-items:center;gap:var(--space-1-5)}
+  .legend__dot{inline-size:var(--space-2);block-size:var(--space-2);border-radius:var(--radius-sm);flex:none}
+
+  /* === Tooltip mockup (mirrors ChartTooltipContent) ======================= */
+  .tt-anchor{position:relative;margin-block-start:var(--space-4)}
+  .tt{
+    display:inline-grid;gap:var(--space-1-5);min-inline-size:8rem;
+    background:var(--surface-card);color:var(--text-primary);
+    border:1px solid color-mix(in srgb,var(--border-default) 50%,transparent);
+    border-radius:var(--radius-lg);
+    padding:var(--space-1-5) var(--space-2-5);font-size:var(--font-size-xs);
+    box-shadow:var(--shadow-lg);
+  }
+  .tt__label{font-weight:var(--font-weight-medium);color:var(--text-primary)}
+  .tt__row{display:flex;align-items:center;gap:var(--space-2)}
+  .tt__row-end{display:flex;flex:1;justify-content:space-between;align-items:center;line-height:1}
+  .tt__name{color:var(--text-secondary)}
+  .tt__value{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:var(--font-weight-medium);color:var(--text-primary);font-variant-numeric:tabular-nums}
+  .tt__dot{inline-size:var(--space-2-5);block-size:var(--space-2-5);border-radius:var(--radius-sm);flex:none}
+
+  /* === Harness chrome ===================================================== */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);font-family:Inter,system-ui,sans-serif;padding:32px}
+  .stack{display:flex;flex-direction:column;gap:32px;max-width:680px;margin:0 auto}
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0 0 8px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+  .row{display:flex;gap:var(--space-4);flex-wrap:wrap;align-items:flex-start}
+</style>
+</head>
+<body>
+  <main class="stack">
+
+    <section>
+      <p class="grp-label">Categorical palette - 5 chart tokens</p>
+      <div class="swatches">
+        <div class="sw"><div class="sw__chip sw__c1"></div><span class="sw__name">Series 1</span><span class="sw__var">--chart-1</span></div>
+        <div class="sw"><div class="sw__chip sw__c2"></div><span class="sw__name">Series 2</span><span class="sw__var">--chart-2</span></div>
+        <div class="sw"><div class="sw__chip sw__c3"></div><span class="sw__name">Series 3</span><span class="sw__var">--chart-3</span></div>
+        <div class="sw"><div class="sw__chip sw__c4"></div><span class="sw__name">Series 4</span><span class="sw__var">--chart-4</span></div>
+        <div class="sw"><div class="sw__chip sw__c5"></div><span class="sw__name">Other</span><span class="sw__var">--chart-5</span></div>
+      </div>
+    </section>
+
+    <section>
+      <p class="grp-label">Bar chart - grouped, 2 series</p>
+      <div class="chart" role="img" aria-label="Monthly visitors 2026 - desktop and mobile, grouped bar chart">
+        <p class="chart__title">Monthly visitors</p>
+        <div class="chart__viewport">
+          <svg viewBox="0 0 600 280" preserveAspectRatio="none" width="100%" height="100%" aria-hidden="true">
+            <!-- y grid -->
+            <g class="chart__grid">
+              <line x1="40" y1="40"  x2="600" y2="40"  stroke-width="1"/>
+              <line x1="40" y1="100" x2="600" y2="100" stroke-width="1"/>
+              <line x1="40" y1="160" x2="600" y2="160" stroke-width="1"/>
+              <line x1="40" y1="220" x2="600" y2="220" stroke-width="1"/>
+            </g>
+            <!-- y ticks -->
+            <g class="chart__axis-text">
+              <text x="0"  y="44"  text-anchor="start">300</text>
+              <text x="0"  y="104" text-anchor="start">200</text>
+              <text x="0"  y="164" text-anchor="start">100</text>
+              <text x="0"  y="224" text-anchor="start">0</text>
+            </g>
+            <!-- x ticks (months) -->
+            <g class="chart__axis-text">
+              <text x="80"  y="250" text-anchor="middle">Jan</text>
+              <text x="160" y="250" text-anchor="middle">Feb</text>
+              <text x="240" y="250" text-anchor="middle">Mar</text>
+              <text x="320" y="250" text-anchor="middle">Apr</text>
+              <text x="400" y="250" text-anchor="middle">May</text>
+              <text x="480" y="250" text-anchor="middle">Jun</text>
+              <text x="560" y="250" text-anchor="middle">Jul</text>
+            </g>
+            <!-- series 1 (desktop) -->
+            <g class="chart__series-1">
+              <rect x="64"  y="108" width="20" height="112" rx="2"/>
+              <rect x="144" y="48"  width="20" height="172" rx="2"/>
+              <rect x="224" y="76"  width="20" height="144" rx="2"/>
+              <rect x="304" y="40"  width="20" height="180" rx="2"/>
+              <rect x="384" y="92"  width="20" height="128" rx="2"/>
+              <rect x="464" y="64"  width="20" height="156" rx="2"/>
+              <rect x="544" y="80"  width="20" height="140" rx="2"/>
+            </g>
+            <!-- series 2 (mobile) -->
+            <g class="chart__series-2">
+              <rect x="88"  y="172" width="20" height="48"  rx="2"/>
+              <rect x="168" y="124" width="20" height="96"  rx="2"/>
+              <rect x="248" y="140" width="20" height="80"  rx="2"/>
+              <rect x="328" y="100" width="20" height="120" rx="2"/>
+              <rect x="408" y="148" width="20" height="72"  rx="2"/>
+              <rect x="488" y="116" width="20" height="104" rx="2"/>
+              <rect x="568" y="132" width="20" height="88"  rx="2"/>
+            </g>
+          </svg>
+        </div>
+        <div class="legend" role="list" aria-label="Chart legend">
+          <div class="legend__item" role="listitem"><span class="legend__dot" style="background:var(--chart-1)"></span>Desktop</div>
+          <div class="legend__item" role="listitem"><span class="legend__dot" style="background:var(--chart-2)"></span>Mobile</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <p class="grp-label">Line / area chart - 3 series</p>
+      <div class="chart" role="img" aria-label="Quarterly revenue by region - US, EU, APAC, line chart">
+        <p class="chart__title">Quarterly revenue by region</p>
+        <div class="chart__viewport">
+          <svg viewBox="0 0 600 280" preserveAspectRatio="none" width="100%" height="100%" aria-hidden="true">
+            <g class="chart__grid">
+              <line x1="40" y1="40"  x2="600" y2="40"  stroke-width="1"/>
+              <line x1="40" y1="100" x2="600" y2="100" stroke-width="1"/>
+              <line x1="40" y1="160" x2="600" y2="160" stroke-width="1"/>
+              <line x1="40" y1="220" x2="600" y2="220" stroke-width="1"/>
+            </g>
+            <g class="chart__axis-text">
+              <text x="0"  y="44"  text-anchor="start">120</text>
+              <text x="0"  y="104" text-anchor="start">80</text>
+              <text x="0"  y="164" text-anchor="start">40</text>
+              <text x="0"  y="224" text-anchor="start">0</text>
+            </g>
+            <g class="chart__axis-text">
+              <text x="80"  y="250" text-anchor="middle">Q1</text>
+              <text x="240" y="250" text-anchor="middle">Q2</text>
+              <text x="400" y="250" text-anchor="middle">Q3</text>
+              <text x="560" y="250" text-anchor="middle">Q4</text>
+            </g>
+            <!-- series 1 -->
+            <polyline points="80,160 240,120 400,80 560,60" fill="none" stroke="var(--chart-1)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- series 2 -->
+            <polyline points="80,180 240,150 400,140 560,100" fill="none" stroke="var(--chart-2)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- series 3 -->
+            <polyline points="80,200 240,180 400,170 560,150" fill="none" stroke="var(--chart-3)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="legend" role="list" aria-label="Chart legend">
+          <div class="legend__item" role="listitem"><span class="legend__dot" style="background:var(--chart-1)"></span>US</div>
+          <div class="legend__item" role="listitem"><span class="legend__dot" style="background:var(--chart-2)"></span>EU</div>
+          <div class="legend__item" role="listitem"><span class="legend__dot" style="background:var(--chart-3)"></span>APAC</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <p class="grp-label">Tooltip - dot indicator, 2 series</p>
+      <div class="tt-anchor">
+        <div class="tt" role="tooltip" aria-label="May tooltip">
+          <div class="tt__label">May 2026</div>
+          <div class="tt__row">
+            <span class="tt__dot" style="background:var(--chart-1)"></span>
+            <div class="tt__row-end"><span class="tt__name">Desktop</span><span class="tt__value">2,540</span></div>
+          </div>
+          <div class="tt__row">
+            <span class="tt__dot" style="background:var(--chart-2)"></span>
+            <div class="tt__row-end"><span class="tt__name">Mobile</span><span class="tt__value">1,820</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</body>
+</html>

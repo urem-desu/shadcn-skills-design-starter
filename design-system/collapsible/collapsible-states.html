@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Collapsible - states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  /* === Collapsible: the primitive itself ships NO styles. The harness
+        demonstrates a typical consumer styling using kit semantic tokens. === */
+
+  /* Trigger - styled as a Button ghost+sm so it reads as interactive */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);
+    border:0;cursor:pointer;font-family:inherit;background:transparent;color:var(--text-primary);
+    border-radius:var(--button-radius);font-weight:var(--button-font-weight);
+    transition:background-color var(--duration-fast) var(--ease-out),
+               box-shadow var(--duration-fast) var(--ease-out);
+    outline:none;-webkit-user-select:none;user-select:none;
+    block-size:var(--control-sm);padding-inline:var(--space-3);font-size:var(--font-size-sm);
+  }
+  .btn:hover{background:var(--action-secondary)}
+  .btn:focus-visible,.btn.s-focus{box-shadow:var(--button-focus-ring)}
+  .btn:disabled,.btn[aria-disabled="true"]{opacity:.5;pointer-events:none;cursor:not-allowed}
+  .btn--outline{background:var(--button-outline-bg);border:1px solid var(--button-outline-border);color:var(--button-outline-text)}
+  .btn--outline:hover{background:var(--button-outline-bg-hover)}
+  .btn svg{inline-size:var(--icon-sm);block-size:var(--icon-sm);stroke:currentColor;fill:none;stroke-width:2;transition:transform var(--duration-base) var(--ease-out)}
+  .btn[aria-expanded="true"] svg{transform:rotate(180deg)}
+
+  /* Content panel - a typical consumer treatment */
+  .panel{
+    margin-block-start:var(--space-3);
+    background:var(--surface-card);border:1px solid var(--border-default);
+    border-radius:var(--radius-md);padding:var(--space-4);
+    color:var(--text-primary);font-size:var(--font-size-sm);line-height:var(--line-normal);
+  }
+  .panel[hidden]{display:none}
+  .panel p{margin:0}
+  .panel p + p{margin-block-start:var(--space-3)}
+
+  /* "Show more" list */
+  .list{display:flex;flex-direction:column;gap:var(--space-2);list-style:none;margin:0;padding:0}
+  .list-item{
+    display:flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-3);
+    background:var(--surface-card);border:1px solid var(--border-default);
+    border-radius:var(--radius-md);font-size:var(--font-size-sm);color:var(--text-primary);
+  }
+  .list-item__dot{inline-size:var(--space-2);block-size:var(--space-2);border-radius:var(--radius-full);background:var(--chart-1);flex:none}
+
+  /* === Harness chrome ===================================================== */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);font-family:Inter,system-ui,sans-serif;padding:32px}
+  .stack{display:flex;flex-direction:column;gap:32px;max-width:680px;margin:0 auto}
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0 0 8px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+  .demo{padding:16px;border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--surface-card)}
+</style>
+</head>
+<body>
+  <main class="stack">
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <symbol id="i-chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></symbol>
+    </svg>
+
+    <section class="demo">
+      <p class="grp-label">Closed - trigger collapsed, panel hidden from AT</p>
+      <div data-slot="collapsible" data-state="closed">
+        <button type="button" class="btn btn--outline" data-slot="collapsible-trigger" aria-expanded="false" aria-controls="cp-1">
+          Advanced options
+          <svg><use href="#i-chevron-down"/></svg>
+        </button>
+        <div class="panel" id="cp-1" data-slot="collapsible-content" data-state="closed" role="region" aria-label="Advanced options" hidden>
+          <p>Hidden content - revealed when the trigger is activated.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="demo">
+      <p class="grp-label">Open - panel visible, trigger marked expanded</p>
+      <div data-slot="collapsible" data-state="open">
+        <button type="button" class="btn btn--outline" data-slot="collapsible-trigger" aria-expanded="true" aria-controls="cp-2">
+          Advanced options
+          <svg><use href="#i-chevron-down"/></svg>
+        </button>
+        <div class="panel" id="cp-2" data-slot="collapsible-content" data-state="open" role="region" aria-label="Advanced options">
+          <p>Adjust how the kit handles legacy browsers, slow networks, and reduced-motion environments. Defaults are tuned for production - change them only if you understand the tradeoffs.</p>
+          <p>All settings persist across sessions.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="demo">
+      <p class="grp-label">Disabled - trigger unfocusable, panel state frozen</p>
+      <div data-slot="collapsible" data-state="closed" data-disabled>
+        <button type="button" class="btn btn--outline" data-slot="collapsible-trigger" aria-expanded="false" aria-controls="cp-3" aria-disabled="true" disabled>
+          Advanced options
+          <svg><use href="#i-chevron-down"/></svg>
+        </button>
+        <div class="panel" id="cp-3" data-slot="collapsible-content" data-state="closed" role="region" aria-label="Advanced options" hidden>
+          <p>Hidden content - frozen because the trigger is disabled.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="demo">
+      <p class="grp-label">"Show more" - 3 visible items, rest collapsed</p>
+      <ul class="list">
+        <li class="list-item"><span class="list-item__dot"></span>Aurora launch checklist</li>
+        <li class="list-item"><span class="list-item__dot"></span>Q3 design review</li>
+        <li class="list-item"><span class="list-item__dot"></span>Pricing experiment results</li>
+      </ul>
+      <div data-slot="collapsible" data-state="open" style="margin-block-start:var(--space-2)">
+        <div data-slot="collapsible-content" data-state="open">
+          <ul class="list">
+            <li class="list-item"><span class="list-item__dot"></span>Compliance audit notes</li>
+            <li class="list-item"><span class="list-item__dot"></span>Hiring panel feedback</li>
+            <li class="list-item"><span class="list-item__dot"></span>Customer interview synthesis</li>
+          </ul>
+        </div>
+        <button type="button" class="btn" data-slot="collapsible-trigger" aria-expanded="true" style="margin-block-start:var(--space-2)">
+          Show less
+          <svg><use href="#i-chevron-down"/></svg>
+        </button>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

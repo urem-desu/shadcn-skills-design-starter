@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Command - states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  /* === Command palette surface (mirrors command.tsx) ====================== */
+  .cmd{
+    display:flex;flex-direction:column;
+    inline-size:100%;max-inline-size:420px;
+    overflow:hidden;background:var(--surface-card);color:var(--text-primary);
+    border:1px solid var(--border-default);border-radius:var(--radius-md);
+    box-shadow:var(--shadow-lg);
+  }
+
+  /* Input wrapper + input */
+  .cmd__inputwrap{
+    display:flex;align-items:center;gap:var(--space-2);
+    block-size:var(--control-sm);padding-inline:var(--space-3);
+    border-block-end:1px solid var(--border-default);
+  }
+  .cmd__inputwrap svg{inline-size:var(--icon-sm);block-size:var(--icon-sm);opacity:.5;stroke:currentColor;fill:none;stroke-width:2;flex:none}
+  .cmd__input{
+    flex:1;min-inline-size:0;background:transparent;border:0;outline:none;
+    block-size:var(--control-md);padding-block:var(--space-3);
+    font-size:var(--font-size-sm);font-family:inherit;color:var(--text-primary);
+  }
+  .cmd__input::placeholder{color:var(--text-tertiary)}
+  .cmd__input:disabled{opacity:.5;cursor:not-allowed}
+
+  /* List */
+  .cmd__list{
+    max-block-size:var(--command-list-max-h);
+    overflow-y:auto;overflow-x:hidden;scroll-padding-block:var(--space-1);
+  }
+
+  /* Group */
+  .cmd__group{overflow:hidden;padding:var(--space-1);color:var(--text-primary)}
+  .cmd__heading{
+    padding-inline:var(--space-2);padding-block:var(--space-1-5);
+    font-size:var(--font-size-xs);font-weight:var(--font-weight-medium);
+    color:var(--text-secondary);margin:0;
+  }
+
+  /* Separator */
+  .cmd__sep{block-size:1px;background:var(--border-default);margin-inline:calc(var(--space-1) * -1)}
+
+  /* Item */
+  .cmd__item{
+    position:relative;display:flex;cursor:default;align-items:center;gap:var(--space-2);
+    border-radius:var(--radius-sm);padding:var(--space-1-5) var(--space-2);
+    font-size:var(--font-size-sm);outline:none;-webkit-user-select:none;user-select:none;
+    color:var(--text-primary);
+  }
+  .cmd__item svg{inline-size:var(--icon-sm);block-size:var(--icon-sm);flex:none;color:var(--text-secondary);stroke:currentColor;fill:none;stroke-width:2;pointer-events:none}
+  .cmd__item[data-selected="true"]{background:var(--interactive-selected-bg);color:var(--interactive-selected-text)}
+  .cmd__item[data-selected="true"] svg{color:var(--interactive-selected-text)}
+  .cmd__item[data-disabled="true"]{opacity:.5;pointer-events:none}
+
+  /* Empty */
+  .cmd__empty{
+    padding-block:var(--space-6);text-align:center;
+    font-size:var(--font-size-sm);color:var(--text-secondary);
+  }
+
+  /* Shortcut */
+  .cmd__shortcut{
+    margin-inline-start:auto;font-size:var(--font-size-xs);letter-spacing:.1em;
+    color:var(--text-secondary);font-variant-numeric:tabular-nums;
+  }
+  .cmd__item[data-selected="true"] .cmd__shortcut{color:var(--interactive-selected-text);opacity:.85}
+
+  /* === Harness chrome ===================================================== */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);font-family:Inter,system-ui,sans-serif;padding:32px}
+  .stack{display:flex;flex-direction:column;gap:32px;max-width:680px;margin:0 auto}
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0 0 8px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+</style>
+</head>
+<body>
+  <main class="stack">
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+      <symbol id="i-calendar" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></symbol>
+      <symbol id="i-calculator" viewBox="0 0 24 24"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></symbol>
+      <symbol id="i-user" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+      <symbol id="i-settings" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></symbol>
+      <symbol id="i-credit-card" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></symbol>
+    </svg>
+
+    <section>
+      <p class="grp-label">Open palette - 2 groups, one item active descendant</p>
+      <div class="cmd" data-slot="command">
+        <div class="cmd__inputwrap" data-slot="command-input-wrapper">
+          <svg><use href="#i-search"/></svg>
+          <input class="cmd__input" data-slot="command-input" role="combobox" aria-expanded="true" aria-controls="cmd-list-1" aria-activedescendant="cmd-item-cal" placeholder="Type a command or search..." value="" aria-label="Command search" />
+        </div>
+        <div class="cmd__list" id="cmd-list-1" data-slot="command-list" role="listbox" aria-label="Suggestions and settings">
+          <div class="cmd__group" data-slot="command-group">
+            <p class="cmd__heading">Suggestions</p>
+            <div class="cmd__item" data-slot="command-item" role="option" data-selected="true" id="cmd-item-cal" aria-selected="true"><svg><use href="#i-calendar"/></svg>Calendar</div>
+            <div class="cmd__item" data-slot="command-item" role="option" aria-selected="false"><svg><use href="#i-calculator"/></svg>Calculator</div>
+          </div>
+          <div class="cmd__sep" data-slot="command-separator" role="separator" aria-hidden="true"></div>
+          <div class="cmd__group" data-slot="command-group">
+            <p class="cmd__heading">Settings</p>
+            <div class="cmd__item" data-slot="command-item" role="option" aria-selected="false"><svg><use href="#i-user"/></svg>Profile<span class="cmd__shortcut">CMD+P</span></div>
+            <div class="cmd__item" data-slot="command-item" role="option" aria-selected="false"><svg><use href="#i-settings"/></svg>Preferences<span class="cmd__shortcut">CMD+,</span></div>
+            <div class="cmd__item" data-slot="command-item" role="option" aria-selected="false" data-disabled="true" aria-disabled="true"><svg><use href="#i-credit-card"/></svg>Billing<span class="cmd__shortcut">CMD+B</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <p class="grp-label">Empty - no results for the current filter</p>
+      <div class="cmd" data-slot="command">
+        <div class="cmd__inputwrap" data-slot="command-input-wrapper">
+          <svg><use href="#i-search"/></svg>
+          <input class="cmd__input" data-slot="command-input" role="combobox" aria-expanded="true" aria-controls="cmd-list-2" placeholder="Search..." value="xyz" aria-label="Search" />
+        </div>
+        <div class="cmd__list" id="cmd-list-2" data-slot="command-list" role="listbox" aria-label="Empty results" aria-hidden="true"></div>
+        <div class="cmd__empty" data-slot="command-empty" role="status" aria-live="polite">No results found.</div>
+      </div>
+    </section>
+
+    <section>
+      <p class="grp-label">Inline typeahead (narrow popover, 280px-wide trigger)</p>
+      <div style="max-inline-size:280px">
+        <div class="cmd" data-slot="command">
+          <div class="cmd__inputwrap" data-slot="command-input-wrapper">
+            <svg><use href="#i-search"/></svg>
+            <input class="cmd__input" data-slot="command-input" role="combobox" aria-expanded="true" aria-controls="cmd-list-3" placeholder="Search projects..." aria-label="Projects" />
+          </div>
+          <div class="cmd__list" id="cmd-list-3" data-slot="command-list" role="listbox" aria-label="Projects">
+            <div class="cmd__group" data-slot="command-group">
+              <p class="cmd__heading">Recent</p>
+              <div class="cmd__item" data-slot="command-item" role="option" aria-selected="false">Aurora launch</div>
+              <div class="cmd__item" data-slot="command-item" role="option" data-selected="true" aria-selected="true">Pricing experiment</div>
+              <div class="cmd__item" data-slot="command-item" role="option" aria-selected="false">Q3 roadmap</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

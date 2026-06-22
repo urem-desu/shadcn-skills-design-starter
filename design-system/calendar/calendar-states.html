@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Calendar - states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  /* === Calendar (mirrors calendar.tsx) ==================================== */
+  .cal{
+    --cell-size:var(--control-sm);
+    background:var(--surface-card);padding:var(--space-3);
+    inline-size:fit-content;max-inline-size:100%;font-family:inherit;color:var(--text-primary);
+    border:1px solid var(--border-default);border-radius:var(--radius-md);
+  }
+  .cal__months{display:flex;flex-direction:column;gap:var(--space-4);position:relative}
+  .cal__month{display:flex;flex-direction:column;gap:var(--space-4);inline-size:100%}
+  .cal__nav{
+    position:absolute;inset-inline:0;top:0;display:flex;inline-size:100%;
+    align-items:center;justify-content:space-between;gap:var(--space-1);
+  }
+  .cal__caption{
+    display:flex;block-size:var(--cell-size);inline-size:100%;
+    align-items:center;justify-content:center;padding-inline:var(--cell-size);
+    font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);
+    -webkit-user-select:none;user-select:none;
+  }
+  .cal__dropdowns{
+    display:flex;block-size:var(--cell-size);inline-size:100%;
+    align-items:center;justify-content:center;gap:var(--space-1-5);
+    font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);
+  }
+  .cal__dd{
+    position:relative;display:inline-flex;align-items:center;gap:var(--space-1);
+    block-size:var(--control-sm);padding-inline:var(--space-2);
+    border:1px solid var(--border-default);border-radius:var(--radius-md);
+    box-shadow:var(--shadow-sm);background:var(--surface-card);
+    font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);
+  }
+  .cal__dd svg{inline-size:var(--icon-xs);block-size:var(--icon-xs);color:var(--text-secondary)}
+  .cal__dd:focus-within{border-color:var(--border-focus);box-shadow:var(--focus-ring)}
+
+  /* nav buttons (uses Button ghost+icon style) */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);
+    border:0;cursor:pointer;font-family:inherit;background:transparent;color:var(--text-primary);
+    border-radius:var(--button-radius);transition:background-color var(--duration-fast) var(--ease-out);
+    outline:none;-webkit-user-select:none;user-select:none;
+    block-size:var(--cell-size);inline-size:var(--cell-size);padding:0;
+  }
+  .btn:hover{background:var(--action-secondary)}
+  .btn:active{background:var(--action-secondary-hover)}
+  .btn:focus-visible,.btn.s-focus{box-shadow:var(--button-focus-ring)}
+  .btn:disabled,.btn[aria-disabled="true"]{opacity:.5;pointer-events:none;cursor:not-allowed}
+  .btn svg{inline-size:var(--icon-sm);block-size:var(--icon-sm);stroke:currentColor;fill:none;stroke-width:2}
+
+  /* grid */
+  .cal__table{inline-size:100%;border-collapse:collapse}
+  .cal__weekdays{display:flex}
+  .cal__weekday{
+    flex:1;border-radius:var(--radius-md);
+    font-size:var(--font-size-xs);font-weight:var(--font-weight-regular);
+    color:var(--text-secondary);-webkit-user-select:none;user-select:none;
+    text-align:center;
+  }
+  .cal__week{margin-block-start:var(--space-2);display:flex;inline-size:100%}
+  .cal__cell{
+    flex:1;position:relative;aspect-ratio:1/1;padding:0;text-align:center;
+    -webkit-user-select:none;user-select:none;
+  }
+
+  /* day button (mirrors CalendarDayButton) */
+  .day{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    aspect-ratio:1/1;inline-size:100%;min-inline-size:var(--cell-size);
+    block-size:auto;background:transparent;border:0;cursor:pointer;
+    font-family:inherit;color:var(--text-primary);font-size:var(--font-size-sm);
+    font-weight:var(--font-weight-regular);line-height:1;gap:var(--space-1);
+    transition:background-color var(--duration-fast) var(--ease-out);
+    outline:none;border-radius:var(--radius-md);
+  }
+  .day:hover{background:var(--action-secondary)}
+  .day:focus-visible,.day.s-focus{position:relative;z-index:10;box-shadow:var(--focus-ring)}
+
+  /* modifiers */
+  .day.today{background:var(--action-secondary);color:var(--text-primary)}
+  .day.outside{color:var(--text-secondary)}
+  /* disabled fades the default text color (text-primary) so the result stays
+     readable; pattern matches the kit's button/checkbox disabled treatment. */
+  .day.disabled{opacity:.5;pointer-events:none;cursor:not-allowed}
+
+  .day.selected-single{background:var(--action-primary);color:var(--text-on-action)}
+  .day.selected-single:hover{background:var(--action-primary-hover)}
+
+  .day.range-start{background:var(--action-primary);color:var(--text-on-action);border-start-end-radius:0;border-end-end-radius:0}
+  .day.range-end{background:var(--action-primary);color:var(--text-on-action);border-start-start-radius:0;border-end-start-radius:0}
+  .day.range-middle{background:var(--interactive-selected-bg);color:var(--interactive-selected-text);border-radius:0}
+
+  /* second line (secondary number / lunar) */
+  .day > .secondary{font-size:var(--font-size-xs);opacity:.7}
+
+  /* === Harness chrome ===================================================== */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);font-family:Inter,system-ui,sans-serif;padding:32px}
+  .stack{display:flex;flex-direction:column;gap:24px;max-width:680px;margin:0 auto}
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0 0 8px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+  .row{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start}
+</style>
+</head>
+<body>
+  <main class="stack">
+    <!-- shared icon defs -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <symbol id="i-chevron-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></symbol>
+      <symbol id="i-chevron-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></symbol>
+      <symbol id="i-chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></symbol>
+    </svg>
+
+    <section>
+      <p class="grp-label">Single date - June 2026 (today: 22, selected: 22)</p>
+      <div class="cal" data-slot="calendar" role="application" aria-label="Calendar June 2026">
+        <div class="cal__months">
+          <div class="cal__nav">
+            <button type="button" class="btn" aria-label="Previous month"><svg><use href="#i-chevron-left"/></svg></button>
+            <button type="button" class="btn" aria-label="Next month"><svg><use href="#i-chevron-right"/></svg></button>
+          </div>
+          <div class="cal__month">
+            <div class="cal__caption">June 2026</div>
+            <table class="cal__table" role="grid" aria-label="June 2026">
+              <thead>
+                <tr class="cal__weekdays">
+                  <th class="cal__weekday" scope="col">Su</th>
+                  <th class="cal__weekday" scope="col">Mo</th>
+                  <th class="cal__weekday" scope="col">Tu</th>
+                  <th class="cal__weekday" scope="col">We</th>
+                  <th class="cal__weekday" scope="col">Th</th>
+                  <th class="cal__weekday" scope="col">Fr</th>
+                  <th class="cal__weekday" scope="col">Sa</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Week 1 -->
+                <tr class="cal__week">
+                  <td class="cal__cell"><button type="button" class="day outside">31</button></td>
+                  <td class="cal__cell"><button type="button" class="day">1</button></td>
+                  <td class="cal__cell"><button type="button" class="day">2</button></td>
+                  <td class="cal__cell"><button type="button" class="day">3</button></td>
+                  <td class="cal__cell"><button type="button" class="day">4</button></td>
+                  <td class="cal__cell"><button type="button" class="day">5</button></td>
+                  <td class="cal__cell"><button type="button" class="day">6</button></td>
+                </tr>
+                <tr class="cal__week">
+                  <td class="cal__cell"><button type="button" class="day">7</button></td>
+                  <td class="cal__cell"><button type="button" class="day">8</button></td>
+                  <td class="cal__cell"><button type="button" class="day">9</button></td>
+                  <td class="cal__cell"><button type="button" class="day">10</button></td>
+                  <td class="cal__cell"><button type="button" class="day">11</button></td>
+                  <td class="cal__cell"><button type="button" class="day">12</button></td>
+                  <td class="cal__cell"><button type="button" class="day">13</button></td>
+                </tr>
+                <tr class="cal__week">
+                  <td class="cal__cell"><button type="button" class="day">14</button></td>
+                  <td class="cal__cell"><button type="button" class="day">15</button></td>
+                  <td class="cal__cell"><button type="button" class="day">16</button></td>
+                  <td class="cal__cell"><button type="button" class="day">17</button></td>
+                  <td class="cal__cell"><button type="button" class="day">18</button></td>
+                  <td class="cal__cell"><button type="button" class="day">19</button></td>
+                  <td class="cal__cell"><button type="button" class="day">20</button></td>
+                </tr>
+                <tr class="cal__week">
+                  <td class="cal__cell"><button type="button" class="day">21</button></td>
+                  <td class="cal__cell" aria-selected="true"><button type="button" class="day selected-single" aria-current="date">22</button></td>
+                  <td class="cal__cell"><button type="button" class="day">23</button></td>
+                  <td class="cal__cell"><button type="button" class="day s-focus">24</button></td>
+                  <td class="cal__cell"><button type="button" class="day">25</button></td>
+                  <td class="cal__cell"><button type="button" class="day">26</button></td>
+                  <td class="cal__cell"><button type="button" class="day">27</button></td>
+                </tr>
+                <tr class="cal__week">
+                  <td class="cal__cell"><button type="button" class="day">28</button></td>
+                  <td class="cal__cell"><button type="button" class="day">29</button></td>
+                  <td class="cal__cell"><button type="button" class="day">30</button></td>
+                  <td class="cal__cell"><button type="button" class="day outside">1</button></td>
+                  <td class="cal__cell"><button type="button" class="day outside">2</button></td>
+                  <td class="cal__cell"><button type="button" class="day outside">3</button></td>
+                  <td class="cal__cell"><button type="button" class="day outside">4</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <p class="grp-label">Date range - June 14 to June 22</p>
+      <div class="cal" data-slot="calendar" role="application" aria-label="Calendar June 2026, range">
+        <div class="cal__months">
+          <div class="cal__nav">
+            <button type="button" class="btn" aria-label="Previous month"><svg><use href="#i-chevron-left"/></svg></button>
+            <button type="button" class="btn" aria-label="Next month"><svg><use href="#i-chevron-right"/></svg></button>
+          </div>
+          <div class="cal__month">
+            <div class="cal__caption">June 2026</div>
+            <table class="cal__table" role="grid" aria-label="June 2026">
+              <thead>
+                <tr class="cal__weekdays">
+                  <th class="cal__weekday" scope="col">Su</th>
+                  <th class="cal__weekday" scope="col">Mo</th>
+                  <th class="cal__weekday" scope="col">Tu</th>
+                  <th class="cal__weekday" scope="col">We</th>
+                  <th class="cal__weekday" scope="col">Th</th>
+                  <th class="cal__weekday" scope="col">Fr</th>
+                  <th class="cal__weekday" scope="col">Sa</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="cal__week">
+                  <td class="cal__cell"><button type="button" class="day outside">31</button></td>
+                  <td class="cal__cell"><button type="button" class="day">1</button></td>
+                  <td class="cal__cell"><button type="button" class="day">2</button></td>
+                  <td class="cal__cell"><button type="button" class="day">3</button></td>
+                  <td class="cal__cell"><button type="button" class="day">4</button></td>
+                  <td class="cal__cell"><button type="button" class="day">5</button></td>
+                  <td class="cal__cell"><button type="button" class="day">6</button></td>
+                </tr>
+                <tr class="cal__week">
+                  <td class="cal__cell"><button type="button" class="day">7</button></td>
+                  <td class="cal__cell"><button type="button" class="day">8</button></td>
+                  <td class="cal__cell"><button type="button" class="day">9</button></td>
+                  <td class="cal__cell"><button type="button" class="day">10</button></td>
+                  <td class="cal__cell"><button type="button" class="day">11</button></td>
+                  <td class="cal__cell"><button type="button" class="day">12</button></td>
+                  <td class="cal__cell"><button type="button" class="day">13</button></td>
+                </tr>
+                <tr class="cal__week">
+                  <td class="cal__cell" aria-selected="true"><button type="button" class="day range-start">14</button></td>
+                  <td class="cal__cell" aria-selected="true"><button type="button" class="day range-middle">15</button></td>
+                  <td class="cal__cell" aria-selected="true"><button type="button" class="day range-middle">16</button></td>
+                  <td class="cal__cell" aria-selected="true"><button type="button" class="day range-middle">17</button></td>
+                  <td class="cal__cell" aria-selected="true"><button type="button" class="day range-middle">18</button></td>
+                  <td class="cal__cell" aria-selected="true"><button type="button" class="day range-middle">19</button></td>
+                  <td class="cal__cell" aria-selected="true"><button type="button" class="day range-middle">20</button></td>
+                </tr>
+                <tr class="cal__week">
+                  <td class="cal__cell" aria-selected="true"><button type="button" class="day range-middle">21</button></td>
+                  <td class="cal__cell" aria-selected="true"><button type="button" class="day range-end">22</button></td>
+                  <td class="cal__cell"><button type="button" class="day today">23</button></td>
+                  <td class="cal__cell"><button type="button" class="day">24</button></td>
+                  <td class="cal__cell"><button type="button" class="day">25</button></td>
+                  <td class="cal__cell"><button type="button" class="day disabled" aria-disabled="true">26</button></td>
+                  <td class="cal__cell"><button type="button" class="day disabled" aria-disabled="true">27</button></td>
+                </tr>
+                <tr class="cal__week">
+                  <td class="cal__cell"><button type="button" class="day">28</button></td>
+                  <td class="cal__cell"><button type="button" class="day">29</button></td>
+                  <td class="cal__cell"><button type="button" class="day">30</button></td>
+                  <td class="cal__cell"><button type="button" class="day outside">1</button></td>
+                  <td class="cal__cell"><button type="button" class="day outside">2</button></td>
+                  <td class="cal__cell"><button type="button" class="day outside">3</button></td>
+                  <td class="cal__cell"><button type="button" class="day outside">4</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <p class="grp-label">Dropdown caption (month + year selects)</p>
+      <div class="cal" data-slot="calendar" role="application" aria-label="Calendar with dropdown caption">
+        <div class="cal__months">
+          <div class="cal__nav">
+            <button type="button" class="btn" aria-label="Previous month"><svg><use href="#i-chevron-left"/></svg></button>
+            <button type="button" class="btn" aria-label="Next month"><svg><use href="#i-chevron-right"/></svg></button>
+          </div>
+          <div class="cal__month">
+            <div class="cal__dropdowns">
+              <span class="cal__dd"><span>Jun</span><svg><use href="#i-chevron-down"/></svg></span>
+              <span class="cal__dd"><span>2026</span><svg><use href="#i-chevron-down"/></svg></span>
+            </div>
+            <table class="cal__table" role="grid" aria-label="Calendar grid">
+              <thead>
+                <tr class="cal__weekdays">
+                  <th class="cal__weekday" scope="col">Su</th>
+                  <th class="cal__weekday" scope="col">Mo</th>
+                  <th class="cal__weekday" scope="col">Tu</th>
+                  <th class="cal__weekday" scope="col">We</th>
+                  <th class="cal__weekday" scope="col">Th</th>
+                  <th class="cal__weekday" scope="col">Fr</th>
+                  <th class="cal__weekday" scope="col">Sa</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="cal__week">
+                  <td class="cal__cell"><button type="button" class="day outside">31</button></td>
+                  <td class="cal__cell"><button type="button" class="day">1</button></td>
+                  <td class="cal__cell"><button type="button" class="day">2</button></td>
+                  <td class="cal__cell"><button type="button" class="day">3</button></td>
+                  <td class="cal__cell"><button type="button" class="day">4</button></td>
+                  <td class="cal__cell"><button type="button" class="day">5</button></td>
+                  <td class="cal__cell"><button type="button" class="day">6</button></td>
+                </tr>
+                <tr class="cal__week">
+                  <td class="cal__cell"><button type="button" class="day">7</button></td>
+                  <td class="cal__cell"><button type="button" class="day">8</button></td>
+                  <td class="cal__cell"><button type="button" class="day">9</button></td>
+                  <td class="cal__cell"><button type="button" class="day">10</button></td>
+                  <td class="cal__cell"><button type="button" class="day">11</button></td>
+                  <td class="cal__cell"><button type="button" class="day">12</button></td>
+                  <td class="cal__cell"><button type="button" class="day">13</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

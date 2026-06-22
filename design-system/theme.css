@@ -136,6 +136,22 @@
      to point at, and a bare px would fail lint_hardcodes). The scrim is the shared
      --scrim semantic; panel/title/description map to surface/text/space/radius/shadow. */
   --dialog-max-w:512px;                                       /* shadcn sm:max-w-lg */
+
+  /* Chart: 5-color categorical palette for data viz. Genuine component tier -
+     Recharts paints SVG and consumes colors via CSS vars (fill/stroke on each
+     <Cell>). The palette favors hue separation over our brand blue so series
+     read as distinct categories. Order is the default display order. */
+  --chart-1:var(--blue-500);   /* #3b82f6 blue */
+  --chart-2:var(--green-600);  /* #16a34a green */
+  --chart-3:var(--amber-600);  /* #d97706 amber/orange */
+  --chart-4:var(--red-500);    /* #ef4444 red */
+  --chart-5:var(--gray-500);   /* #6b7280 neutral (use for "other") */
+
+  /* Command palette: the only seam is the scroll cap on the result list -
+     300px isn't a clean multiple of an existing token, and a bare px would
+     fail lint_hardcodes. Everything else (typography, surface, item radius,
+     selection treatment, shortcut chip) maps to semantic/primitive tokens. */
+  --command-list-max-h:300px;                                 /* shadcn max-h-[300px] */
 }
 
 /* ---- Dark mode: SEMANTIC overrides only -------------------------------- */
@@ -168,6 +184,14 @@
      carry red text at AA, so the hover bg goes neutral */
   --menu-item-destructive-text:var(--red-300);
   --menu-item-destructive-bg-hover:var(--action-secondary-hover);
+
+  /* chart palette: lift each hue one step lighter so series read with enough
+     luminance against the dark surface (parallel to text-link's blue lift). */
+  --chart-1:var(--blue-400);
+  --chart-2:var(--green-300);
+  --chart-3:var(--amber-300);
+  --chart-4:var(--red-400);
+  --chart-5:var(--gray-400);
 }
 
 /* -----------------------------------------------------------------------------

@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Breadcrumb - states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  /* nav landmark wrapper - no styles needed */
+  .bc-list{
+    display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-2);
+    list-style:none;margin:0;padding:0;
+    font-size:var(--font-size-sm);color:var(--text-secondary);word-break:break-word;
+  }
+  .bc-item{display:inline-flex;align-items:center;gap:var(--space-1-5)}
+  .bc-link{
+    color:var(--text-secondary);text-decoration:none;outline:none;
+    border-radius:var(--radius-sm);
+    transition:color var(--duration-fast) var(--ease-out);
+  }
+  .bc-link:hover{color:var(--text-primary)}
+  .bc-link:focus-visible{box-shadow:var(--focus-ring)}
+  .bc-page{color:var(--text-primary);font-weight:var(--font-weight-regular)}
+  .bc-sep{display:inline-flex;align-items:center}
+  .bc-sep svg{inline-size:var(--icon-xs);block-size:var(--icon-xs)}
+  .bc-ell{
+    display:inline-flex;inline-size:var(--space-9);block-size:var(--space-9);
+    align-items:center;justify-content:center;
+  }
+  .bc-ell svg{inline-size:var(--icon-sm);block-size:var(--icon-sm)}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+  /* === harness chrome === */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);font-family:Inter,system-ui,sans-serif;padding:32px}
+  .stack{display:flex;flex-direction:column;gap:24px;max-width:680px;margin:0 auto}
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0 0 8px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+  .demo{padding:16px;border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--surface-card)}
+
+  /* render :focus and :hover on a marked state without real interaction */
+  .force-hover .bc-link.s-hover{color:var(--text-primary)}
+  .force-focus .bc-link.s-focus{box-shadow:var(--focus-ring)}
+</style>
+</head>
+<body>
+  <main class="stack">
+
+    <!-- shared icon defs (single-source, reused via <use>) -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <symbol id="i-chevron-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m9 18 6-6-6-6"/>
+      </symbol>
+      <symbol id="i-more-horizontal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>
+      </symbol>
+    </svg>
+
+    <section class="demo">
+      <p class="grp-label">Default - 3 levels</p>
+      <nav aria-label="breadcrumb">
+        <ol class="bc-list">
+          <li class="bc-item"><a class="bc-link" href="#">Home</a></li>
+          <li class="bc-item bc-sep" role="presentation" aria-hidden="true"><svg><use href="#i-chevron-right"/></svg></li>
+          <li class="bc-item"><a class="bc-link" href="#">Projects</a></li>
+          <li class="bc-item bc-sep" role="presentation" aria-hidden="true"><svg><use href="#i-chevron-right"/></svg></li>
+          <li class="bc-item"><span class="bc-page" role="link" aria-disabled="true" aria-current="page">Aurora launch</span></li>
+        </ol>
+      </nav>
+    </section>
+
+    <section class="demo">
+      <p class="grp-label">Long path - collapsed with ellipsis</p>
+      <nav aria-label="breadcrumb">
+        <ol class="bc-list">
+          <li class="bc-item"><a class="bc-link" href="#">Home</a></li>
+          <li class="bc-item bc-sep" role="presentation" aria-hidden="true"><svg><use href="#i-chevron-right"/></svg></li>
+          <li class="bc-item">
+            <span class="bc-ell" role="presentation" aria-hidden="true">
+              <svg><use href="#i-more-horizontal"/></svg>
+              <span class="sr-only">More</span>
+            </span>
+          </li>
+          <li class="bc-item bc-sep" role="presentation" aria-hidden="true"><svg><use href="#i-chevron-right"/></svg></li>
+          <li class="bc-item"><a class="bc-link" href="#">Design</a></li>
+          <li class="bc-item bc-sep" role="presentation" aria-hidden="true"><svg><use href="#i-chevron-right"/></svg></li>
+          <li class="bc-item"><span class="bc-page" role="link" aria-disabled="true" aria-current="page">Tokens</span></li>
+        </ol>
+      </nav>
+    </section>
+
+    <section class="demo">
+      <p class="grp-label">Custom separator (slash)</p>
+      <nav aria-label="breadcrumb">
+        <ol class="bc-list">
+          <li class="bc-item"><a class="bc-link" href="#">Docs</a></li>
+          <li class="bc-item bc-sep" role="presentation" aria-hidden="true">/</li>
+          <li class="bc-item"><a class="bc-link" href="#">Components</a></li>
+          <li class="bc-item bc-sep" role="presentation" aria-hidden="true">/</li>
+          <li class="bc-item"><span class="bc-page" role="link" aria-disabled="true" aria-current="page">Breadcrumb</span></li>
+        </ol>
+      </nav>
+    </section>
+
+    <section class="demo force-hover force-focus">
+      <p class="grp-label">States - hover (forced) and focus (forced)</p>
+      <nav aria-label="breadcrumb">
+        <ol class="bc-list">
+          <li class="bc-item"><a class="bc-link" href="#">Default</a></li>
+          <li class="bc-item bc-sep" role="presentation" aria-hidden="true"><svg><use href="#i-chevron-right"/></svg></li>
+          <li class="bc-item"><a class="bc-link s-hover" href="#">Hover</a></li>
+          <li class="bc-item bc-sep" role="presentation" aria-hidden="true"><svg><use href="#i-chevron-right"/></svg></li>
+          <li class="bc-item"><a class="bc-link s-focus" href="#">Focused</a></li>
+          <li class="bc-item bc-sep" role="presentation" aria-hidden="true"><svg><use href="#i-chevron-right"/></svg></li>
+          <li class="bc-item"><span class="bc-page" role="link" aria-disabled="true" aria-current="page">Current</span></li>
+        </ol>
+      </nav>
+    </section>
+
+    <section class="demo">
+      <p class="grp-label">Wrapping - many crumbs, narrow container (220px)</p>
+      <div style="inline-size:220px;max-inline-size:100%">
+        <nav aria-label="breadcrumb">
+          <ol class="bc-list">
+            <li class="bc-item"><a class="bc-link" href="#">Home</a></li>
+            <li class="bc-item bc-sep" role="presentation" aria-hidden="true"><svg><use href="#i-chevron-right"/></svg></li>
+            <li class="bc-item"><a class="bc-link" href="#">Workspaces</a></li>
+            <li class="bc-item bc-sep" role="presentation" aria-hidden="true"><svg><use href="#i-chevron-right"/></svg></li>
+            <li class="bc-item"><a class="bc-link" href="#">Acme Corp</a></li>
+            <li class="bc-item bc-sep" role="presentation" aria-hidden="true"><svg><use href="#i-chevron-right"/></svg></li>
+            <li class="bc-item"><span class="bc-page" role="link" aria-disabled="true" aria-current="page">Q3 Roadmap</span></li>
+          </ol>
+        </nav>
+      </div>
+    </section>
+
+  </main>
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Combobox - states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  /* === Trigger (Button outline) ========================================== */
+  .trg{
+    display:inline-flex;align-items:center;justify-content:space-between;gap:var(--space-2);
+    inline-size:100%;border:1px solid var(--button-outline-border);
+    background:var(--button-outline-bg);color:var(--button-outline-text);
+    border-radius:var(--button-radius);font-weight:var(--font-weight-regular);
+    font-family:inherit;font-size:var(--font-size-base);
+    block-size:var(--control-md);padding-inline:var(--space-4);
+    transition:background-color var(--duration-fast) var(--ease-out),box-shadow var(--duration-fast) var(--ease-out);
+    cursor:pointer;outline:none;
+  }
+  .trg:hover{background:var(--button-outline-bg-hover)}
+  .trg:focus-visible,.trg.s-focus{box-shadow:var(--button-focus-ring)}
+  .trg:disabled,.trg[aria-disabled="true"]{opacity:.5;pointer-events:none;cursor:not-allowed}
+  .trg__label{flex:1;min-inline-size:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:start}
+  /* Harness shows placeholder as a <span>; spans need full 4.5:1 contrast (no
+     WCAG placeholder exemption). Real component uses --text-tertiary on <input>
+     placeholder which is exempt. Use --text-secondary here for gate compliance. */
+  .trg__label--placeholder{color:var(--text-secondary)}
+  .trg svg{inline-size:var(--icon-sm);block-size:var(--icon-sm);opacity:.5;flex:none;stroke:currentColor;fill:none;stroke-width:2}
+
+  /* === Popover panel (PopoverContent shape) ============================== */
+  .pop{
+    inline-size:min(240px,100%);background:var(--surface-card);color:var(--text-primary);
+    border:1px solid var(--border-default);border-radius:var(--radius-md);
+    box-shadow:var(--shadow-lg);padding:0;overflow:hidden;
+  }
+
+  /* === Command (subset of command.tsx, just what combobox needs) ========= */
+  .cmd{display:flex;flex-direction:column}
+  .cmd__inputwrap{
+    display:flex;align-items:center;gap:var(--space-2);
+    block-size:var(--control-sm);padding-inline:var(--space-3);
+    border-block-end:1px solid var(--border-default);
+  }
+  .cmd__inputwrap svg{inline-size:var(--icon-sm);block-size:var(--icon-sm);opacity:.5;flex:none;stroke:currentColor;fill:none;stroke-width:2}
+  .cmd__input{
+    flex:1;min-inline-size:0;background:transparent;border:0;outline:none;
+    block-size:var(--control-md);padding-block:var(--space-3);
+    font-size:var(--font-size-sm);font-family:inherit;color:var(--text-primary);
+  }
+  .cmd__input::placeholder{color:var(--text-tertiary)}
+  .cmd__list{max-block-size:var(--command-list-max-h);overflow-y:auto;overflow-x:hidden}
+  .cmd__group{padding:var(--space-1)}
+  .cmd__item{
+    position:relative;display:flex;align-items:center;gap:var(--space-2);
+    border-radius:var(--radius-sm);padding:var(--space-1-5) var(--space-2);
+    font-size:var(--font-size-sm);color:var(--text-primary);outline:none;
+    -webkit-user-select:none;user-select:none;cursor:default;
+  }
+  .cmd__item[data-selected="true"]{background:var(--interactive-selected-bg);color:var(--interactive-selected-text)}
+  .cmd__item[data-disabled="true"]{opacity:.5;pointer-events:none}
+  .cmd__check{margin-inline-start:auto;inline-size:var(--icon-sm);block-size:var(--icon-sm);flex:none;stroke:currentColor;fill:none;stroke-width:2}
+  .cmd__check--off{opacity:0}
+  .cmd__check--on{opacity:1}
+  .cmd__empty{padding-block:var(--space-6);text-align:center;font-size:var(--font-size-sm);color:var(--text-secondary)}
+
+  /* === Harness chrome =================================================== */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);font-family:Inter,system-ui,sans-serif;padding:32px}
+  .stack{display:flex;flex-direction:column;gap:32px;max-width:680px;margin:0 auto}
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0 0 8px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+  .field{display:flex;flex-direction:column;gap:var(--space-1-5);max-inline-size:240px}
+  .lbl{font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);color:var(--text-primary)}
+  .row{display:flex;flex-wrap:wrap;gap:var(--space-6);align-items:flex-start}
+  .anchor{position:relative;display:inline-block;inline-size:min(240px,100%)}
+  .anchor .pop{position:absolute;inset-inline-start:0;inset-block-start:calc(100% + var(--space-1))}
+  .demo{padding:16px;border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--surface-card)}
+</style>
+</head>
+<body>
+  <main class="stack">
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <symbol id="i-chevrons-up-down" viewBox="0 0 24 24"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></symbol>
+      <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+    </svg>
+
+    <section>
+      <p class="grp-label">Trigger states - closed</p>
+      <div class="row">
+        <div class="field">
+          <label class="lbl" for="cb-empty">Framework</label>
+          <button id="cb-empty" type="button" class="trg" aria-haspopup="dialog" aria-expanded="false" aria-controls="cb-empty-pop">
+            <span class="trg__label trg__label--placeholder">Select framework...</span>
+            <svg aria-hidden="true"><use href="#i-chevrons-up-down"/></svg>
+          </button>
+        </div>
+        <div class="field">
+          <label class="lbl" for="cb-value">Framework</label>
+          <button id="cb-value" type="button" class="trg" aria-haspopup="dialog" aria-expanded="false">
+            <span class="trg__label">Next.js</span>
+            <svg aria-hidden="true"><use href="#i-chevrons-up-down"/></svg>
+          </button>
+        </div>
+        <div class="field">
+          <label class="lbl" for="cb-focus">Focused (forced)</label>
+          <button id="cb-focus" type="button" class="trg s-focus" aria-haspopup="dialog" aria-expanded="false">
+            <span class="trg__label">SvelteKit</span>
+            <svg aria-hidden="true"><use href="#i-chevrons-up-down"/></svg>
+          </button>
+        </div>
+        <div class="field">
+          <label class="lbl" for="cb-dis">Disabled</label>
+          <button id="cb-dis" type="button" class="trg" aria-haspopup="dialog" aria-expanded="false" disabled>
+            <span class="trg__label trg__label--placeholder">Select framework...</span>
+            <svg aria-hidden="true"><use href="#i-chevrons-up-down"/></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="demo">
+      <p class="grp-label">Open - selected value highlighted, one item is active descendant</p>
+      <div class="anchor">
+        <button type="button" class="trg" aria-label="Framework: Next.js" aria-haspopup="dialog" aria-expanded="true" aria-controls="cb-panel-1">
+          <span class="trg__label" aria-hidden="true">Next.js</span>
+          <svg aria-hidden="true"><use href="#i-chevrons-up-down"/></svg>
+        </button>
+        <div class="pop" id="cb-panel-1" role="dialog" aria-label="Framework search">
+          <div class="cmd" data-slot="command">
+            <div class="cmd__inputwrap" data-slot="command-input-wrapper">
+              <svg aria-hidden="true"><use href="#i-search"/></svg>
+              <input class="cmd__input" data-slot="command-input" role="combobox" aria-expanded="true" aria-controls="cb-list-1" aria-autocomplete="list" placeholder="Search framework..." aria-label="Search framework" />
+            </div>
+            <div class="cmd__list" id="cb-list-1" data-slot="command-list" role="listbox" aria-label="Frameworks">
+              <div class="cmd__group" data-slot="command-group">
+                <div class="cmd__item" data-slot="command-item" role="option" aria-selected="true">
+                  Next.js<svg class="cmd__check cmd__check--on"><use href="#i-check"/></svg>
+                </div>
+                <div class="cmd__item" data-slot="command-item" role="option" aria-selected="false" data-selected="true" id="cb-item-svelte">
+                  SvelteKit<svg class="cmd__check cmd__check--off"><use href="#i-check"/></svg>
+                </div>
+                <div class="cmd__item" data-slot="command-item" role="option" aria-selected="false">
+                  Nuxt.js<svg class="cmd__check cmd__check--off"><use href="#i-check"/></svg>
+                </div>
+                <div class="cmd__item" data-slot="command-item" role="option" aria-selected="false">
+                  Remix<svg class="cmd__check cmd__check--off"><use href="#i-check"/></svg>
+                </div>
+                <div class="cmd__item" data-slot="command-item" role="option" aria-selected="false" data-disabled="true" aria-disabled="true">
+                  Astro (preview)<svg class="cmd__check cmd__check--off"><use href="#i-check"/></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="demo">
+      <p class="grp-label">Empty - no matches for the current search</p>
+      <div class="anchor">
+        <button type="button" class="trg" aria-label="Framework: none selected" aria-haspopup="dialog" aria-expanded="true" aria-controls="cb-panel-2">
+          <span class="trg__label trg__label--placeholder" aria-hidden="true">Select framework...</span>
+          <svg aria-hidden="true"><use href="#i-chevrons-up-down"/></svg>
+        </button>
+        <div class="pop" id="cb-panel-2" role="dialog" aria-label="Framework search">
+          <div class="cmd" data-slot="command">
+            <div class="cmd__inputwrap" data-slot="command-input-wrapper">
+              <svg aria-hidden="true"><use href="#i-search"/></svg>
+              <input class="cmd__input" data-slot="command-input" role="combobox" aria-expanded="true" aria-controls="cb-list-empty" aria-autocomplete="list" placeholder="Search framework..." value="xyz" aria-label="Search framework" />
+            </div>
+            <div class="cmd__list" id="cb-list-empty" data-slot="command-list" role="listbox" aria-label="Empty results" aria-hidden="true"></div>
+            <div class="cmd__empty" data-slot="command-empty" role="status" aria-live="polite">No framework found.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
