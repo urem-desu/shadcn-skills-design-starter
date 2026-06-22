@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Drawer - states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  /* ===== Button (mirrors button.tsx buttonVariants) ====================== */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);
+    white-space:nowrap;height:var(--control-md);padding-inline:var(--space-4);
+    border:0;border-radius:var(--button-radius);font-family:inherit;
+    font-size:var(--font-size-base);font-weight:var(--button-font-weight);
+    line-height:var(--line-normal);cursor:pointer;outline:none;
+    transition:background-color var(--transition-micro),color var(--transition-micro),box-shadow var(--transition-micro)}
+  .btn:focus-visible,.btn.is-focus{box-shadow:var(--button-focus-ring)}
+  .btn-block{width:100%}
+  .btn-primary{background:var(--button-primary-bg);color:var(--button-primary-text)}
+  .btn-primary:hover,.btn-primary.is-hover{background:var(--button-primary-bg-hover)}
+  .btn-primary:active{background:var(--button-primary-bg-active)}
+  .btn-outline{background:var(--button-outline-bg);color:var(--button-outline-text);
+    border:1px solid var(--button-outline-border)}
+  .btn-outline:hover,.btn-outline.is-hover{background:var(--button-outline-bg-hover)}
+
+  /* ===== Drawer (mirrors drawer.tsx, bottom direction) =================== */
+  .dw-scene{position:relative;overflow:hidden;border-radius:var(--radius-lg);
+    background:var(--surface-sunken);min-height:600px}
+  .dw-overlay{position:absolute;inset:0;background:var(--scrim)}
+  .dw-content{position:absolute;inset-inline:0;bottom:0;display:flex;flex-direction:column;
+    max-height:90%;background:var(--surface-card);color:var(--text-primary);
+    border-top:1px solid var(--border-default);
+    border-start-start-radius:var(--radius-lg);border-start-end-radius:var(--radius-lg);
+    box-shadow:var(--shadow-lg)}
+  .dw-handle{margin:var(--space-4) auto 0;height:var(--space-2);width:var(--drawer-handle-w);
+    border-radius:var(--radius-full);background:var(--border-default);flex:none}
+  .dw-inner{width:100%;max-width:var(--drawer-content-max-w);margin:0 auto}
+
+  .dw-header{display:flex;flex-direction:column;gap:var(--space-1-5);padding:var(--space-4);text-align:center}
+  .dw-title{margin:0;font-size:var(--font-size-base);font-weight:var(--font-weight-semibold);
+    line-height:var(--line-normal);color:var(--text-primary)}
+  .dw-desc{margin:0;font-size:var(--font-size-sm);line-height:var(--line-normal);color:var(--text-secondary)}
+
+  .dw-body{padding-inline:var(--space-4)}
+  .dw-stepper{display:flex;align-items:center;gap:var(--space-2)}
+  .dw-stepper__num{flex:1;text-align:center}
+  .dw-num{font-size:72px;font-weight:700;line-height:1;letter-spacing:-.02em;color:var(--text-primary)}
+  .dw-unit{margin-top:var(--space-0-5);font-size:var(--font-size-xs);text-transform:uppercase;
+    letter-spacing:.06em;color:var(--text-secondary)}
+  .dw-step{display:inline-flex;align-items:center;justify-content:center;flex:none;
+    width:var(--control-sm);height:var(--control-sm);border-radius:var(--radius-full);
+    border:1px solid var(--button-outline-border);background:var(--button-outline-bg);
+    color:var(--button-outline-text);cursor:pointer;outline:none;
+    transition:background-color var(--transition-micro),box-shadow var(--transition-micro)}
+  .dw-step:hover,.dw-step.is-hover{background:var(--button-outline-bg-hover)}
+  .dw-step:focus-visible,.dw-step.is-focus{box-shadow:var(--button-focus-ring)}
+  .dw-step svg{width:var(--icon-sm);height:var(--icon-sm);stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+  .dw-bars{display:flex;align-items:flex-end;justify-content:center;gap:var(--space-1-5);
+    height:80px;margin-top:var(--space-4);padding-inline:var(--space-2)}
+  .dw-bar{flex:1;max-width:var(--space-2);background:var(--text-primary);border-radius:var(--radius-sm)}
+
+  .dw-footer{display:flex;flex-direction:column;gap:var(--space-2);padding:var(--space-4);margin-top:auto}
+
+  /* ===== harness chrome ================================================== */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);
+    font-family:Inter,system-ui,-apple-system,sans-serif;padding:32px}
+  .stack{display:flex;flex-direction:column;gap:32px;max-width:640px;margin:0 auto}
+  .stack > section{min-inline-size:0}
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0 0 8px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+</style>
+</head>
+<body>
+  <main class="stack">
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
+    </svg>
+
+    <section>
+      <p class="grp-label">Trigger (closed)</p>
+      <button class="btn btn-outline" type="button" aria-haspopup="dialog">Open Drawer</button>
+    </section>
+
+    <section>
+      <p class="grp-label">Open - bottom drawer (Move Goal)</p>
+      <div class="dw-scene">
+        <div class="dw-overlay"></div>
+        <div class="dw-content" role="dialog" aria-modal="true" aria-labelledby="dwt1" aria-describedby="dwd1">
+          <div class="dw-handle" aria-hidden="true"></div>
+          <div class="dw-inner">
+            <div class="dw-header">
+              <h2 class="dw-title" id="dwt1">Move Goal</h2>
+              <p class="dw-desc" id="dwd1">Set your daily activity goal.</p>
+            </div>
+            <div class="dw-body">
+              <div class="dw-stepper">
+                <button class="dw-step" type="button" aria-label="Decrease"><svg aria-hidden="true"><use href="#i-minus"/></svg></button>
+                <div class="dw-stepper__num">
+                  <div class="dw-num">350</div>
+                  <div class="dw-unit">Calories/day</div>
+                </div>
+                <button class="dw-step" type="button" aria-label="Increase"><svg aria-hidden="true"><use href="#i-plus"/></svg></button>
+              </div>
+              <div class="dw-bars" aria-hidden="true">
+                <div class="dw-bar" style="height:78%"></div>
+                <div class="dw-bar" style="height:52%"></div>
+                <div class="dw-bar" style="height:40%"></div>
+                <div class="dw-bar" style="height:46%"></div>
+                <div class="dw-bar" style="height:58%"></div>
+                <div class="dw-bar" style="height:64%"></div>
+                <div class="dw-bar" style="height:44%"></div>
+                <div class="dw-bar" style="height:56%"></div>
+                <div class="dw-bar" style="height:62%"></div>
+                <div class="dw-bar" style="height:48%"></div>
+                <div class="dw-bar" style="height:54%"></div>
+                <div class="dw-bar" style="height:72%"></div>
+              </div>
+            </div>
+            <div class="dw-footer">
+              <button class="btn btn-primary btn-block" type="button">Submit</button>
+              <button class="btn btn-outline btn-block" type="button">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <p class="grp-label">Focus / hover - increase focused, Submit focused, Cancel hover</p>
+      <div class="dw-scene">
+        <div class="dw-overlay"></div>
+        <div class="dw-content" role="dialog" aria-modal="true" aria-labelledby="dwt2" aria-describedby="dwd2">
+          <div class="dw-handle" aria-hidden="true"></div>
+          <div class="dw-inner">
+            <div class="dw-header">
+              <h2 class="dw-title" id="dwt2">Move Goal</h2>
+              <p class="dw-desc" id="dwd2">Set your daily activity goal.</p>
+            </div>
+            <div class="dw-body">
+              <div class="dw-stepper">
+                <button class="dw-step" type="button" aria-label="Decrease"><svg aria-hidden="true"><use href="#i-minus"/></svg></button>
+                <div class="dw-stepper__num">
+                  <div class="dw-num">400</div>
+                  <div class="dw-unit">Calories/day</div>
+                </div>
+                <button class="dw-step is-focus" type="button" aria-label="Increase"><svg aria-hidden="true"><use href="#i-plus"/></svg></button>
+              </div>
+            </div>
+            <div class="dw-footer">
+              <button class="btn btn-primary btn-block is-focus" type="button">Submit</button>
+              <button class="btn btn-outline btn-block is-hover" type="button">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

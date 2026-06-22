@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Date Picker - states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  /* === Date Picker (mirrors date-picker.tsx) ============================== */
+  .dp{display:flex;flex-direction:column;gap:var(--space-2);inline-size:fit-content;max-inline-size:100%}
+  .dp__label{font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);color:var(--text-primary)}
+
+  /* Trigger = Button outline md, justify-between, fixed width, regular weight */
+  .dp__trigger{
+    display:inline-flex;align-items:center;justify-content:space-between;gap:var(--space-2);
+    inline-size:var(--date-picker-trigger-w);max-inline-size:100%;
+    block-size:var(--control-md);padding-inline:var(--space-4);
+    border:1px solid var(--button-outline-border);background:var(--button-outline-bg);
+    color:var(--button-outline-text);border-radius:var(--button-radius);
+    font-family:inherit;font-size:var(--font-size-base);font-weight:var(--font-weight-regular);
+    white-space:nowrap;cursor:pointer;outline:none;
+    transition:background-color var(--transition-micro),box-shadow var(--transition-micro),border-color var(--transition-micro)}
+  .dp__trigger:hover{background:var(--button-outline-bg-hover)}
+  .dp__trigger:focus-visible{box-shadow:var(--button-focus-ring)}
+  .dp__trigger:disabled{pointer-events:none;opacity:.5}
+  .dp__trigger svg{flex:none;inline-size:var(--icon-md);block-size:var(--icon-md);
+    stroke:var(--text-secondary);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+  /* Popover surface (provides border/radius/shadow; calendar inside is borderless) */
+  .dp__pop{
+    inline-size:fit-content;max-inline-size:100%;
+    border:1px solid var(--border-default);border-radius:var(--radius-lg);
+    background:var(--surface-card);box-shadow:var(--shadow-md);overflow:hidden}
+
+  /* === Calendar (mirrors calendar.tsx; borderless inside the popover) ====== */
+  .cal{--cell-size:var(--control-sm);background:var(--surface-card);padding:var(--space-3);
+    inline-size:fit-content;max-inline-size:100%;font-family:inherit;color:var(--text-primary)}
+  .cal__months{display:flex;flex-direction:column;gap:var(--space-4);position:relative}
+  .cal__month{display:flex;flex-direction:column;gap:var(--space-4);inline-size:100%}
+  .cal__nav{position:absolute;inset-inline:0;top:0;display:flex;inline-size:100%;
+    align-items:center;justify-content:space-between;gap:var(--space-1)}
+  .cal__dropdowns{display:flex;block-size:var(--cell-size);inline-size:100%;
+    align-items:center;justify-content:center;gap:var(--space-1-5);
+    font-size:var(--font-size-sm);font-weight:var(--font-weight-medium)}
+  .cal__dd{position:relative;display:inline-flex;align-items:center;gap:var(--space-1);
+    block-size:var(--control-sm);padding-inline:var(--space-2);
+    border:1px solid var(--border-default);border-radius:var(--radius-md);
+    box-shadow:var(--shadow-sm);background:var(--surface-card);color:var(--text-primary);
+    font-family:inherit;font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);cursor:pointer}
+  .cal__dd svg{inline-size:var(--icon-xs);block-size:var(--icon-xs);color:var(--text-secondary)}
+  .cal__dd:focus-within{border-color:var(--border-focus);box-shadow:var(--focus-ring)}
+
+  .btn{display:inline-flex;align-items:center;justify-content:center;border:0;cursor:pointer;
+    font-family:inherit;background:transparent;color:var(--text-primary);
+    border-radius:var(--button-radius);transition:background-color var(--duration-fast) var(--ease-out);
+    outline:none;block-size:var(--cell-size);inline-size:var(--cell-size);padding:0}
+  .btn:hover{background:var(--action-secondary)}
+  .btn:focus-visible{box-shadow:var(--button-focus-ring)}
+  .btn svg{inline-size:var(--icon-sm);block-size:var(--icon-sm);stroke:currentColor;fill:none;stroke-width:2}
+
+  .cal__table{inline-size:100%;border-collapse:collapse}
+  .cal__weekdays{display:flex}
+  .cal__weekday{flex:1;border-radius:var(--radius-md);font-size:var(--font-size-xs);
+    font-weight:var(--font-weight-regular);color:var(--text-secondary);text-align:center;
+    -webkit-user-select:none;user-select:none}
+  .cal__week{margin-block-start:var(--space-2);display:flex;inline-size:100%}
+  .cal__cell{flex:1;position:relative;aspect-ratio:1/1;padding:0;text-align:center}
+  .day{display:flex;align-items:center;justify-content:center;aspect-ratio:1/1;inline-size:100%;
+    min-inline-size:var(--cell-size);background:transparent;border:0;cursor:pointer;
+    font-family:inherit;color:var(--text-primary);font-size:var(--font-size-sm);
+    font-weight:var(--font-weight-regular);line-height:1;
+    transition:background-color var(--duration-fast) var(--ease-out);
+    outline:none;border-radius:var(--radius-md)}
+  .day:hover{background:var(--action-secondary)}
+  .day:focus-visible,.day.s-focus{position:relative;z-index:10;box-shadow:var(--focus-ring)}
+  .day.outside{color:var(--text-secondary)}
+  .day.disabled{opacity:.5;pointer-events:none;cursor:not-allowed}
+  .day.today{background:var(--action-secondary);color:var(--text-primary)}
+  .day.selected-single{background:var(--action-primary);color:var(--text-on-action)}
+  .day.selected-single:hover{background:var(--action-primary-hover)}
+
+  /* === Harness chrome ===================================================== */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);font-family:Inter,system-ui,sans-serif;padding:32px}
+  .stack{display:flex;flex-direction:column;gap:32px;max-width:680px;margin:0 auto}
+  .stack > section{min-inline-size:0}
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0 0 8px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+</style>
+</head>
+<body>
+  <main class="stack">
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <symbol id="i-chevron-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></symbol>
+      <symbol id="i-chevron-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></symbol>
+      <symbol id="i-chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></symbol>
+    </svg>
+
+    <!-- Section 1: Default (closed) -->
+    <section>
+      <p class="grp-label">Default - no date selected (closed)</p>
+      <div class="dp">
+        <label class="dp__label" for="dp-dob-1">Date of Birth</label>
+        <button id="dp-dob-1" type="button" class="dp__trigger" aria-haspopup="dialog" aria-expanded="false">
+          Select a date
+          <svg aria-hidden="true"><use href="#i-chevron-down"/></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- Section 2: Open - popover with dropdown-caption calendar, June 2025, 25 selected -->
+    <section>
+      <p class="grp-label">Open - calendar popover (dropdown caption, 25 selected)</p>
+      <div class="dp">
+        <label class="dp__label" for="dp-dob-2">Date of Birth</label>
+        <button id="dp-dob-2" type="button" class="dp__trigger" aria-haspopup="dialog" aria-expanded="true">
+          Select a date
+          <svg aria-hidden="true"><use href="#i-chevron-down"/></svg>
+        </button>
+        <div class="dp__pop" role="dialog" aria-label="Choose date">
+          <div class="cal" data-slot="calendar" role="application" aria-label="Calendar June 2025">
+            <div class="cal__months">
+              <div class="cal__nav">
+                <button type="button" class="btn" aria-label="Previous month"><svg><use href="#i-chevron-left"/></svg></button>
+                <button type="button" class="btn" aria-label="Next month"><svg><use href="#i-chevron-right"/></svg></button>
+              </div>
+              <div class="cal__month">
+                <div class="cal__dropdowns">
+                  <button type="button" class="cal__dd" aria-label="Choose month"><span>Jun</span><svg><use href="#i-chevron-down"/></svg></button>
+                  <button type="button" class="cal__dd" aria-label="Choose year"><span>2025</span><svg><use href="#i-chevron-down"/></svg></button>
+                </div>
+                <table class="cal__table" role="grid" aria-label="June 2025">
+                  <thead>
+                    <tr class="cal__weekdays">
+                      <th class="cal__weekday" scope="col">Su</th>
+                      <th class="cal__weekday" scope="col">Mo</th>
+                      <th class="cal__weekday" scope="col">Tu</th>
+                      <th class="cal__weekday" scope="col">We</th>
+                      <th class="cal__weekday" scope="col">Th</th>
+                      <th class="cal__weekday" scope="col">Fr</th>
+                      <th class="cal__weekday" scope="col">Sa</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="cal__week">
+                      <td class="cal__cell"><button type="button" class="day">1</button></td>
+                      <td class="cal__cell"><button type="button" class="day">2</button></td>
+                      <td class="cal__cell"><button type="button" class="day">3</button></td>
+                      <td class="cal__cell"><button type="button" class="day">4</button></td>
+                      <td class="cal__cell"><button type="button" class="day">5</button></td>
+                      <td class="cal__cell"><button type="button" class="day">6</button></td>
+                      <td class="cal__cell"><button type="button" class="day">7</button></td>
+                    </tr>
+                    <tr class="cal__week">
+                      <td class="cal__cell"><button type="button" class="day">8</button></td>
+                      <td class="cal__cell"><button type="button" class="day">9</button></td>
+                      <td class="cal__cell"><button type="button" class="day">10</button></td>
+                      <td class="cal__cell"><button type="button" class="day">11</button></td>
+                      <td class="cal__cell"><button type="button" class="day">12</button></td>
+                      <td class="cal__cell"><button type="button" class="day">13</button></td>
+                      <td class="cal__cell"><button type="button" class="day">14</button></td>
+                    </tr>
+                    <tr class="cal__week">
+                      <td class="cal__cell"><button type="button" class="day">15</button></td>
+                      <td class="cal__cell"><button type="button" class="day">16</button></td>
+                      <td class="cal__cell"><button type="button" class="day">17</button></td>
+                      <td class="cal__cell"><button type="button" class="day">18</button></td>
+                      <td class="cal__cell"><button type="button" class="day">19</button></td>
+                      <td class="cal__cell"><button type="button" class="day">20</button></td>
+                      <td class="cal__cell"><button type="button" class="day">21</button></td>
+                    </tr>
+                    <tr class="cal__week">
+                      <td class="cal__cell"><button type="button" class="day">22</button></td>
+                      <td class="cal__cell"><button type="button" class="day">23</button></td>
+                      <td class="cal__cell"><button type="button" class="day">24</button></td>
+                      <td class="cal__cell" aria-selected="true"><button type="button" class="day selected-single" aria-current="date">25</button></td>
+                      <td class="cal__cell"><button type="button" class="day">26</button></td>
+                      <td class="cal__cell"><button type="button" class="day">27</button></td>
+                      <td class="cal__cell"><button type="button" class="day">28</button></td>
+                    </tr>
+                    <tr class="cal__week">
+                      <td class="cal__cell"><button type="button" class="day">29</button></td>
+                      <td class="cal__cell"><button type="button" class="day">30</button></td>
+                      <td class="cal__cell"><button type="button" class="day outside disabled" aria-disabled="true">1</button></td>
+                      <td class="cal__cell"><button type="button" class="day outside disabled" aria-disabled="true">2</button></td>
+                      <td class="cal__cell"><button type="button" class="day outside disabled" aria-disabled="true">3</button></td>
+                      <td class="cal__cell"><button type="button" class="day outside disabled" aria-disabled="true">4</button></td>
+                      <td class="cal__cell"><button type="button" class="day outside disabled" aria-disabled="true">5</button></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Selected (closed, value committed) + Disabled -->
+    <section>
+      <p class="grp-label">Selected value (closed) and disabled</p>
+      <div style="display:flex;flex-wrap:wrap;gap:20px;align-items:flex-end">
+        <div class="dp">
+          <label class="dp__label" for="dp-dob-3">Date of Birth</label>
+          <button id="dp-dob-3" type="button" class="dp__trigger" aria-haspopup="dialog" aria-expanded="false">
+            6/25/2025
+            <svg aria-hidden="true"><use href="#i-chevron-down"/></svg>
+          </button>
+        </div>
+        <div class="dp">
+          <label class="dp__label" for="dp-dob-4">Date of Birth</label>
+          <button id="dp-dob-4" type="button" class="dp__trigger" aria-haspopup="dialog" aria-expanded="false" disabled>
+            Select a date
+            <svg aria-hidden="true"><use href="#i-chevron-down"/></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

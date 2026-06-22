@@ -152,6 +152,26 @@
      fail lint_hardcodes. Everything else (typography, surface, item radius,
      selection treatment, shortcut chip) maps to semantic/primitive tokens. */
   --command-list-max-h:300px;                                 /* shadcn max-h-[300px] */
+
+  /* Data Table: hybrid - zero color/geometry tokens (Table surface maps to
+     surface-card / border-default / text-primary / surface-sunken row-hover /
+     action-secondary selected-row; toolbar + pagination reuse the Button + Input
+     atoms). The one seam is the toolbar filter width (a bare px would fail
+     lint_hardcodes, and there is no scale token at 384). */
+  --data-table-filter-max-w:384px;                            /* Figma filter input width */
+
+  /* Date Picker: hybrid - composes Label + Button (outline trigger) + Calendar
+     (captionLayout="dropdown") inside a colocated Popover; every value maps to an
+     existing semantic/primitive. The one seam is the trigger width (Figma w-48 /
+     192px; a bare px would fail lint_hardcodes and no scale token sits at 192). */
+  --date-picker-trigger-w:192px;                              /* Figma trigger width (w-48) */
+
+  /* Drawer: hybrid - Vaul bottom/side sheet reusing --scrim + surface-card /
+     border-default / text-primary / text-secondary + the space/radius/shadow
+     scales. Two seams (bare px, no token to point at): the drag-handle width and
+     the centered content max-width (shadcn max-w-sm). */
+  --drawer-handle-w:100px;                                    /* shadcn handle w-[100px] */
+  --drawer-content-max-w:384px;                               /* shadcn max-w-sm */
 }
 
 /* ---- Dark mode: SEMANTIC overrides only -------------------------------- */

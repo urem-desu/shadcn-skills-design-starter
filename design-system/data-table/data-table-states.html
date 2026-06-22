@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Data Table - states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  /* === Data Table surface (mirrors data-table.tsx) ======================== */
+  .dt{inline-size:100%;max-inline-size:640px;margin:0 auto}
+
+  /* Toolbar: filter input + Columns menu trigger */
+  .dt__toolbar{display:flex;align-items:center;justify-content:space-between;
+    gap:var(--space-2);padding-block:var(--space-4)}
+  .dt__filter{
+    block-size:var(--control-md);inline-size:100%;min-inline-size:0;
+    max-inline-size:var(--data-table-filter-max-w);
+    border:1px solid var(--field-border);border-radius:var(--field-radius);
+    padding-inline:var(--space-3);background:var(--field-bg);color:var(--field-text);
+    font-size:var(--font-size-base);font-family:inherit;outline:none;
+    transition:border-color var(--transition-micro),box-shadow var(--transition-micro)}
+  .dt__filter::placeholder{color:var(--field-placeholder)}
+  .dt__filter:hover{border-color:var(--field-border-hover)}
+  .dt__filter:focus-visible{border-color:var(--field-border-focus);box-shadow:var(--field-focus-ring)}
+
+  /* Buttons (reuse the Button atom's token map) */
+  .dt__btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);
+    white-space:nowrap;border-radius:var(--button-radius);font-weight:var(--font-weight-medium);
+    font-family:inherit;cursor:pointer;outline:none;
+    transition:background-color var(--transition-micro),box-shadow var(--transition-micro),border-color var(--transition-micro)}
+  .dt__btn:focus-visible{box-shadow:var(--button-focus-ring)}
+  .dt__btn:disabled{pointer-events:none;opacity:.5}
+  .dt__btn svg{flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .dt__btn--outline{border:1px solid var(--button-outline-border);background:var(--button-outline-bg);color:var(--button-outline-text)}
+  .dt__btn--outline:hover{background:var(--button-outline-bg-hover)}
+  .dt__btn--ghost{border:1px solid transparent;background:var(--button-ghost-bg);color:var(--button-ghost-text)}
+  .dt__btn--ghost:hover{background:var(--button-ghost-bg-hover)}
+  .dt__btn--md{block-size:var(--control-md);padding-inline:var(--space-4);font-size:var(--font-size-base)}
+  .dt__btn--md svg{inline-size:var(--icon-md);block-size:var(--icon-md)}
+  .dt__btn--sm{block-size:var(--control-sm);padding-inline:var(--space-3);font-size:var(--font-size-sm)}
+  .dt__btn--sm svg{inline-size:var(--icon-sm);block-size:var(--icon-sm)}
+  .dt__btn--icon{block-size:var(--control-sm);inline-size:var(--control-sm);padding:0}
+  .dt__btn--icon svg{inline-size:var(--icon-sm);block-size:var(--icon-sm);fill:currentColor;stroke:none}
+  .dt__sort{margin-inline-start:calc(var(--space-3) * -1)}
+
+  /* Table */
+  .dt__tablewrap{border:1px solid var(--border-default);border-radius:var(--radius-md);
+    background:var(--surface-card);overflow:hidden}
+  .dt__scroll{position:relative;inline-size:100%;overflow-x:auto} /* relative = containing block so sr-only spans clip here, not at <html> */
+  .dt__table{inline-size:100%;border-collapse:collapse;
+    font-size:var(--font-size-sm);color:var(--text-primary)}
+  .dt__table th{block-size:var(--control-md);padding-inline:var(--space-2);
+    text-align:start;vertical-align:middle;font-weight:var(--font-weight-medium);
+    color:var(--text-primary);white-space:nowrap}
+  .dt__table thead tr{border-block-end:1px solid var(--border-default)}
+  .dt__table tbody tr{border-block-end:1px solid var(--border-default);
+    transition:background-color var(--transition-micro)}
+  .dt__table tbody tr:last-child{border-block-end:0}
+  .dt__table tbody tr:hover{background:var(--surface-sunken)}
+  .dt__table tbody tr[data-state="selected"]{background:var(--action-secondary)}
+  .dt__table td{padding:var(--space-3) var(--space-2);vertical-align:middle;color:var(--text-primary)}
+  .dt__cell-check{inline-size:1px;padding-inline-start:var(--space-2)}
+  .dt__cell-actions{inline-size:1px;text-align:end}
+  .dt__num{text-align:end;font-variant-numeric:tabular-nums}
+
+  /* Checkbox (thin custom control, identical to the Checkbox atom) */
+  .dt__cbx{position:relative;display:inline-grid;place-items:center;flex:none;vertical-align:middle;
+    inline-size:var(--control-box-size);block-size:var(--control-box-size)}
+  .dt__cbx input{position:absolute;inset:0;margin:0;opacity:0;cursor:pointer}
+  .dt__cbx input:disabled{cursor:not-allowed}
+  .dt__cbx__box{pointer-events:none;inline-size:100%;block-size:100%;display:grid;place-items:center;
+    border:1.5px solid var(--control-box-border);border-radius:var(--checkbox-radius);background:var(--control-box-bg);
+    transition:background-color var(--transition-micro),border-color var(--transition-micro),box-shadow var(--transition-micro)}
+  .dt__cbx__box svg{inline-size:.62rem;block-size:.62rem;stroke:var(--control-checked-mark);fill:none;
+    stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .dt__cbx__box svg path{opacity:0}
+  .dt__cbx input:checked + .dt__cbx__box,
+  .dt__cbx input:indeterminate + .dt__cbx__box{background:var(--control-checked-bg);border-color:var(--control-checked-bg)}
+  .dt__cbx input:checked + .dt__cbx__box .check{opacity:1}
+  .dt__cbx input:indeterminate + .dt__cbx__box .dash{opacity:1}
+  .dt__cbx input:focus-visible + .dt__cbx__box{box-shadow:var(--focus-ring)}
+
+  /* Footer: selection count + pagination */
+  .dt__footer{display:flex;align-items:center;justify-content:flex-end;
+    gap:var(--space-2);padding-block:var(--space-4)}
+  .dt__count{flex:1;min-inline-size:0;font-size:var(--font-size-sm);color:var(--text-secondary)}
+
+  .sr-only{position:absolute;inline-size:1px;block-size:1px;padding:0;margin:-1px;
+    overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+  /* === Harness chrome ===================================================== */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);font-family:Inter,system-ui,sans-serif;padding:32px}
+  .stack{display:flex;flex-direction:column;gap:32px;max-width:720px;margin:0 auto}
+  .stack > section{min-inline-size:0} /* let the table's overflow-x scroll box clip instead of pushing page width */
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0 0 8px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+</style>
+</head>
+<body>
+  <main class="stack">
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+      <symbol id="i-arrow-up-down" viewBox="0 0 24 24"><path d="m21 16-4 4-4-4"/><path d="M17 20V4"/><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/></symbol>
+      <symbol id="i-ellipsis" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/><circle cx="5" cy="12" r="1.6"/></symbol>
+    </svg>
+
+    <!-- Section 1: canonical Figma render (nothing selected, single page) -->
+    <section>
+      <p class="grp-label">Resting - 0 selected, single page</p>
+      <div class="dt">
+        <div class="dt__toolbar">
+          <input class="dt__filter" type="text" placeholder="Filter emails..." aria-label="Filter emails" />
+          <button class="dt__btn dt__btn--outline dt__btn--md" type="button" aria-haspopup="menu" aria-expanded="false">
+            Columns
+            <svg aria-hidden="true"><use href="#i-chevron-down"/></svg>
+          </button>
+        </div>
+
+        <div class="dt__tablewrap">
+          <div class="dt__scroll">
+            <table class="dt__table">
+              <thead>
+                <tr>
+                  <th class="dt__cell-check" scope="col">
+                    <span class="dt__cbx"><input type="checkbox" aria-label="Select all" /><span class="dt__cbx__box"><svg viewBox="0 0 16 16" aria-hidden="true"><path class="check" d="M13 4.5 6.5 11.5 3 8"/><path class="dash" d="M3.5 8h9"/></svg></span></span>
+                  </th>
+                  <th scope="col">Status</th>
+                  <th scope="col">
+                    <button class="dt__btn dt__btn--ghost dt__btn--sm dt__sort" type="button">
+                      Email
+                      <svg aria-hidden="true"><use href="#i-arrow-up-down"/></svg>
+                    </button>
+                  </th>
+                  <th class="dt__num" scope="col">Amount</th>
+                  <th class="dt__cell-actions" scope="col"><span class="sr-only">Actions</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="dt__cell-check"><span class="dt__cbx"><input type="checkbox" aria-label="Select row" /><span class="dt__cbx__box"><svg viewBox="0 0 16 16" aria-hidden="true"><path class="check" d="M13 4.5 6.5 11.5 3 8"/><path class="dash" d="M3.5 8h9"/></svg></span></span></td>
+                  <td>Success</td>
+                  <td>ken99@yahoo.com</td>
+                  <td class="dt__num">$316.00</td>
+                  <td class="dt__cell-actions"><button class="dt__btn dt__btn--ghost dt__btn--icon" type="button"><span class="sr-only">Open row actions</span><svg aria-hidden="true"><use href="#i-ellipsis"/></svg></button></td>
+                </tr>
+                <tr>
+                  <td class="dt__cell-check"><span class="dt__cbx"><input type="checkbox" aria-label="Select row" /><span class="dt__cbx__box"><svg viewBox="0 0 16 16" aria-hidden="true"><path class="check" d="M13 4.5 6.5 11.5 3 8"/><path class="dash" d="M3.5 8h9"/></svg></span></span></td>
+                  <td>Success</td>
+                  <td>abe45@gmail.com</td>
+                  <td class="dt__num">$242.00</td>
+                  <td class="dt__cell-actions"><button class="dt__btn dt__btn--ghost dt__btn--icon" type="button"><span class="sr-only">Open row actions</span><svg aria-hidden="true"><use href="#i-ellipsis"/></svg></button></td>
+                </tr>
+                <tr>
+                  <td class="dt__cell-check"><span class="dt__cbx"><input type="checkbox" aria-label="Select row" /><span class="dt__cbx__box"><svg viewBox="0 0 16 16" aria-hidden="true"><path class="check" d="M13 4.5 6.5 11.5 3 8"/><path class="dash" d="M3.5 8h9"/></svg></span></span></td>
+                  <td>Processing</td>
+                  <td>monserrat44@gmail.com</td>
+                  <td class="dt__num">$837.00</td>
+                  <td class="dt__cell-actions"><button class="dt__btn dt__btn--ghost dt__btn--icon" type="button"><span class="sr-only">Open row actions</span><svg aria-hidden="true"><use href="#i-ellipsis"/></svg></button></td>
+                </tr>
+                <tr>
+                  <td class="dt__cell-check"><span class="dt__cbx"><input type="checkbox" aria-label="Select row" /><span class="dt__cbx__box"><svg viewBox="0 0 16 16" aria-hidden="true"><path class="check" d="M13 4.5 6.5 11.5 3 8"/><path class="dash" d="M3.5 8h9"/></svg></span></span></td>
+                  <td>Success</td>
+                  <td>silas22@gmail.com</td>
+                  <td class="dt__num">$874.00</td>
+                  <td class="dt__cell-actions"><button class="dt__btn dt__btn--ghost dt__btn--icon" type="button"><span class="sr-only">Open row actions</span><svg aria-hidden="true"><use href="#i-ellipsis"/></svg></button></td>
+                </tr>
+                <tr>
+                  <td class="dt__cell-check"><span class="dt__cbx"><input type="checkbox" aria-label="Select row" /><span class="dt__cbx__box"><svg viewBox="0 0 16 16" aria-hidden="true"><path class="check" d="M13 4.5 6.5 11.5 3 8"/><path class="dash" d="M3.5 8h9"/></svg></span></span></td>
+                  <td>Failed</td>
+                  <td>carmella@hotmail.com</td>
+                  <td class="dt__num">$721.00</td>
+                  <td class="dt__cell-actions"><button class="dt__btn dt__btn--ghost dt__btn--icon" type="button"><span class="sr-only">Open row actions</span><svg aria-hidden="true"><use href="#i-ellipsis"/></svg></button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="dt__footer">
+          <div class="dt__count">0 of 5 row(s) selected.</div>
+          <button class="dt__btn dt__btn--outline dt__btn--sm" type="button" disabled>Previous</button>
+          <button class="dt__btn dt__btn--outline dt__btn--sm" type="button" disabled>Next</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: selection + sorted + paginated state -->
+    <section>
+      <p class="grp-label">Selected rows - 2 of 5, sorted by email, page 1 of 2</p>
+      <div class="dt">
+        <div class="dt__toolbar">
+          <input class="dt__filter" type="text" placeholder="Filter emails..." aria-label="Filter emails" value="@gmail" />
+          <button class="dt__btn dt__btn--outline dt__btn--md" type="button" aria-haspopup="menu" aria-expanded="false">
+            Columns
+            <svg aria-hidden="true"><use href="#i-chevron-down"/></svg>
+          </button>
+        </div>
+
+        <div class="dt__tablewrap">
+          <div class="dt__scroll">
+            <table class="dt__table">
+              <thead>
+                <tr>
+                  <th class="dt__cell-check" scope="col">
+                    <span class="dt__cbx"><input type="checkbox" id="dt-all" aria-label="Select all" /><span class="dt__cbx__box"><svg viewBox="0 0 16 16" aria-hidden="true"><path class="check" d="M13 4.5 6.5 11.5 3 8"/><path class="dash" d="M3.5 8h9"/></svg></span></span>
+                  </th>
+                  <th scope="col">Status</th>
+                  <th scope="col">
+                    <button class="dt__btn dt__btn--ghost dt__btn--sm dt__sort" type="button" aria-label="Sort by email ascending">
+                      Email
+                      <svg aria-hidden="true"><use href="#i-arrow-up-down"/></svg>
+                    </button>
+                  </th>
+                  <th class="dt__num" scope="col">Amount</th>
+                  <th class="dt__cell-actions" scope="col"><span class="sr-only">Actions</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr data-state="selected">
+                  <td class="dt__cell-check"><span class="dt__cbx"><input type="checkbox" checked aria-label="Select row" /><span class="dt__cbx__box"><svg viewBox="0 0 16 16" aria-hidden="true"><path class="check" d="M13 4.5 6.5 11.5 3 8"/><path class="dash" d="M3.5 8h9"/></svg></span></span></td>
+                  <td>Success</td>
+                  <td>abe45@gmail.com</td>
+                  <td class="dt__num">$242.00</td>
+                  <td class="dt__cell-actions"><button class="dt__btn dt__btn--ghost dt__btn--icon" type="button"><span class="sr-only">Open row actions</span><svg aria-hidden="true"><use href="#i-ellipsis"/></svg></button></td>
+                </tr>
+                <tr>
+                  <td class="dt__cell-check"><span class="dt__cbx"><input type="checkbox" aria-label="Select row" /><span class="dt__cbx__box"><svg viewBox="0 0 16 16" aria-hidden="true"><path class="check" d="M13 4.5 6.5 11.5 3 8"/><path class="dash" d="M3.5 8h9"/></svg></span></span></td>
+                  <td>Processing</td>
+                  <td>monserrat44@gmail.com</td>
+                  <td class="dt__num">$837.00</td>
+                  <td class="dt__cell-actions"><button class="dt__btn dt__btn--ghost dt__btn--icon" type="button"><span class="sr-only">Open row actions</span><svg aria-hidden="true"><use href="#i-ellipsis"/></svg></button></td>
+                </tr>
+                <tr data-state="selected">
+                  <td class="dt__cell-check"><span class="dt__cbx"><input type="checkbox" checked aria-label="Select row" /><span class="dt__cbx__box"><svg viewBox="0 0 16 16" aria-hidden="true"><path class="check" d="M13 4.5 6.5 11.5 3 8"/><path class="dash" d="M3.5 8h9"/></svg></span></span></td>
+                  <td>Success</td>
+                  <td>silas22@gmail.com</td>
+                  <td class="dt__num">$874.00</td>
+                  <td class="dt__cell-actions"><button class="dt__btn dt__btn--ghost dt__btn--icon" type="button"><span class="sr-only">Open row actions</span><svg aria-hidden="true"><use href="#i-ellipsis"/></svg></button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="dt__footer">
+          <div class="dt__count">2 of 5 row(s) selected.</div>
+          <button class="dt__btn dt__btn--outline dt__btn--sm" type="button" disabled>Previous</button>
+          <button class="dt__btn dt__btn--outline dt__btn--sm" type="button">Next</button>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script>
+    // select-all reflects a partial selection in section 2
+    var all = document.getElementById('dt-all');
+    if (all) all.indeterminate = true;
+  </script>
+</body>
+</html>

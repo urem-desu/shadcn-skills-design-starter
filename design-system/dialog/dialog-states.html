@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dialog - states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  /* ===== Button (mirrors button.tsx buttonVariants, size md) ============== */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);
+    white-space:nowrap;height:var(--control-md);padding-inline:var(--space-4);
+    border:0;border-radius:var(--button-radius);font-family:inherit;
+    font-size:var(--font-size-base);font-weight:var(--button-font-weight);
+    line-height:var(--line-normal);cursor:pointer;outline:none;
+    transition:background-color var(--transition-micro),color var(--transition-micro),box-shadow var(--transition-micro)}
+  .btn:focus-visible,.btn.is-focus{box-shadow:var(--button-focus-ring)}
+  .btn-primary{background:var(--button-primary-bg);color:var(--button-primary-text)}
+  .btn-primary:hover,.btn-primary.is-hover{background:var(--button-primary-bg-hover)}
+  .btn-primary:active{background:var(--button-primary-bg-active)}
+  .btn-secondary{background:var(--button-secondary-bg);color:var(--button-secondary-text)}
+  .btn-secondary:hover,.btn-secondary.is-hover{background:var(--button-secondary-bg-hover)}
+  .btn-secondary:active{background:var(--button-secondary-bg-active)}
+  .btn-outline{background:var(--button-outline-bg);color:var(--button-outline-text);
+    border:1px solid var(--button-outline-border)}
+  .btn-outline:hover,.btn-outline.is-hover{background:var(--button-outline-bg-hover)}
+
+  /* ===== Dialog (mirrors dialog.tsx) ===================================== */
+  .dlg-scene{position:relative;overflow:hidden;border-radius:var(--radius-lg);
+    background:var(--surface-sunken);min-height:380px;padding:var(--space-6);
+    display:flex;align-items:center;justify-content:center}
+  .dlg-overlay{position:absolute;inset:0;background:var(--scrim)}
+  .dlg-content{position:relative;display:flex;flex-direction:column;gap:var(--space-4);
+    width:100%;max-width:var(--dialog-max-w);
+    border:1px solid var(--border-default);background:var(--surface-card);
+    padding:var(--space-6);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg)}
+  .dlg-close{position:absolute;right:var(--space-4);top:var(--space-4);
+    display:inline-flex;align-items:center;justify-content:center;
+    border:0;background:transparent;color:var(--text-secondary);opacity:.7;
+    border-radius:var(--radius-sm);cursor:pointer;outline:none;padding:0;
+    transition:opacity var(--transition-micro),box-shadow var(--transition-micro)}
+  .dlg-close:hover,.dlg-close:focus-visible,.dlg-close.is-focus{opacity:1}
+  .dlg-close:focus-visible,.dlg-close.is-focus{box-shadow:var(--focus-ring)}
+  .dlg-close svg{width:var(--icon-sm);height:var(--icon-sm);stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .dlg-header{display:flex;flex-direction:column;gap:var(--space-2)}
+  .dlg-title{margin:0;font-size:var(--font-size-lg);font-weight:var(--font-weight-semibold);
+    line-height:var(--line-tight);color:var(--text-primary)}
+  .dlg-desc{margin:0;font-size:var(--font-size-sm);line-height:var(--line-normal);color:var(--text-secondary)}
+  .dlg-body{display:flex;flex-direction:column;gap:var(--space-4)}
+  .dlg-footer{display:flex;flex-direction:row;justify-content:flex-end;gap:var(--space-2)}
+
+  /* Form field (label + input) */
+  .field{display:flex;flex-direction:column;gap:var(--space-2)}
+  .field__label{font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);color:var(--text-primary)}
+  .field__input{height:var(--control-md);min-width:0;border:1px solid var(--field-border);
+    border-radius:var(--field-radius);padding-inline:var(--space-3);
+    background:var(--field-bg);color:var(--field-text);
+    font-size:var(--font-size-base);font-family:inherit;outline:none;
+    transition:border-color var(--transition-micro),box-shadow var(--transition-micro)}
+  .field__input:hover{border-color:var(--field-border-hover)}
+  .field__input:focus-visible,.field__input.is-focus{border-color:var(--field-border-focus);box-shadow:var(--field-focus-ring)}
+
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+  /* ===== harness chrome ================================================== */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);
+    font-family:Inter,system-ui,-apple-system,sans-serif;padding:32px}
+  .stack{display:flex;flex-direction:column;gap:32px;max-width:600px;margin:0 auto}
+  .stack > section{min-inline-size:0}
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0 0 8px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+</style>
+</head>
+<body>
+  <main class="stack">
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+    </svg>
+
+    <section>
+      <p class="grp-label">Trigger (closed)</p>
+      <button class="btn btn-outline" type="button" aria-haspopup="dialog">Edit profile</button>
+    </section>
+
+    <section>
+      <p class="grp-label">Open - Edit profile</p>
+      <div class="dlg-scene">
+        <div class="dlg-overlay"></div>
+        <div class="dlg-content" role="dialog" aria-modal="true" aria-labelledby="dt1" aria-describedby="dd1">
+          <button class="dlg-close" type="button"><svg aria-hidden="true"><use href="#i-x"/></svg><span class="sr-only">Close</span></button>
+          <div class="dlg-header">
+            <h2 class="dlg-title" id="dt1">Edit profile</h2>
+            <p class="dlg-desc" id="dd1">Make changes to your profile here. Click save when you're done.</p>
+          </div>
+          <div class="dlg-body">
+            <div class="field">
+              <label class="field__label" for="dlg-name">Name</label>
+              <input class="field__input" id="dlg-name" type="text" value="Pedro Duarte" />
+            </div>
+            <div class="field">
+              <label class="field__label" for="dlg-user">Username</label>
+              <input class="field__input" id="dlg-user" type="text" value="@peduarte" />
+            </div>
+          </div>
+          <div class="dlg-footer">
+            <button class="btn btn-secondary" type="button">Cancel</button>
+            <button class="btn btn-primary" type="button">Save Changes</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <p class="grp-label">Focus / hover - close focused, username focused, Save focused</p>
+      <div class="dlg-scene">
+        <div class="dlg-overlay"></div>
+        <div class="dlg-content" role="dialog" aria-modal="true" aria-labelledby="dt2" aria-describedby="dd2">
+          <button class="dlg-close is-focus" type="button"><svg aria-hidden="true"><use href="#i-x"/></svg><span class="sr-only">Close</span></button>
+          <div class="dlg-header">
+            <h2 class="dlg-title" id="dt2">Edit profile</h2>
+            <p class="dlg-desc" id="dd2">Make changes to your profile here. Click save when you're done.</p>
+          </div>
+          <div class="dlg-body">
+            <div class="field">
+              <label class="field__label" for="dlg-name2">Name</label>
+              <input class="field__input" id="dlg-name2" type="text" value="Pedro Duarte" />
+            </div>
+            <div class="field">
+              <label class="field__label" for="dlg-user2">Username</label>
+              <input class="field__input is-focus" id="dlg-user2" type="text" value="@peduarte" />
+            </div>
+          </div>
+          <div class="dlg-footer">
+            <button class="btn btn-secondary is-hover" type="button">Cancel</button>
+            <button class="btn btn-primary is-focus" type="button">Save Changes</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
