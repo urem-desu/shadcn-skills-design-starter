@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Menubar - states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  /* === Menubar seam ======================================================= */
+  :root { --menubar-trigger-px: 12px; }
+
+  /* === Menubar strip (mirrors menubar.tsx) ================================ */
+  .menubar{
+    display:flex;height:var(--control-sm);align-items:center;gap:var(--space-1);
+    border-radius:var(--radius-md);border:1px solid var(--border-default);
+    background:var(--surface-card);padding:0 var(--space-1);
+    box-shadow:var(--shadow-sm);
+  }
+  .mb-trigger{
+    display:flex;align-items:center;cursor:default;user-select:none;
+    border-radius:var(--radius-sm);
+    padding:var(--space-1) var(--menubar-trigger-px);
+    font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);
+    color:var(--text-primary);border:0;background:transparent;font-family:inherit;outline:none;
+    transition:background var(--duration-fast) var(--ease-out);
+  }
+  .mb-trigger:hover,.mb-trigger.s-hover,.mb-trigger.s-open{background:var(--action-secondary)}
+  .mb-trigger:focus-visible{box-shadow:var(--focus-ring)}
+
+  /* === Menu panel (reused across dropdown/context/menubar) ================ */
+  .menu{
+    min-width:var(--dropdown-min-w);max-width:var(--dropdown-max-w);overflow:hidden;
+    border-radius:var(--radius-lg);border:1px solid var(--border-default);
+    background:var(--surface-card);padding:var(--space-1);color:var(--text-primary);
+    box-shadow:var(--shadow-lg);
+  }
+  .menu-label{
+    padding:var(--space-1-5) var(--space-2);
+    font-size:var(--font-size-sm);font-weight:var(--font-weight-semibold);color:var(--text-primary)
+  }
+  .menu-sep{height:1px;margin:var(--space-1) calc(var(--space-1) * -1);background:var(--border-default)}
+  .menu-item{
+    position:relative;display:flex;align-items:center;gap:var(--space-2);
+    border-radius:var(--radius-sm);padding:var(--space-1-5) var(--space-2);
+    font-size:var(--font-size-sm);line-height:var(--line-tight);color:var(--text-primary);
+    border:0;width:100%;background:transparent;font-family:var(--font-sans);text-align:start;
+    cursor:default;outline:none;
+  }
+  .menu-item .ico{width:var(--icon-sm);height:var(--icon-sm);stroke:currentColor;fill:none;stroke-width:2;flex:none}
+  .menu-item .indicator{
+    position:absolute;inset-inline-start:var(--space-2);
+    display:flex;width:var(--icon-sm);height:var(--icon-sm);align-items:center;justify-content:center
+  }
+  .menu-item.inset{padding-inline-start:var(--space-6)}
+  .menu-item:hover,.menu-item.s-hover{background:var(--action-secondary)}
+  .menu-item[aria-disabled="true"]{pointer-events:none;opacity:.5}
+  .menu-item--destructive{color:var(--menu-item-destructive-text)}
+  .menu-item--destructive:hover{background:var(--menu-item-destructive-bg-hover)}
+  .menu-shortcut{margin-inline-start:auto;font-size:var(--font-size-xs);letter-spacing:.1em;color:var(--text-secondary)}
+  .menu-item .chev{margin-inline-start:auto}
+
+  /* === Harness chrome ===================================================== */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);font-family:Inter,system-ui,sans-serif;padding:32px} /* ds-allow-hardcode: harness chrome */
+  .stack{display:flex;flex-direction:column;gap:32px;max-inline-size:680px;margin:0 auto} /* ds-allow-hardcode: harness chrome */
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0 0 8px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+  .row{display:flex;gap:var(--space-6);flex-wrap:wrap;align-items:flex-start}
+</style>
+</head>
+<body>
+  <main class="stack">
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+      <symbol id="i-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" fill="currentColor"/></symbol>
+      <symbol id="i-chev-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+    </svg>
+
+    <!-- 1. Menubar strip — resting -->
+    <section>
+      <p class="grp-label">Strip — resting (all triggers closed)</p>
+      <div class="menubar" role="menubar" aria-label="Application menu">
+        <button class="mb-trigger" role="menuitem" aria-haspopup="menu" aria-expanded="false">File</button>
+        <button class="mb-trigger" role="menuitem" aria-haspopup="menu" aria-expanded="false">Edit</button>
+        <button class="mb-trigger" role="menuitem" aria-haspopup="menu" aria-expanded="false">View</button>
+        <button class="mb-trigger" role="menuitem" aria-haspopup="menu" aria-expanded="false">Help</button>
+      </div>
+    </section>
+
+    <!-- 2. Trigger open state -->
+    <section>
+      <p class="grp-label">Strip — "File" trigger open</p>
+      <div class="menubar" role="menubar" aria-label="Application menu">
+        <button class="mb-trigger s-open" role="menuitem" aria-haspopup="menu" aria-expanded="true">File</button>
+        <button class="mb-trigger" role="menuitem" aria-haspopup="menu" aria-expanded="false">Edit</button>
+        <button class="mb-trigger" role="menuitem" aria-haspopup="menu" aria-expanded="false">View</button>
+        <button class="mb-trigger" role="menuitem" aria-haspopup="menu" aria-expanded="false">Help</button>
+      </div>
+    </section>
+
+    <!-- 3. File menu open -->
+    <section>
+      <p class="grp-label">File menu panel — open</p>
+      <div class="row">
+        <div class="menu" role="menu" aria-label="File">
+          <div class="menu-item inset" role="menuitem" tabindex="-1">
+            New tab <span class="menu-shortcut">&#x2318;T</span>
+          </div>
+          <div class="menu-item inset" role="menuitem" tabindex="-1">
+            New window <span class="menu-shortcut">&#x2318;N</span>
+          </div>
+          <div class="menu-item inset" role="menuitem" tabindex="-1" aria-disabled="true">
+            New incognito <span class="menu-shortcut">&#x2318;&#x21E7;N</span>
+          </div>
+          <div class="menu-sep" role="separator"></div>
+          <div class="menu-item inset s-hover" role="menuitem" tabindex="-1">
+            Print… <span class="menu-shortcut">&#x2318;P</span>
+          </div>
+          <div class="menu-sep" role="separator"></div>
+          <div class="menu-item inset menu-item--destructive" role="menuitem" tabindex="-1">
+            Quit <span class="menu-shortcut">&#x2318;Q</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. View menu — checkbox + radio items -->
+    <section>
+      <p class="grp-label">View menu panel — checkbox + radio + submenu trigger</p>
+      <div class="row">
+        <div class="menu" role="menu" aria-label="View">
+          <div class="menu-item" role="menuitemcheckbox" tabindex="-1" aria-checked="true">
+            <span class="indicator" aria-hidden="true"><svg class="ico"><use href="#i-check"/></svg></span>
+            <span class="inset">Show toolbar</span>
+          </div>
+          <div class="menu-item inset" role="menuitemcheckbox" tabindex="-1" aria-checked="false">
+            Show bookmarks bar
+          </div>
+          <div class="menu-sep" role="separator"></div>
+          <div class="menu-label inset" role="presentation">Zoom</div>
+          <div role="group" aria-label="Zoom level">
+            <div class="menu-item" role="menuitemradio" tabindex="-1" aria-checked="false">
+              <span class="indicator" aria-hidden="true"></span>
+              <span class="inset">75%</span>
+            </div>
+            <div class="menu-item" role="menuitemradio" tabindex="-1" aria-checked="true">
+              <span class="indicator" aria-hidden="true"><svg class="ico"><use href="#i-circle"/></svg></span>
+              <span class="inset">100%</span>
+            </div>
+            <div class="menu-item" role="menuitemradio" tabindex="-1" aria-checked="false">
+              <span class="indicator" aria-hidden="true"></span>
+              <span class="inset">125%</span>
+            </div>
+          </div>
+          <div class="menu-sep" role="separator"></div>
+          <div class="menu-item" role="menuitem" tabindex="-1" aria-haspopup="menu" aria-expanded="false">
+            Developer tools
+            <svg class="ico chev" aria-hidden="true"><use href="#i-chev-right"/></svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Dark mode -->
+    <section data-theme="dark" style="background:var(--surface-page);padding:24px;border-radius:var(--radius-lg)">
+      <p class="grp-label">Dark mode</p>
+      <div class="menubar" role="menubar" aria-label="Application menu" style="margin-bottom:var(--space-4)">
+        <button class="mb-trigger s-open" role="menuitem" aria-haspopup="menu" aria-expanded="true">File</button>
+        <button class="mb-trigger" role="menuitem" aria-haspopup="menu" aria-expanded="false">Edit</button>
+        <button class="mb-trigger" role="menuitem" aria-haspopup="menu" aria-expanded="false">View</button>
+      </div>
+      <div class="menu" role="menu" aria-label="File" style="max-width:220px">
+        <div class="menu-item inset" role="menuitem" tabindex="-1">New tab <span class="menu-shortcut">&#x2318;T</span></div>
+        <div class="menu-item inset s-hover" role="menuitem" tabindex="-1">Print… <span class="menu-shortcut">&#x2318;P</span></div>
+        <div class="menu-sep" role="separator"></div>
+        <div class="menu-item inset menu-item--destructive" role="menuitem" tabindex="-1">Quit</div>
+      </div>
+    </section>
+
+  </main>
+</body>
+</html>

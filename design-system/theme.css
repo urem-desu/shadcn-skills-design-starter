@@ -153,6 +153,15 @@
      selection treatment, shortcut chip) maps to semantic/primitive tokens. */
   --command-list-max-h:300px;                                 /* shadcn max-h-[300px] */
 
+  /* Input OTP: alias --otp-slot-size to control-md (40px). Named separately to
+     express the OTP-specific square-slot constraint rather than reusing "control". */
+  --otp-slot-size:var(--control-md);                           /* 40px square OTP slot */
+
+  /* Menubar: hybrid - Radix menubar strip. Shares all menu item / surface tokens
+     with DropdownMenu and ContextMenu. One seam: trigger horizontal padding
+     (12px; no space token at that value). */
+  --menubar-trigger-px:12px;                                   /* Figma trigger padding-inline */
+
   /* Hover Card: hybrid - Radix portal card (surface-card, border-default, shadow-lg,
      radius-lg, space-4, text-primary). One seam: card width (320px, no scale match). */
   --hover-card-w:320px;                                        /* Figma card width */

@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Input OTP - states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  /* === OTP slot size seam ================================================= */
+  :root { --otp-slot-size: var(--control-md); } /* 40px — aliased from control-md */
+
+  /* === OTP Group (mirrors input-otp.tsx) ================================== */
+  .otp-container{display:flex;align-items:center;gap:var(--space-2)}
+  .otp-group{display:flex;align-items:center}
+
+  .otp-slot{
+    position:relative;
+    display:flex;width:var(--otp-slot-size);height:var(--otp-slot-size);
+    align-items:center;justify-content:center;
+    border-top:1px solid var(--field-border);
+    border-bottom:1px solid var(--field-border);
+    border-right:1px solid var(--field-border);
+    font-size:var(--font-size-base);font-weight:var(--font-weight-medium);
+    color:var(--text-primary);
+  }
+  .otp-slot:first-child{border-left:1px solid var(--field-border);border-radius:var(--field-radius) 0 0 var(--field-radius)}
+  .otp-slot:last-child{border-radius:0 var(--field-radius) var(--field-radius) 0}
+  .otp-slot.active{
+    z-index:10;border-color:var(--field-border-focus);
+    box-shadow:var(--field-focus-ring);
+  }
+  .otp-slot .caret{
+    position:absolute;display:flex;inset:0;align-items:center;justify-content:center;
+    pointer-events:none;
+  }
+  .otp-slot .caret-line{
+    height:var(--space-4);width:1px;background:var(--text-primary);
+    animation:blink 1s step-end infinite;
+  }
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+  .otp-sep{
+    display:flex;align-items:center;justify-content:center;
+    color:var(--text-tertiary);
+  }
+  .otp-sep svg{width:var(--icon-sm);height:var(--icon-sm);stroke:currentColor;fill:none;stroke-width:2}
+
+  .otp-disabled{opacity:.5;pointer-events:none}
+
+  /* === Harness chrome ===================================================== */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);font-family:Inter,system-ui,sans-serif;padding:32px} /* ds-allow-hardcode: harness chrome */
+  .stack{display:flex;flex-direction:column;gap:32px;max-inline-size:480px;margin:0 auto} /* ds-allow-hardcode: harness chrome */
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0 0 8px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+</style>
+</head>
+<body>
+  <main class="stack">
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <symbol id="i-minus" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/></symbol>
+    </svg>
+
+    <!-- 1. Empty — first slot active (caret) -->
+    <section>
+      <p class="grp-label">Empty — first slot active (caret blinking)</p>
+      <div class="otp-container" role="group" aria-label="One-time password">
+        <div class="otp-group">
+          <div class="otp-slot active" aria-current="true">
+            <div class="caret"><div class="caret-line"></div></div>
+          </div>
+          <div class="otp-slot"></div>
+          <div class="otp-slot"></div>
+        </div>
+        <div class="otp-sep" role="separator" aria-hidden="true"><svg><use href="#i-minus"/></svg></div>
+        <div class="otp-group">
+          <div class="otp-slot"></div>
+          <div class="otp-slot"></div>
+          <div class="otp-slot"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Partially filled -->
+    <section>
+      <p class="grp-label">Partially filled — 3 of 6</p>
+      <div class="otp-container" role="group" aria-label="One-time password">
+        <div class="otp-group">
+          <div class="otp-slot">4</div>
+          <div class="otp-slot">2</div>
+          <div class="otp-slot">9</div>
+        </div>
+        <div class="otp-sep" role="separator" aria-hidden="true"><svg><use href="#i-minus"/></svg></div>
+        <div class="otp-group">
+          <div class="otp-slot active" aria-current="true">
+            <div class="caret"><div class="caret-line"></div></div>
+          </div>
+          <div class="otp-slot"></div>
+          <div class="otp-slot"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Fully filled -->
+    <section>
+      <p class="grp-label">Fully filled — 6 of 6</p>
+      <div class="otp-container" role="group" aria-label="One-time password">
+        <div class="otp-group">
+          <div class="otp-slot">4</div>
+          <div class="otp-slot">2</div>
+          <div class="otp-slot">9</div>
+        </div>
+        <div class="otp-sep" role="separator" aria-hidden="true"><svg><use href="#i-minus"/></svg></div>
+        <div class="otp-group">
+          <div class="otp-slot">1</div>
+          <div class="otp-slot">7</div>
+          <div class="otp-slot">8</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. 4-slot PIN (no separator) -->
+    <section>
+      <p class="grp-label">4-digit PIN — single group</p>
+      <div class="otp-container" role="group" aria-label="PIN">
+        <div class="otp-group">
+          <div class="otp-slot">3</div>
+          <div class="otp-slot active" aria-current="true">
+            <div class="caret"><div class="caret-line"></div></div>
+          </div>
+          <div class="otp-slot"></div>
+          <div class="otp-slot"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Disabled -->
+    <section>
+      <p class="grp-label">Disabled</p>
+      <div class="otp-container otp-disabled" role="group" aria-label="One-time password" aria-disabled="true">
+        <div class="otp-group">
+          <div class="otp-slot">•</div>
+          <div class="otp-slot">•</div>
+          <div class="otp-slot">•</div>
+        </div>
+        <div class="otp-sep" role="separator" aria-hidden="true"><svg><use href="#i-minus"/></svg></div>
+        <div class="otp-group">
+          <div class="otp-slot">•</div>
+          <div class="otp-slot">•</div>
+          <div class="otp-slot">•</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. Dark mode -->
+    <section data-theme="dark" style="background:var(--surface-page);padding:24px;border-radius:var(--radius-lg)">
+      <p class="grp-label">Dark mode — partially filled</p>
+      <div class="otp-container" role="group" aria-label="One-time password">
+        <div class="otp-group">
+          <div class="otp-slot">4</div>
+          <div class="otp-slot">2</div>
+          <div class="otp-slot">9</div>
+        </div>
+        <div class="otp-sep" role="separator" aria-hidden="true"><svg><use href="#i-minus"/></svg></div>
+        <div class="otp-group">
+          <div class="otp-slot active" aria-current="true">
+            <div class="caret"><div class="caret-line"></div></div>
+          </div>
+          <div class="otp-slot"></div>
+          <div class="otp-slot"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</body>
+</html>

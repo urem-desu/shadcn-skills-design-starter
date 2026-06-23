@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Kbd - states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  /* === Kbd (mirrors kbd.tsx) ============================================== */
+  .kbd{
+    display:inline-flex;align-items:center;justify-content:center;
+    border-radius:var(--radius-sm);border:1px solid var(--border-default);
+    background:var(--surface-sunken);
+    padding:var(--space-0-5) var(--space-1-5);
+    font-family:ui-monospace,"JetBrains Mono",monospace;
+    font-size:var(--font-size-xs);font-weight:var(--font-weight-medium);
+    line-height:var(--line-tight);color:var(--text-secondary);
+    box-shadow:0 1px 0 var(--border-default);
+  }
+
+  /* === Prose container ==================================================== */
+  .prose{font-size:var(--font-size-sm);color:var(--text-primary);line-height:var(--line-normal)}
+  .compound{display:inline-flex;align-items:center;gap:var(--space-1)}
+  .compound .sep{color:var(--text-tertiary);font-size:var(--font-size-xs)}
+
+  /* === Harness chrome ===================================================== */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);font-family:Inter,system-ui,sans-serif;padding:32px} /* ds-allow-hardcode: harness chrome */
+  .stack{display:flex;flex-direction:column;gap:32px;max-inline-size:600px;margin:0 auto} /* ds-allow-hardcode: harness chrome */
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0 0 8px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+  .row{display:flex;flex-wrap:wrap;gap:var(--space-2);align-items:center}
+</style>
+</head>
+<body>
+  <main class="stack">
+
+    <!-- 1. Single keys -->
+    <section>
+      <p class="grp-label">Single keys</p>
+      <div class="row">
+        <kbd class="kbd">Enter</kbd>
+        <kbd class="kbd">Esc</kbd>
+        <kbd class="kbd">Tab</kbd>
+        <kbd class="kbd">Space</kbd>
+        <kbd class="kbd">Backspace</kbd>
+        <kbd class="kbd">Delete</kbd>
+        <kbd class="kbd">&#x2190;</kbd>
+        <kbd class="kbd">&#x2192;</kbd>
+        <kbd class="kbd">&#x2191;</kbd>
+        <kbd class="kbd">&#x2193;</kbd>
+      </div>
+    </section>
+
+    <!-- 2. Modifier keys -->
+    <section>
+      <p class="grp-label">Modifier keys</p>
+      <div class="row">
+        <kbd class="kbd">&#x2318;</kbd>
+        <kbd class="kbd">Ctrl</kbd>
+        <kbd class="kbd">Alt</kbd>
+        <kbd class="kbd">&#x21E7;</kbd>
+        <kbd class="kbd">Opt</kbd>
+        <kbd class="kbd">Fn</kbd>
+      </div>
+    </section>
+
+    <!-- 3. Compound shortcuts -->
+    <section>
+      <p class="grp-label">Compound shortcuts</p>
+      <div style="display:flex;flex-direction:column;gap:var(--space-3)">
+        <div class="compound">
+          <kbd class="kbd">&#x2318;</kbd>
+          <kbd class="kbd">K</kbd>
+        </div>
+        <div class="compound">
+          <kbd class="kbd">Ctrl</kbd>
+          <span class="sep">+</span>
+          <kbd class="kbd">Shift</kbd>
+          <span class="sep">+</span>
+          <kbd class="kbd">P</kbd>
+        </div>
+        <div class="compound">
+          <kbd class="kbd">&#x2318;</kbd>
+          <kbd class="kbd">&#x21E7;</kbd>
+          <kbd class="kbd">Z</kbd>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Inline in prose -->
+    <section>
+      <p class="grp-label">Inline in prose</p>
+      <div style="display:flex;flex-direction:column;gap:var(--space-3)">
+        <p class="prose">Press <kbd class="kbd">&#x2318;K</kbd> to open the command palette.</p>
+        <p class="prose">Use <kbd class="kbd">Tab</kbd> to navigate between fields, and <kbd class="kbd">Enter</kbd> to submit.</p>
+        <p class="prose">Undo with <kbd class="kbd">&#x2318;Z</kbd> or redo with <kbd class="kbd">&#x2318;&#x21E7;Z</kbd>.</p>
+      </div>
+    </section>
+
+    <!-- 5. In a menu shortcut context -->
+    <section>
+      <p class="grp-label">In menu shortcut context</p>
+      <div style="display:flex;flex-direction:column;gap:var(--space-2)">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:var(--space-1-5) var(--space-2);font-size:var(--font-size-sm);color:var(--text-primary);background:var(--action-secondary);border-radius:var(--radius-sm)">
+          <span>New tab</span>
+          <kbd class="kbd">&#x2318;T</kbd>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:var(--space-1-5) var(--space-2);font-size:var(--font-size-sm);color:var(--text-primary)">
+          <span>Close tab</span>
+          <kbd class="kbd">&#x2318;W</kbd>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:var(--space-1-5) var(--space-2);font-size:var(--font-size-sm);color:var(--text-primary)">
+          <span>Find on page</span>
+          <div class="compound"><kbd class="kbd">&#x2318;</kbd><kbd class="kbd">F</kbd></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. Dark mode -->
+    <section data-theme="dark" style="background:var(--surface-page);padding:24px;border-radius:var(--radius-lg)">
+      <p class="grp-label">Dark mode</p>
+      <div class="row" style="margin-bottom:var(--space-4)">
+        <kbd class="kbd">&#x2318;</kbd>
+        <kbd class="kbd">Shift</kbd>
+        <kbd class="kbd">Enter</kbd>
+        <kbd class="kbd">Esc</kbd>
+      </div>
+      <p class="prose">Press <kbd class="kbd">&#x2318;K</kbd> to open the command palette.</p>
+    </section>
+
+  </main>
+</body>
+</html>

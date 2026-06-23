@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Item - states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  /* === Item (mirrors item.tsx) ============================================ */
+  .item{
+    display:flex;align-items:center;gap:var(--space-3);
+    padding:var(--space-3) var(--space-4);
+  }
+  .item--interactive{
+    cursor:pointer;user-select:none;
+    border-radius:var(--radius-md);
+    transition:background var(--duration-fast) var(--ease-out);
+  }
+  .item--interactive:hover,.item--interactive.s-hover{background:var(--action-secondary)}
+  .item--interactive:active,.item--interactive.s-active{background:var(--action-secondary-active)}
+  .item--interactive:focus-visible{outline:none;box-shadow:var(--focus-ring)}
+
+  .item-icon{
+    display:flex;width:var(--icon-md);height:var(--icon-md);
+    flex:none;align-items:center;justify-content:center;color:var(--text-secondary);
+  }
+  .item-icon svg{width:var(--icon-md);height:var(--icon-md);stroke:currentColor;fill:none;stroke-width:2}
+  .item-body{display:flex;min-width:0;flex:1;flex-direction:column;gap:var(--space-0-5)}
+  .item-title{
+    overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
+    font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);
+    line-height:var(--line-tight);color:var(--text-primary);
+  }
+  .item-desc{
+    overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
+    font-size:var(--font-size-xs);line-height:var(--line-normal);color:var(--text-secondary);
+  }
+  .item-trailing{
+    display:flex;flex:none;align-items:center;gap:var(--space-2);
+    color:var(--text-secondary);
+  }
+  .item-trailing svg{width:var(--icon-sm);height:var(--icon-sm);stroke:currentColor;fill:none;stroke-width:2}
+
+  /* Badge (reused from badge.tsx) */
+  .badge{
+    display:inline-flex;align-items:center;
+    border-radius:var(--badge-radius);padding:0 var(--space-2);height:var(--space-5);
+    font-size:var(--font-size-xs);font-weight:var(--badge-font-weight);
+    background:var(--badge-default-bg);color:var(--badge-default-text);
+  }
+  .badge-secondary{background:var(--badge-secondary-bg);color:var(--badge-secondary-text)}
+
+  /* List panel */
+  .panel{
+    border-radius:var(--radius-lg);border:1px solid var(--border-default);
+    background:var(--surface-card);overflow:hidden;
+  }
+  .panel .item+.item{border-top:1px solid var(--border-default)}
+
+  /* === Harness chrome ===================================================== */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);font-family:Inter,system-ui,sans-serif;padding:32px} /* ds-allow-hardcode: harness chrome */
+  .stack{display:flex;flex-direction:column;gap:32px;max-inline-size:480px;margin:0 auto} /* ds-allow-hardcode: harness chrome */
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0 0 8px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+</style>
+</head>
+<body>
+  <main class="stack">
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <symbol id="i-inbox" viewBox="0 0 24 24"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></symbol>
+      <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></symbol>
+      <symbol id="i-user" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+      <symbol id="i-settings" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></symbol>
+      <symbol id="i-chev-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+    </svg>
+
+    <!-- 1. Static — title only -->
+    <section>
+      <p class="grp-label">Static — title only</p>
+      <div class="panel">
+        <div class="item"><div class="item-body"><span class="item-title">Messages</span></div></div>
+      </div>
+    </section>
+
+    <!-- 2. Static — icon + title + description -->
+    <section>
+      <p class="grp-label">Static — icon + title + description</p>
+      <div class="panel">
+        <div class="item">
+          <div class="item-icon" aria-hidden="true"><svg><use href="#i-inbox"/></svg></div>
+          <div class="item-body">
+            <span class="item-title">Messages</span>
+            <span class="item-desc">3 unread messages</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Interactive states — resting / hover / active / focus -->
+    <section>
+      <p class="grp-label">Interactive states — resting / hover / active</p>
+      <div class="panel">
+        <div class="item item--interactive" role="button" tabindex="0">
+          <div class="item-icon" aria-hidden="true"><svg><use href="#i-inbox"/></svg></div>
+          <div class="item-body"><span class="item-title">Resting</span></div>
+        </div>
+        <div class="item item--interactive s-hover" role="button" tabindex="0">
+          <div class="item-icon" aria-hidden="true"><svg><use href="#i-bell"/></svg></div>
+          <div class="item-body"><span class="item-title">Hover (forced)</span></div>
+          <div class="item-trailing"><span class="badge badge-secondary">4</span></div>
+        </div>
+        <div class="item item--interactive s-active" role="button" tabindex="0">
+          <div class="item-icon" aria-hidden="true"><svg><use href="#i-user"/></svg></div>
+          <div class="item-body"><span class="item-title">Active (forced)</span></div>
+        </div>
+        <div class="item item--interactive" role="button" tabindex="0" style="box-shadow:var(--focus-ring);outline:none">
+          <div class="item-icon" aria-hidden="true"><svg><use href="#i-settings"/></svg></div>
+          <div class="item-body"><span class="item-title">Focus (tab to me)</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. With trailing chevron (navigation) -->
+    <section>
+      <p class="grp-label">Navigation — trailing chevron</p>
+      <div class="panel">
+        <div class="item item--interactive" role="button" tabindex="0">
+          <div class="item-icon" aria-hidden="true"><svg><use href="#i-user"/></svg></div>
+          <div class="item-body">
+            <span class="item-title">Account settings</span>
+            <span class="item-desc">Manage your profile</span>
+          </div>
+          <div class="item-trailing"><svg><use href="#i-chev-right"/></svg></div>
+        </div>
+        <div class="item item--interactive" role="button" tabindex="0">
+          <div class="item-icon" aria-hidden="true"><svg><use href="#i-bell"/></svg></div>
+          <div class="item-body">
+            <span class="item-title">Notifications</span>
+            <span class="item-desc">Push, email, SMS</span>
+          </div>
+          <div class="item-trailing">
+            <span class="badge">12</span>
+            <svg><use href="#i-chev-right"/></svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Dark mode -->
+    <section data-theme="dark" style="background:var(--surface-page);padding:24px;border-radius:var(--radius-lg)">
+      <p class="grp-label">Dark mode</p>
+      <div class="panel">
+        <div class="item item--interactive" role="button" tabindex="0">
+          <div class="item-icon" aria-hidden="true"><svg><use href="#i-inbox"/></svg></div>
+          <div class="item-body">
+            <span class="item-title">Messages</span>
+            <span class="item-desc">3 unread messages</span>
+          </div>
+          <div class="item-trailing"><span class="badge">3</span></div>
+        </div>
+        <div class="item item--interactive s-hover" role="button" tabindex="0">
+          <div class="item-icon" aria-hidden="true"><svg><use href="#i-bell"/></svg></div>
+          <div class="item-body"><span class="item-title">Hover state</span></div>
+          <div class="item-trailing"><svg><use href="#i-chev-right"/></svg></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</body>
+</html>
