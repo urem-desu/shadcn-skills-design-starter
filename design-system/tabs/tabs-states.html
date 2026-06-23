@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tabs - states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  /* === Tabs (mirrors tabs.tsx) ============================================ */
+  .tabs-list{
+    display:inline-flex;height:var(--control-md);align-items:center;justify-content:center;
+    gap:var(--space-1);padding:var(--space-1);
+    border-radius:var(--radius-md);background:var(--surface-sunken);
+    color:var(--text-secondary);
+  }
+  .tabs-trigger{
+    display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;
+    border-radius:var(--radius-sm);
+    padding:var(--space-1-5) var(--space-3);
+    font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);
+    border:none;background:transparent;cursor:pointer;
+    transition:color var(--duration-fast) var(--ease-out),
+               background var(--duration-fast) var(--ease-out),
+               box-shadow var(--duration-fast) var(--ease-out);
+    color:var(--text-secondary);
+  }
+  .tabs-trigger:hover{color:var(--text-primary)}
+  .tabs-trigger:focus-visible{outline:none;box-shadow:var(--focus-ring)}
+  .tabs-trigger[aria-selected="true"]{
+    background:var(--surface-card);color:var(--text-primary);
+    box-shadow:var(--shadow-sm);
+  }
+  .tabs-trigger:disabled{pointer-events:none;opacity:.5}
+  .tabs-content{
+    margin-top:var(--space-2);
+    font-size:var(--font-size-sm);color:var(--text-primary);
+  }
+
+  /* === Harness chrome ===================================================== */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);font-family:Inter,system-ui,sans-serif;padding:32px} /* ds-allow-hardcode: harness chrome */
+  .stack{display:flex;flex-direction:column;gap:40px;max-inline-size:540px;margin:0 auto} /* ds-allow-hardcode: harness chrome */
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0 0 12px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+  .panel{
+    padding:var(--space-4);border-radius:var(--radius-md);
+    border:1px solid var(--border-default);background:var(--surface-card);
+  }
+  .panel p{margin:0;font-size:var(--font-size-sm);color:var(--text-secondary);line-height:var(--line-normal)}
+</style>
+</head>
+<body>
+  <main class="stack">
+
+    <!-- 1. Default — first tab active -->
+    <section>
+      <p class="grp-label">Default — first tab active</p>
+      <div>
+        <div class="tabs-list" role="tablist" aria-label="Account settings">
+          <button class="tabs-trigger" role="tab" aria-selected="true" aria-controls="panel-account-1" id="tab-account-1">Account</button>
+          <button class="tabs-trigger" role="tab" aria-selected="false" aria-controls="panel-password-1" id="tab-password-1" tabindex="-1">Password</button>
+          <button class="tabs-trigger" role="tab" aria-selected="false" aria-controls="panel-notifications-1" id="tab-notifications-1" tabindex="-1">Notifications</button>
+        </div>
+        <div class="tabs-content panel" role="tabpanel" id="panel-account-1" aria-labelledby="tab-account-1">
+          <p>Make changes to your account settings here. Changes are saved automatically.</p>
+        </div>
+        <div class="tabs-content" role="tabpanel" id="panel-password-1" aria-labelledby="tab-password-1" hidden>
+          <p>Password content</p>
+        </div>
+        <div class="tabs-content" role="tabpanel" id="panel-notifications-1" aria-labelledby="tab-notifications-1" hidden>
+          <p>Notifications content</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Middle tab active -->
+    <section>
+      <p class="grp-label">Middle tab active</p>
+      <div>
+        <div class="tabs-list" role="tablist" aria-label="Settings tabs">
+          <button class="tabs-trigger" role="tab" aria-selected="false" tabindex="-1">Account</button>
+          <button class="tabs-trigger" role="tab" aria-selected="true">Password</button>
+          <button class="tabs-trigger" role="tab" aria-selected="false" tabindex="-1">Notifications</button>
+        </div>
+        <div class="tabs-content panel">
+          <p>Change your password and configure two-factor authentication.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Trigger focus state -->
+    <section>
+      <p class="grp-label">Trigger — focus state</p>
+      <div>
+        <div class="tabs-list" role="tablist" aria-label="Settings tabs">
+          <button class="tabs-trigger" role="tab" aria-selected="true">Account</button>
+          <button class="tabs-trigger" role="tab" aria-selected="false" style="box-shadow:var(--focus-ring);color:var(--text-primary)">Password</button>
+          <button class="tabs-trigger" role="tab" aria-selected="false" tabindex="-1">Notifications</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Disabled trigger -->
+    <section>
+      <p class="grp-label">Disabled trigger</p>
+      <div>
+        <div class="tabs-list" role="tablist" aria-label="Settings tabs">
+          <button class="tabs-trigger" role="tab" aria-selected="true">Account</button>
+          <button class="tabs-trigger" role="tab" aria-selected="false" disabled tabindex="-1">Password</button>
+          <button class="tabs-trigger" role="tab" aria-selected="false" tabindex="-1">Notifications</button>
+        </div>
+        <div class="tabs-content panel">
+          <p>Account settings panel content.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Dark mode -->
+    <section data-theme="dark" style="background:var(--surface-page);padding:24px;border-radius:var(--radius-lg)">
+      <p class="grp-label">Dark mode</p>
+      <div>
+        <div class="tabs-list" role="tablist" aria-label="Settings tabs">
+          <button class="tabs-trigger" role="tab" aria-selected="true">Account</button>
+          <button class="tabs-trigger" role="tab" aria-selected="false" tabindex="-1">Password</button>
+          <button class="tabs-trigger" role="tab" aria-selected="false" tabindex="-1">Notifications</button>
+        </div>
+        <div class="tabs-content panel">
+          <p>Account settings panel content.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</body>
+</html>

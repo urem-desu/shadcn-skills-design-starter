@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Skeleton - states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  /* === Skeleton (mirrors skeleton.tsx) ==================================== */
+  @keyframes pulse{
+    0%,100%{opacity:1}
+    50%{opacity:.5}
+  }
+  .skeleton{
+    border-radius:var(--radius-md);
+    background:var(--surface-sunken);
+    animation:pulse 2s cubic-bezier(.4,0,.6,1) infinite;
+  }
+  @media (prefers-reduced-motion:reduce){
+    .skeleton{animation:none}
+  }
+
+  /* === Harness chrome ===================================================== */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);font-family:Inter,system-ui,sans-serif;padding:32px} /* ds-allow-hardcode: harness chrome */
+  .stack{display:flex;flex-direction:column;gap:40px;max-inline-size:480px;margin:0 auto} /* ds-allow-hardcode: harness chrome */
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0 0 12px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+</style>
+</head>
+<body>
+  <main class="stack">
+
+    <!-- 1. Avatar + name lines -->
+    <section>
+      <p class="grp-label">Avatar + text lines</p>
+      <div style="display:flex;align-items:center;gap:var(--space-4)">
+        <div class="skeleton" style="width:48px;height:48px;border-radius:9999px"></div> <!-- ds-allow-hardcode: harness size -->
+        <div style="display:flex;flex-direction:column;gap:var(--space-2)">
+          <div class="skeleton" style="height:16px;width:192px"></div> <!-- ds-allow-hardcode: harness size -->
+          <div class="skeleton" style="height:16px;width:128px"></div> <!-- ds-allow-hardcode: harness size -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Card skeleton -->
+    <section>
+      <p class="grp-label">Card — image + title + body</p>
+      <div style="display:flex;flex-direction:column;gap:var(--space-3);padding:var(--space-4);border-radius:var(--radius-lg);border:1px solid var(--border-default)">
+        <div class="skeleton" style="height:160px;width:100%;border-radius:var(--radius-md)"></div> <!-- ds-allow-hardcode: harness size -->
+        <div class="skeleton" style="height:20px;width:75%"></div> <!-- ds-allow-hardcode: harness size -->
+        <div style="display:flex;flex-direction:column;gap:var(--space-1-5)">
+          <div class="skeleton" style="height:14px;width:100%"></div> <!-- ds-allow-hardcode: harness size -->
+          <div class="skeleton" style="height:14px;width:85%"></div> <!-- ds-allow-hardcode: harness size -->
+          <div class="skeleton" style="height:14px;width:60%"></div> <!-- ds-allow-hardcode: harness size -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Table rows skeleton -->
+    <section>
+      <p class="grp-label">Table rows</p>
+      <div style="display:flex;flex-direction:column;gap:var(--space-2)">
+        <div style="display:flex;gap:var(--space-4);align-items:center">
+          <div class="skeleton" style="height:14px;width:96px"></div> <!-- ds-allow-hardcode: harness size -->
+          <div class="skeleton" style="height:14px;width:64px"></div> <!-- ds-allow-hardcode: harness size -->
+          <div class="skeleton" style="height:14px;width:80px;margin-inline-start:auto"></div> <!-- ds-allow-hardcode: harness size -->
+        </div>
+        <div style="height:1px;background:var(--border-default)"></div>
+        <div style="display:flex;gap:var(--space-4);align-items:center">
+          <div class="skeleton" style="height:14px;width:112px"></div>
+          <div class="skeleton" style="height:14px;width:56px"></div>
+          <div class="skeleton" style="height:14px;width:72px;margin-inline-start:auto"></div>
+        </div>
+        <div style="height:1px;background:var(--border-default)"></div>
+        <div style="display:flex;gap:var(--space-4);align-items:center">
+          <div class="skeleton" style="height:14px;width:80px"></div>
+          <div class="skeleton" style="height:14px;width:72px"></div>
+          <div class="skeleton" style="height:14px;width:64px;margin-inline-start:auto"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Button skeleton -->
+    <section>
+      <p class="grp-label">Button placeholder</p>
+      <div style="display:flex;gap:var(--space-3)">
+        <div class="skeleton" style="height:var(--control-md);width:120px;border-radius:var(--radius-md)"></div>
+        <div class="skeleton" style="height:var(--control-md);width:80px;border-radius:var(--radius-md)"></div>
+      </div>
+    </section>
+
+    <!-- 5. Dark mode -->
+    <section data-theme="dark" style="background:var(--surface-page);padding:24px;border-radius:var(--radius-lg)">
+      <p class="grp-label">Dark mode</p>
+      <div style="display:flex;align-items:center;gap:var(--space-4)">
+        <div class="skeleton" style="width:48px;height:48px;border-radius:9999px"></div> <!-- ds-allow-hardcode: harness size -->
+        <div style="display:flex;flex-direction:column;gap:var(--space-2)">
+          <div class="skeleton" style="height:16px;width:192px"></div>
+          <div class="skeleton" style="height:16px;width:128px"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</body>
+</html>

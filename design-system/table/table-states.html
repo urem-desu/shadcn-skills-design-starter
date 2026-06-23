@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Table - states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  /* === Table (mirrors table.tsx) ========================================== */
+  .table-wrap{width:100%;overflow-x:auto}
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:var(--font-size-sm);
+  }
+  /* Header */
+  thead tr{border-bottom:1px solid var(--border-default)}
+  th{
+    height:var(--control-md);padding:0 var(--space-4);text-align:left;
+    vertical-align:middle;
+    font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);
+    color:var(--text-secondary);white-space:nowrap;
+  }
+  /* Body */
+  tbody tr{
+    border-bottom:1px solid var(--border-default);
+    transition:background var(--duration-fast) var(--ease-out);
+  }
+  tbody tr:last-child{border-bottom:0}
+  tbody tr:hover{background:var(--surface-sunken)}
+  tbody tr[data-state="selected"]{background:var(--interactive-selected-bg)}
+  td{
+    padding:var(--space-3) var(--space-4);vertical-align:middle;
+    color:var(--text-primary);
+  }
+  /* Footer */
+  tfoot{border-top:1px solid var(--border-default);background:var(--surface-sunken)}
+  tfoot td{font-weight:var(--font-weight-medium)}
+  /* Caption */
+  caption{
+    caption-side:bottom;margin-top:var(--space-4);
+    font-size:var(--font-size-sm);color:var(--text-secondary);
+  }
+
+  /* === Status badge (harness helper) ====================================== */
+  .badge{
+    display:inline-flex;align-items:center;height:20px;padding:0 var(--space-2-5); /* ds-allow-hardcode: harness badge height */
+    border-radius:var(--radius-full);font-size:var(--font-size-xs);font-weight:var(--font-weight-medium);
+  }
+  .badge--paid{background:var(--green-100);color:var(--green-700)}
+  .badge--pending{background:var(--amber-100);color:var(--amber-700)}
+  .badge--failed{background:var(--red-100);color:var(--red-700)}
+
+  /* === Harness chrome ===================================================== */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);font-family:Inter,system-ui,sans-serif;padding:32px} /* ds-allow-hardcode: harness chrome */
+  .stack{display:flex;flex-direction:column;gap:40px;max-inline-size:720px;margin:0 auto} /* ds-allow-hardcode: harness chrome */
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0 0 12px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+  [data-theme="dark"] .badge--paid{background:var(--green-800);color:var(--green-300)}
+  [data-theme="dark"] .badge--pending{background:var(--amber-800);color:var(--amber-300)}
+  [data-theme="dark"] .badge--failed{background:var(--red-800);color:var(--red-300)}
+</style>
+</head>
+<body>
+  <main class="stack">
+
+    <!-- 1. Default table -->
+    <section>
+      <p class="grp-label">Default — invoices</p>
+      <div class="table-wrap">
+        <table>
+          <caption>Monthly invoices</caption>
+          <thead>
+            <tr>
+              <th>Invoice</th>
+              <th>Status</th>
+              <th>Method</th>
+              <th style="text-align:right">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="font-weight:var(--font-weight-medium)">INV-001</td>
+              <td><span class="badge badge--paid">Paid</span></td>
+              <td>Credit Card</td>
+              <td style="text-align:right">$250.00</td>
+            </tr>
+            <tr>
+              <td style="font-weight:var(--font-weight-medium)">INV-002</td>
+              <td><span class="badge badge--pending">Pending</span></td>
+              <td>Bank Transfer</td>
+              <td style="text-align:right">$1,200.00</td>
+            </tr>
+            <tr>
+              <td style="font-weight:var(--font-weight-medium)">INV-003</td>
+              <td><span class="badge badge--failed">Failed</span></td>
+              <td>PayPal</td>
+              <td style="text-align:right">$89.00</td>
+            </tr>
+            <tr>
+              <td style="font-weight:var(--font-weight-medium)">INV-004</td>
+              <td><span class="badge badge--paid">Paid</span></td>
+              <td>Credit Card</td>
+              <td style="text-align:right">$350.00</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="3">Total</td>
+              <td style="text-align:right">$1,889.00</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </section>
+
+    <!-- 2. Row hover + selected state -->
+    <section>
+      <p class="grp-label">Selected row (data-state="selected")</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Role</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Alice Chen</td>
+              <td>Designer</td>
+              <td><span class="badge badge--paid">Active</span></td>
+            </tr>
+            <tr data-state="selected">
+              <td style="font-weight:var(--font-weight-medium);color:var(--interactive-selected-text)">Bob Johnson</td>
+              <td>Engineer</td>
+              <td><span class="badge badge--paid">Active</span></td>
+            </tr>
+            <tr>
+              <td>Carol White</td>
+              <td>Product</td>
+              <td><span class="badge badge--pending">Pending</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 3. Dark mode -->
+    <section data-theme="dark" style="background:var(--surface-page);padding:24px;border-radius:var(--radius-lg)">
+      <p class="grp-label">Dark mode</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Invoice</th>
+              <th>Status</th>
+              <th style="text-align:right">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="font-weight:var(--font-weight-medium)">INV-001</td>
+              <td><span class="badge badge--paid">Paid</span></td>
+              <td style="text-align:right">$250.00</td>
+            </tr>
+            <tr>
+              <td style="font-weight:var(--font-weight-medium)">INV-002</td>
+              <td><span class="badge badge--pending">Pending</span></td>
+              <td style="text-align:right">$1,200.00</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="2">Total</td>
+              <td style="text-align:right">$1,450.00</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </section>
+
+  </main>
+</body>
+</html>

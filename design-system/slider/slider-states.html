@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Slider - states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  /* === Slider seams ======================================================= */
+  :root {
+    --slider-track-h: 4px;
+    --slider-thumb-size: 16px;
+  }
+
+  /* === Slider (mirrors slider.tsx) ======================================== */
+  .slider{
+    position:relative;display:flex;align-items:center;width:100%;
+    touch-action:none;user-select:none;
+  }
+  .slider-track{
+    position:relative;flex-grow:1;height:var(--slider-track-h);overflow:hidden;
+    border-radius:var(--radius-full);background:var(--action-secondary);
+  }
+  .slider-range{
+    position:absolute;height:100%;background:var(--action-primary);
+  }
+  .slider-thumb{
+    display:block;width:var(--slider-thumb-size);height:var(--slider-thumb-size);
+    border-radius:var(--radius-full);
+    border:2px solid var(--action-primary);background:var(--surface-card); /* ds-allow-hardcode: 2px border */
+    box-shadow:var(--shadow-sm);
+    transition:box-shadow var(--duration-fast) var(--ease-out);
+    cursor:pointer;
+  }
+  .slider-thumb:hover{box-shadow:var(--shadow-md)}
+  .slider-thumb:focus-visible{outline:none;box-shadow:var(--focus-ring)}
+
+  /* === Helpers ============================================================ */
+  .slider-row{display:flex;flex-direction:column;gap:var(--space-2)}
+  .slider-meta{display:flex;justify-content:space-between;align-items:center}
+  .slider-label{font-size:var(--font-size-sm);color:var(--text-secondary)}
+  .slider-val{font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);color:var(--text-primary)}
+
+  /* === Harness chrome ===================================================== */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);font-family:Inter,system-ui,sans-serif;padding:32px} /* ds-allow-hardcode: harness chrome */
+  .stack{display:flex;flex-direction:column;gap:32px;max-inline-size:480px;margin:0 auto} /* ds-allow-hardcode: harness chrome */
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0 0 12px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+</style>
+</head>
+<body>
+  <main class="stack">
+
+    <!-- 1. Default — 50% -->
+    <section>
+      <p class="grp-label">Default — 50%</p>
+      <div class="slider" role="slider" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" aria-label="Volume" tabindex="0">
+        <div class="slider-track">
+          <div class="slider-range" style="width:50%;left:0"></div>
+        </div>
+        <div class="slider-thumb" style="position:absolute;left:calc(50% - var(--slider-thumb-size) / 2)"></div>
+      </div>
+    </section>
+
+    <!-- 2. With label + value -->
+    <section>
+      <p class="grp-label">With label + value</p>
+      <div class="slider-row">
+        <div class="slider-meta">
+          <span class="slider-label">Volume</span>
+          <span class="slider-val">72%</span>
+        </div>
+        <div class="slider" role="slider" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100" aria-label="Volume" tabindex="0">
+          <div class="slider-track">
+            <div class="slider-range" style="width:72%;left:0"></div>
+          </div>
+          <div class="slider-thumb" style="position:absolute;left:calc(72% - var(--slider-thumb-size) / 2)"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Minimum (0%) -->
+    <section>
+      <p class="grp-label">Minimum — 0%</p>
+      <div class="slider" role="slider" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Slider" tabindex="0">
+        <div class="slider-track">
+          <div class="slider-range" style="width:0%;left:0"></div>
+        </div>
+        <div class="slider-thumb" style="position:absolute;left:0"></div>
+      </div>
+    </section>
+
+    <!-- 4. Maximum (100%) -->
+    <section>
+      <p class="grp-label">Maximum — 100%</p>
+      <div class="slider" role="slider" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" aria-label="Slider" tabindex="0">
+        <div class="slider-track">
+          <div class="slider-range" style="width:100%;left:0"></div>
+        </div>
+        <div class="slider-thumb" style="position:absolute;right:0;left:auto"></div>
+      </div>
+    </section>
+
+    <!-- 5. Focus state -->
+    <section>
+      <p class="grp-label">Focus — thumb focused</p>
+      <div class="slider" role="slider" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" aria-label="Slider" tabindex="0">
+        <div class="slider-track">
+          <div class="slider-range" style="width:40%;left:0"></div>
+        </div>
+        <div class="slider-thumb" style="position:absolute;left:calc(40% - var(--slider-thumb-size) / 2);box-shadow:var(--focus-ring)"></div>
+      </div>
+    </section>
+
+    <!-- 6. Disabled -->
+    <section>
+      <p class="grp-label">Disabled</p>
+      <div class="slider" style="opacity:.5;pointer-events:none" aria-disabled="true" role="slider" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100" aria-label="Slider">
+        <div class="slider-track">
+          <div class="slider-range" style="width:30%;left:0"></div>
+        </div>
+        <div class="slider-thumb" style="position:absolute;left:calc(30% - var(--slider-thumb-size) / 2);cursor:not-allowed"></div>
+      </div>
+    </section>
+
+    <!-- 7. Dark mode -->
+    <section data-theme="dark" style="background:var(--surface-page);padding:24px;border-radius:var(--radius-lg)">
+      <p class="grp-label">Dark mode</p>
+      <div class="slider-row">
+        <div class="slider-meta">
+          <span class="slider-label">Brightness</span>
+          <span class="slider-val">60%</span>
+        </div>
+        <div class="slider" role="slider" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" aria-label="Brightness" tabindex="0">
+          <div class="slider-track">
+            <div class="slider-range" style="width:60%;left:0"></div>
+          </div>
+          <div class="slider-thumb" style="position:absolute;left:calc(60% - var(--slider-thumb-size) / 2)"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</body>
+</html>

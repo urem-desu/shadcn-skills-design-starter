@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Toggle - states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  /* === Toggle (mirrors toggle.tsx) ======================================== */
+  .toggle{
+    display:inline-flex;align-items:center;justify-content:center;
+    gap:var(--space-2);border:none;background:transparent;cursor:pointer;
+    border-radius:var(--radius-md);
+    font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);
+    color:var(--text-secondary);
+    transition:background var(--duration-fast) var(--ease-out),
+               color var(--duration-fast) var(--ease-out);
+  }
+  .toggle:hover{background:var(--action-secondary);color:var(--text-primary)}
+  .toggle:focus-visible{outline:none;box-shadow:var(--focus-ring)}
+  .toggle:disabled{pointer-events:none;opacity:.5}
+  .toggle[aria-pressed="true"]{
+    background:var(--interactive-selected-bg);
+    color:var(--interactive-selected-text);
+  }
+  /* Sizes */
+  .toggle--sm{height:var(--control-sm);padding:0 var(--space-2);font-size:var(--font-size-xs)}
+  .toggle--md{height:var(--control-md);padding:0 var(--space-3)}
+  .toggle--lg{height:var(--control-lg,48px);padding:0 var(--space-4);font-size:var(--font-size-base)}
+  /* Outline variant */
+  .toggle--outline{border:1px solid var(--border-default)}
+  .toggle--outline:hover{border-color:var(--border-default)}
+
+  /* === Icon placeholder =================================================== */
+  .icon{width:var(--icon-sm);height:var(--icon-sm)}
+  .icon svg{width:100%;height:100%}
+
+  /* === Harness chrome ===================================================== */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);font-family:Inter,system-ui,sans-serif;padding:32px} /* ds-allow-hardcode: harness chrome */
+  .stack{display:flex;flex-direction:column;gap:32px;max-inline-size:480px;margin:0 auto} /* ds-allow-hardcode: harness chrome */
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0 0 12px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+  .row{display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap}
+</style>
+</head>
+<body>
+  <main class="stack">
+
+    <!-- 1. Default variant — states -->
+    <section>
+      <p class="grp-label">Default variant</p>
+      <div class="row">
+        <button class="toggle toggle--md" role="button" aria-pressed="false">Off</button>
+        <button class="toggle toggle--md" role="button" aria-pressed="true">On</button>
+        <button class="toggle toggle--md" role="button" aria-pressed="false" style="background:var(--action-secondary);color:var(--text-primary)">Hover</button>
+        <button class="toggle toggle--md" role="button" aria-pressed="false" style="box-shadow:var(--focus-ring)">Focus</button>
+        <button class="toggle toggle--md" role="button" aria-pressed="false" disabled>Disabled</button>
+      </div>
+    </section>
+
+    <!-- 2. Outline variant -->
+    <section>
+      <p class="grp-label">Outline variant</p>
+      <div class="row">
+        <button class="toggle toggle--outline toggle--md" role="button" aria-pressed="false">Off</button>
+        <button class="toggle toggle--outline toggle--md" role="button" aria-pressed="true">On</button>
+      </div>
+    </section>
+
+    <!-- 3. Sizes -->
+    <section>
+      <p class="grp-label">Sizes — sm / md / lg</p>
+      <div class="row">
+        <button class="toggle toggle--sm" role="button" aria-pressed="false">
+          <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/><path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/></svg>
+          </span>
+          Bold
+        </button>
+        <button class="toggle toggle--md" role="button" aria-pressed="true">
+          <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="4" x2="10" y2="4"/><line x1="14" y1="20" x2="5" y2="20"/><line x1="15" y1="4" x2="9" y2="20"/></svg>
+          </span>
+          Italic
+        </button>
+        <button class="toggle toggle--lg" role="button" aria-pressed="false">
+          <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>
+          </span>
+          Underline
+        </button>
+      </div>
+    </section>
+
+    <!-- 4. Icon-only -->
+    <section>
+      <p class="grp-label">Icon-only toggles</p>
+      <div class="row">
+        <button class="toggle toggle--md" role="button" aria-pressed="false" aria-label="Bold" style="padding:0;width:var(--control-md)">
+          <svg width="var(--icon-sm)" height="var(--icon-sm)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/><path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/></svg>
+        </button>
+        <button class="toggle toggle--md" role="button" aria-pressed="true" aria-label="Italic" style="padding:0;width:var(--control-md)">
+          <svg width="var(--icon-sm)" height="var(--icon-sm)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="19" y1="4" x2="10" y2="4"/><line x1="14" y1="20" x2="5" y2="20"/><line x1="15" y1="4" x2="9" y2="20"/></svg>
+        </button>
+        <button class="toggle toggle--md" role="button" aria-pressed="false" aria-label="Underline" style="padding:0;width:var(--control-md)">
+          <svg width="var(--icon-sm)" height="var(--icon-sm)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- 5. Dark mode -->
+    <section data-theme="dark" style="background:var(--surface-page);padding:24px;border-radius:var(--radius-lg)">
+      <p class="grp-label">Dark mode</p>
+      <div class="row">
+        <button class="toggle toggle--md" role="button" aria-pressed="false">Off</button>
+        <button class="toggle toggle--md" role="button" aria-pressed="true">On</button>
+        <button class="toggle toggle--outline toggle--md" role="button" aria-pressed="false">Outline</button>
+      </div>
+    </section>
+
+  </main>
+</body>
+</html>

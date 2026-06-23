@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Toggle Group - states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  /* === Toggle (base — shared with Toggle) ================================= */
+  .toggle{
+    display:inline-flex;align-items:center;justify-content:center;
+    gap:var(--space-2);border:none;background:transparent;cursor:pointer;
+    font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);
+    color:var(--text-secondary);
+    transition:background var(--duration-fast) var(--ease-out),
+               color var(--duration-fast) var(--ease-out);
+  }
+  .toggle:hover{background:var(--action-secondary);color:var(--text-primary)}
+  .toggle:focus-visible{outline:none;box-shadow:var(--focus-ring)}
+  .toggle:disabled{pointer-events:none;opacity:.5}
+  .toggle[aria-pressed="true"]{
+    background:var(--interactive-selected-bg);
+    color:var(--interactive-selected-text);
+  }
+  .toggle--sm{height:var(--control-sm);padding:0 var(--space-2);font-size:var(--font-size-xs)}
+  .toggle--md{height:var(--control-md);padding:0 var(--space-3)}
+
+  /* === Toggle Group container (mirrors toggle-group.tsx) ================== */
+  .toggle-group{
+    display:inline-flex;align-items:center;
+    border:1px solid var(--border-default);border-radius:var(--radius-md);
+    overflow:hidden;
+  }
+  /* Items inside the group: flush radius + right-border divider */
+  .toggle-group .toggle{
+    border-radius:0;
+    border-right:1px solid var(--border-default);
+  }
+  .toggle-group .toggle:last-child{border-right:0}
+
+  /* === Icon placeholder =================================================== */
+  .icon{display:inline-flex;align-items:center;justify-content:center;width:var(--icon-sm);height:var(--icon-sm)}
+  .icon svg{width:100%;height:100%}
+
+  /* === Harness chrome ===================================================== */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);font-family:Inter,system-ui,sans-serif;padding:32px} /* ds-allow-hardcode: harness chrome */
+  .stack{display:flex;flex-direction:column;gap:32px;max-inline-size:480px;margin:0 auto} /* ds-allow-hardcode: harness chrome */
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0 0 12px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+  .row{display:flex;align-items:center;gap:var(--space-4);flex-wrap:wrap}
+</style>
+</head>
+<body>
+  <main class="stack">
+
+    <!-- 1. Text alignment (single selection) -->
+    <section>
+      <p class="grp-label">Text alignment — single selection</p>
+      <div class="toggle-group" role="group" aria-label="Text alignment">
+        <button class="toggle toggle--md" role="button" aria-pressed="true" aria-label="Left">
+          <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
+          </span>
+        </button>
+        <button class="toggle toggle--md" role="button" aria-pressed="false" aria-label="Center">
+          <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="10" x2="6" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="18" y1="18" x2="6" y2="18"/></svg>
+          </span>
+        </button>
+        <button class="toggle toggle--md" role="button" aria-pressed="false" aria-label="Right">
+          <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="21" y1="10" x2="7" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="21" y1="18" x2="7" y2="18"/></svg>
+          </span>
+        </button>
+      </div>
+    </section>
+
+    <!-- 2. Text formatting (multiple selection) -->
+    <section>
+      <p class="grp-label">Text formatting — multiple selection</p>
+      <div class="toggle-group" role="group" aria-label="Text formatting">
+        <button class="toggle toggle--md" role="button" aria-pressed="true">
+          <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/><path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/></svg>
+          </span>
+        </button>
+        <button class="toggle toggle--md" role="button" aria-pressed="true">
+          <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="4" x2="10" y2="4"/><line x1="14" y1="20" x2="5" y2="20"/><line x1="15" y1="4" x2="9" y2="20"/></svg>
+          </span>
+        </button>
+        <button class="toggle toggle--md" role="button" aria-pressed="false">
+          <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>
+          </span>
+        </button>
+      </div>
+    </section>
+
+    <!-- 3. With text labels -->
+    <section>
+      <p class="grp-label">Text labels</p>
+      <div class="toggle-group" role="group" aria-label="View mode">
+        <button class="toggle toggle--md" role="button" aria-pressed="false">List</button>
+        <button class="toggle toggle--md" role="button" aria-pressed="true">Grid</button>
+        <button class="toggle toggle--md" role="button" aria-pressed="false">Board</button>
+      </div>
+    </section>
+
+    <!-- 4. Small size -->
+    <section>
+      <p class="grp-label">Small size</p>
+      <div class="toggle-group" role="group" aria-label="Period">
+        <button class="toggle toggle--sm" role="button" aria-pressed="false">Day</button>
+        <button class="toggle toggle--sm" role="button" aria-pressed="true">Week</button>
+        <button class="toggle toggle--sm" role="button" aria-pressed="false">Month</button>
+        <button class="toggle toggle--sm" role="button" aria-pressed="false">Year</button>
+      </div>
+    </section>
+
+    <!-- 5. Focus state -->
+    <section>
+      <p class="grp-label">Item focus state</p>
+      <div class="toggle-group" role="group" aria-label="Text alignment">
+        <button class="toggle toggle--md" role="button" aria-pressed="true" aria-label="Left">Left</button>
+        <button class="toggle toggle--md" role="button" aria-pressed="false" style="box-shadow:var(--focus-ring);color:var(--text-primary)" aria-label="Center">Center</button>
+        <button class="toggle toggle--md" role="button" aria-pressed="false" aria-label="Right">Right</button>
+      </div>
+    </section>
+
+    <!-- 6. Dark mode -->
+    <section data-theme="dark" style="background:var(--surface-page);padding:24px;border-radius:var(--radius-lg)">
+      <p class="grp-label">Dark mode</p>
+      <div class="row">
+        <div class="toggle-group" role="group" aria-label="Text alignment">
+          <button class="toggle toggle--md" role="button" aria-pressed="true" aria-label="Left">Left</button>
+          <button class="toggle toggle--md" role="button" aria-pressed="false" aria-label="Center">Center</button>
+          <button class="toggle toggle--md" role="button" aria-pressed="false" aria-label="Right">Right</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</body>
+</html>

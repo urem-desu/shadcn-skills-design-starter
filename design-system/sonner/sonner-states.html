@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sonner - states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  /* === Toast (mirrors Sonner classNames in sonner.tsx) ==================== */
+  .toast{
+    display:flex;align-items:flex-start;gap:var(--space-3);
+    min-width:320px;max-width:420px; /* ds-allow-hardcode: Sonner default width range */
+    padding:var(--space-4);
+    border-radius:var(--radius-lg);border:1px solid var(--border-default);
+    background:var(--surface-card);box-shadow:var(--shadow-lg);
+    font-size:var(--font-size-sm);color:var(--text-primary);
+    position:relative;
+  }
+  .toast-body{display:flex;flex-direction:column;gap:var(--space-1);flex:1;min-width:0}
+  .toast-title{font-weight:var(--font-weight-medium);line-height:var(--line-normal)}
+  .toast-desc{color:var(--text-secondary);font-size:var(--font-size-sm)}
+  .toast-actions{display:flex;gap:var(--space-2);margin-top:var(--space-2)}
+
+  /* Toast type borders */
+  .toast--success{border-color:var(--green-300)}
+  .toast--error{border-color:var(--red-300)}
+  .toast--warning{border-color:var(--amber-300)}
+  .toast--info{border-color:var(--blue-200)}
+
+  /* Toast icon */
+  .toast-icon{
+    display:flex;align-items:center;justify-content:center;
+    width:var(--icon-md);height:var(--icon-md);flex-shrink:0;
+    margin-top:1px; /* ds-allow-hardcode: optical alignment with first text line */
+  }
+  .toast-icon svg{width:var(--icon-sm);height:var(--icon-sm)}
+  .toast--success .toast-icon{color:var(--green-600)}
+  .toast--error .toast-icon,.toast--error .toast-title{color:var(--text-destructive)}
+  .toast--warning .toast-icon,.toast--warning .toast-title{color:var(--amber-700)}
+  .toast--info .toast-icon,.toast--info .toast-title{color:var(--text-link)}
+
+  /* Buttons */
+  .btn-action{
+    height:var(--control-sm);padding:0 var(--space-3);
+    border-radius:var(--radius-sm);border:none;cursor:pointer;
+    font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);
+    background:var(--action-primary);color:var(--action-primary-text);
+    transition:background var(--duration-fast) var(--ease-out);
+  }
+  .btn-action:hover{background:var(--action-primary-hover)}
+  .btn-cancel{
+    height:var(--control-sm);padding:0 var(--space-3);
+    border-radius:var(--radius-sm);border:none;cursor:pointer;
+    font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);
+    background:var(--action-secondary);color:var(--text-secondary);
+  }
+
+  /* Close button */
+  .toast-close{
+    position:absolute;inset-block-start:var(--space-3);inset-inline-end:var(--space-3);
+    display:flex;align-items:center;justify-content:center;
+    width:var(--icon-md);height:var(--icon-md);
+    border-radius:var(--radius-sm);border:none;background:transparent;
+    color:var(--text-tertiary);cursor:pointer;
+  }
+  .toast-close:hover{background:var(--action-secondary);color:var(--text-primary)}
+  .toast-close svg{width:var(--icon-xs,12px);height:var(--icon-xs,12px)}
+
+  /* === Harness chrome ===================================================== */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);font-family:Inter,system-ui,sans-serif;padding:32px} /* ds-allow-hardcode: harness chrome */
+  .stack{display:flex;flex-direction:column;gap:24px;max-inline-size:480px;margin:0 auto} /* ds-allow-hardcode: harness chrome */
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0 0 8px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+</style>
+</head>
+<body>
+  <main class="stack">
+
+    <!-- 1. Default -->
+    <section>
+      <p class="grp-label">Default</p>
+      <div class="toast" role="status">
+        <div class="toast-body">
+          <p class="toast-title">Profile updated</p>
+        </div>
+        <button class="toast-close" aria-label="Dismiss">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- 2. Success -->
+    <section>
+      <p class="grp-label">Success</p>
+      <div class="toast toast--success" role="status">
+        <div class="toast-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg>
+        </div>
+        <div class="toast-body">
+          <p class="toast-title">Changes saved</p>
+          <p class="toast-desc">Your profile has been updated successfully.</p>
+        </div>
+        <button class="toast-close" aria-label="Dismiss">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- 3. Error -->
+    <section>
+      <p class="grp-label">Error</p>
+      <div class="toast toast--error" role="alert">
+        <div class="toast-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div class="toast-body">
+          <p class="toast-title">Upload failed</p>
+          <p class="toast-desc">The file exceeded the 10 MB limit. Try compressing it first.</p>
+        </div>
+        <button class="toast-close" aria-label="Dismiss">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- 4. Warning -->
+    <section>
+      <p class="grp-label">Warning</p>
+      <div class="toast toast--warning" role="alert">
+        <div class="toast-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div class="toast-body">
+          <p class="toast-title">Low disk space</p>
+          <p class="toast-desc">Less than 500 MB remaining. Free up space to continue.</p>
+        </div>
+        <button class="toast-close" aria-label="Dismiss">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- 5. Info -->
+    <section>
+      <p class="grp-label">Info</p>
+      <div class="toast toast--info" role="status">
+        <div class="toast-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        </div>
+        <div class="toast-body">
+          <p class="toast-title">System maintenance</p>
+          <p class="toast-desc">Scheduled maintenance at 2:00 AM UTC. Expect brief downtime.</p>
+        </div>
+        <button class="toast-close" aria-label="Dismiss">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- 6. With action button -->
+    <section>
+      <p class="grp-label">With action + cancel</p>
+      <div class="toast" role="status">
+        <div class="toast-body">
+          <p class="toast-title">File deleted</p>
+          <p class="toast-desc">report-2024.pdf has been moved to trash.</p>
+          <div class="toast-actions">
+            <button class="btn-action">Undo</button>
+            <button class="btn-cancel">Dismiss</button>
+          </div>
+        </div>
+        <button class="toast-close" aria-label="Dismiss">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- 7. Dark mode -->
+    <section data-theme="dark" style="background:var(--surface-page);padding:24px;border-radius:var(--radius-lg)">
+      <p class="grp-label">Dark mode</p>
+      <div class="toast toast--success" role="status">
+        <div class="toast-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg>
+        </div>
+        <div class="toast-body">
+          <p class="toast-title">Changes saved</p>
+          <p class="toast-desc">Your profile has been updated.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</body>
+</html>

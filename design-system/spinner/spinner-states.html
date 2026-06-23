@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Spinner - states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  /* === Spinner (mirrors spinner.tsx) ====================================== */
+  @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+  .spinner{
+    display:inline-block;
+    animation:spin 1s linear infinite;
+    color:currentColor;
+  }
+  @media (prefers-reduced-motion:reduce){
+    .spinner{animation:none}
+  }
+  .spinner svg{display:block;width:100%;height:100%}
+  .spinner--sm{width:var(--icon-sm);height:var(--icon-sm)}
+  .spinner--md{width:var(--icon-md);height:var(--icon-md)}
+  .spinner--lg{width:var(--icon-lg);height:var(--icon-lg)}
+
+  /* === Harness chrome ===================================================== */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);font-family:Inter,system-ui,sans-serif;padding:32px} /* ds-allow-hardcode: harness chrome */
+  .stack{display:flex;flex-direction:column;gap:32px;max-inline-size:480px;margin:0 auto} /* ds-allow-hardcode: harness chrome */
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0 0 12px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+  .row{display:flex;align-items:center;gap:var(--space-4)}
+</style>
+</head>
+<body>
+  <main class="stack">
+
+    <!-- 1. Sizes -->
+    <section>
+      <p class="grp-label">Sizes — sm / md / lg</p>
+      <div class="row">
+        <span class="spinner spinner--sm" role="status" aria-label="Loading">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.25" stroke-width="2" fill="none"/>
+            <path d="M12 2a10 10 0 0 1 10 10"/>
+          </svg>
+        </span>
+        <span class="spinner spinner--md" role="status" aria-label="Loading">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.25" stroke-width="2" fill="none"/>
+            <path d="M12 2a10 10 0 0 1 10 10"/>
+          </svg>
+        </span>
+        <span class="spinner spinner--lg" role="status" aria-label="Loading">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.25" stroke-width="2" fill="none"/>
+            <path d="M12 2a10 10 0 0 1 10 10"/>
+          </svg>
+        </span>
+      </div>
+    </section>
+
+    <!-- 2. Colors via text inheritance -->
+    <section>
+      <p class="grp-label">Colors — inherits currentColor</p>
+      <div class="row">
+        <span class="spinner spinner--md" role="status" aria-label="Loading" style="color:var(--action-primary)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.25" stroke-width="2" fill="none"/>
+            <path d="M12 2a10 10 0 0 1 10 10"/>
+          </svg>
+        </span>
+        <span class="spinner spinner--md" role="status" aria-label="Loading" style="color:var(--green-600)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.25" stroke-width="2" fill="none"/>
+            <path d="M12 2a10 10 0 0 1 10 10"/>
+          </svg>
+        </span>
+        <span class="spinner spinner--md" role="status" aria-label="Loading" style="color:var(--text-destructive)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.25" stroke-width="2" fill="none"/>
+            <path d="M12 2a10 10 0 0 1 10 10"/>
+          </svg>
+        </span>
+        <span class="spinner spinner--md" role="status" aria-label="Loading" style="color:var(--text-tertiary)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.25" stroke-width="2" fill="none"/>
+            <path d="M12 2a10 10 0 0 1 10 10"/>
+          </svg>
+        </span>
+      </div>
+    </section>
+
+    <!-- 3. In a button (loading state) -->
+    <section>
+      <p class="grp-label">In button — loading state</p>
+      <div class="row">
+        <button disabled style="
+          display:inline-flex;align-items:center;gap:var(--space-2);
+          height:var(--control-md);padding:0 var(--space-4);
+          border-radius:var(--radius-md);border:none;cursor:not-allowed;
+          background:var(--action-primary);color:var(--action-primary-text);
+          font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);
+          opacity:.8;
+        " aria-disabled="true">
+          <span class="spinner spinner--sm" aria-label="Saving" style="color:var(--action-primary-text)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.25" stroke-width="2" fill="none"/>
+              <path d="M12 2a10 10 0 0 1 10 10"/>
+            </svg>
+          </span>
+          Saving…
+        </button>
+      </div>
+    </section>
+
+    <!-- 4. Full-page loading overlay (inline demo) -->
+    <section>
+      <p class="grp-label">Full-page overlay (inline demo)</p>
+      <div style="
+        position:relative;height:120px;border-radius:var(--radius-lg); /* ds-allow-hardcode: harness size */
+        border:1px solid var(--border-default);background:var(--surface-page);
+        display:flex;align-items:center;justify-content:center;
+      ">
+        <div style="
+          position:absolute;inset:0;border-radius:inherit;
+          display:flex;flex-direction:column;align-items:center;justify-content:center;
+          gap:var(--space-3);background:color-mix(in srgb,var(--surface-page) 80%,transparent);
+        " aria-busy="true" aria-label="Loading page">
+          <span class="spinner spinner--lg" style="color:var(--action-primary)" role="status" aria-label="Loading">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.25" stroke-width="2" fill="none"/>
+              <path d="M12 2a10 10 0 0 1 10 10"/>
+            </svg>
+          </span>
+          <span style="font-size:var(--font-size-sm);color:var(--text-secondary)">Loading…</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Dark mode -->
+    <section data-theme="dark" style="background:var(--surface-page);padding:24px;border-radius:var(--radius-lg)">
+      <p class="grp-label">Dark mode</p>
+      <div class="row">
+        <span class="spinner spinner--sm" role="status" aria-label="Loading">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.25" stroke-width="2" fill="none"/>
+            <path d="M12 2a10 10 0 0 1 10 10"/>
+          </svg>
+        </span>
+        <span class="spinner spinner--md" role="status" aria-label="Loading" style="color:var(--action-primary)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.25" stroke-width="2" fill="none"/>
+            <path d="M12 2a10 10 0 0 1 10 10"/>
+          </svg>
+        </span>
+        <span class="spinner spinner--lg" role="status" aria-label="Loading">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.25" stroke-width="2" fill="none"/>
+            <path d="M12 2a10 10 0 0 1 10 10"/>
+          </svg>
+        </span>
+      </div>
+    </section>
+
+  </main>
+</body>
+</html>

@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sidebar - states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  /* === Sidebar seams ====================================================== */
+  :root {
+    --sidebar-w: 240px;
+    --sidebar-collapsed-w: 48px;
+  }
+
+  /* === Layout wrapper (mirrors SidebarProvider) =========================== */
+  .sidebar-wrapper{
+    display:flex;min-height:400px; /* ds-allow-hardcode: harness height */
+    border:1px solid var(--border-default);border-radius:var(--radius-lg);
+    overflow:hidden;background:var(--surface-page);
+  }
+
+  /* === Sidebar panel (mirrors sidebar.tsx) ================================ */
+  .sidebar{
+    flex-shrink:0;position:relative;
+    display:flex;flex-direction:column;overflow:hidden;
+    background:var(--surface-card);
+    transition:width var(--duration-base) var(--ease-in-out);
+  }
+  .sidebar--left{border-right:1px solid var(--border-default)}
+  .sidebar--expanded{width:var(--sidebar-w)}
+  .sidebar--collapsed{width:var(--sidebar-collapsed-w)}
+
+  /* === Structural sections ================================================ */
+  .sidebar-header{
+    display:flex;flex-direction:column;gap:var(--space-2);
+    padding:var(--space-3);border-bottom:1px solid var(--border-default);
+    flex-shrink:0;
+  }
+  .sidebar-content{
+    display:flex;flex-direction:column;gap:var(--space-1);
+    flex:1;overflow-y:auto;overflow-x:hidden;padding:var(--space-3);
+  }
+  .sidebar-footer{
+    display:flex;flex-direction:column;gap:var(--space-2);
+    padding:var(--space-3);border-top:1px solid var(--border-default);
+    flex-shrink:0;
+  }
+
+  /* === Groups ============================================================= */
+  .sidebar-group{display:flex;flex-direction:column;gap:var(--space-1)}
+  .sidebar-group-label{
+    padding:var(--space-1) var(--space-2);
+    font-size:var(--font-size-xs);font-weight:var(--font-weight-medium);
+    color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.06em;
+    overflow:hidden;white-space:nowrap;
+    transition:opacity var(--duration-base);
+  }
+  .sidebar--collapsed .sidebar-group-label{
+    opacity:0;pointer-events:none;height:0;padding:0;overflow:hidden;
+  }
+  .sidebar-group-content{display:flex;flex-direction:column;gap:2px} /* ds-allow-hardcode: micro-gap */
+
+  /* === Menu items ========================================================= */
+  .sidebar-menu{display:flex;flex-direction:column;gap:2px;list-style:none;margin:0;padding:0} /* ds-allow-hardcode: micro-gap */
+  .sidebar-menu-btn{
+    display:flex;align-items:center;gap:var(--space-2);width:100%;
+    height:var(--control-md);padding:0 var(--space-2);
+    border-radius:var(--radius-md);border:none;background:transparent;
+    font-size:var(--font-size-sm);color:var(--text-primary);
+    text-align:left;cursor:pointer;white-space:nowrap;
+    transition:background var(--duration-fast) var(--ease-out),
+               color var(--duration-fast) var(--ease-out);
+  }
+  .sidebar-menu-btn:hover{background:var(--action-secondary)}
+  .sidebar-menu-btn:focus-visible{outline:none;box-shadow:var(--focus-ring)}
+  .sidebar-menu-btn[aria-current="page"]{
+    background:var(--interactive-selected-bg);
+    color:var(--interactive-selected-text);
+    font-weight:var(--font-weight-medium);
+  }
+  .sidebar--collapsed .sidebar-menu-btn{justify-content:center;padding:0}
+  .sidebar--collapsed .sidebar-menu-btn .btn-label{display:none}
+
+  /* === Icon placeholder =================================================== */
+  .icon{
+    display:inline-flex;align-items:center;justify-content:center;
+    flex-shrink:0;width:var(--icon-sm);height:var(--icon-sm);
+  }
+  .icon svg{width:100%;height:100%}
+
+  /* === Trigger button ===================================================== */
+  .sidebar-trigger{
+    display:flex;align-items:center;justify-content:center;
+    width:var(--control-sm);height:var(--control-sm);
+    border-radius:var(--radius-md);border:none;background:transparent;
+    color:var(--text-secondary);cursor:pointer;
+    transition:background var(--duration-fast) var(--ease-out),
+               color var(--duration-fast) var(--ease-out);
+  }
+  .sidebar-trigger:hover{background:var(--action-secondary);color:var(--text-primary)}
+  .sidebar-trigger:focus-visible{outline:none;box-shadow:var(--focus-ring)}
+  .sidebar-trigger svg{width:var(--icon-sm);height:var(--icon-sm)}
+
+  /* === Main content area ================================================== */
+  .main-area{
+    flex:1;padding:var(--space-6);
+    font-size:var(--font-size-sm);color:var(--text-tertiary);
+    overflow:hidden;
+  }
+
+  /* === Separator ========================================================== */
+  .sidebar-sep{margin:var(--space-2) 0;border-top:1px solid var(--border-default)}
+
+  /* === Harness chrome ===================================================== */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);font-family:Inter,system-ui,sans-serif;padding:32px} /* ds-allow-hardcode: harness chrome */
+  .stack{display:flex;flex-direction:column;gap:40px;max-inline-size:680px;margin:0 auto} /* ds-allow-hardcode: harness chrome */
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0 0 12px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+</style>
+</head>
+<body>
+  <main class="stack">
+
+    <!-- 1. Expanded — default state -->
+    <section>
+      <p class="grp-label">Expanded (default)</p>
+      <div class="sidebar-wrapper">
+        <aside class="sidebar sidebar--left sidebar--expanded" aria-label="Navigation">
+          <div class="sidebar-header">
+            <button class="sidebar-trigger" aria-expanded="true" aria-label="Collapse sidebar">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                <rect x="2" y="2" width="12" height="12" rx="2"/><line x1="6" y1="2" x2="6" y2="14"/>
+              </svg>
+            </button>
+          </div>
+          <div class="sidebar-content">
+            <div class="sidebar-group">
+              <p class="sidebar-group-label">Navigation</p>
+              <ul class="sidebar-menu" role="list">
+                <li>
+                  <button class="sidebar-menu-btn" aria-current="page">
+                    <span class="icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                    </span>
+                    <span class="btn-label">Dashboard</span>
+                  </button>
+                </li>
+                <li>
+                  <button class="sidebar-menu-btn">
+                    <span class="icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </span>
+                    <span class="btn-label">Users</span>
+                  </button>
+                </li>
+                <li>
+                  <button class="sidebar-menu-btn">
+                    <span class="icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    </span>
+                    <span class="btn-label">Documents</span>
+                  </button>
+                </li>
+              </ul>
+            </div>
+            <hr class="sidebar-sep" />
+            <div class="sidebar-group">
+              <p class="sidebar-group-label">System</p>
+              <ul class="sidebar-menu" role="list">
+                <li>
+                  <button class="sidebar-menu-btn">
+                    <span class="icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                    </span>
+                    <span class="btn-label">Settings</span>
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="sidebar-footer">
+            <button class="sidebar-menu-btn">
+              <span class="icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              </span>
+              <span class="btn-label">Log out</span>
+            </button>
+          </div>
+        </aside>
+        <div class="main-area">Main content area</div>
+      </div>
+    </section>
+
+    <!-- 2. Collapsed / icon-rail -->
+    <section>
+      <p class="grp-label">Collapsed — icon rail</p>
+      <div class="sidebar-wrapper">
+        <aside class="sidebar sidebar--left sidebar--collapsed" aria-label="Navigation">
+          <div class="sidebar-header">
+            <button class="sidebar-trigger" aria-expanded="false" aria-label="Expand sidebar">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                <rect x="2" y="2" width="12" height="12" rx="2"/><line x1="6" y1="2" x2="6" y2="14"/>
+              </svg>
+            </button>
+          </div>
+          <div class="sidebar-content">
+            <div class="sidebar-group">
+              <p class="sidebar-group-label">Navigation</p>
+              <ul class="sidebar-menu" role="list">
+                <li>
+                  <button class="sidebar-menu-btn" aria-current="page" title="Dashboard">
+                    <span class="icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                    </span>
+                    <span class="btn-label">Dashboard</span>
+                  </button>
+                </li>
+                <li>
+                  <button class="sidebar-menu-btn" title="Users">
+                    <span class="icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                    </span>
+                    <span class="btn-label">Users</span>
+                  </button>
+                </li>
+                <li>
+                  <button class="sidebar-menu-btn" title="Settings">
+                    <span class="icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2"/></svg>
+                    </span>
+                    <span class="btn-label">Settings</span>
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </aside>
+        <div class="main-area">Main content area</div>
+      </div>
+    </section>
+
+    <!-- 3. Dark mode -->
+    <section data-theme="dark">
+      <p class="grp-label">Dark mode — expanded</p>
+      <div class="sidebar-wrapper">
+        <aside class="sidebar sidebar--left sidebar--expanded" aria-label="Navigation">
+          <div class="sidebar-header">
+            <button class="sidebar-trigger" aria-expanded="true" aria-label="Collapse sidebar">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                <rect x="2" y="2" width="12" height="12" rx="2"/><line x1="6" y1="2" x2="6" y2="14"/>
+              </svg>
+            </button>
+          </div>
+          <div class="sidebar-content">
+            <div class="sidebar-group">
+              <p class="sidebar-group-label">Navigation</p>
+              <ul class="sidebar-menu" role="list">
+                <li>
+                  <button class="sidebar-menu-btn" aria-current="page">
+                    <span class="icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                    </span>
+                    <span class="btn-label">Dashboard</span>
+                  </button>
+                </li>
+                <li>
+                  <button class="sidebar-menu-btn">
+                    <span class="icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                    </span>
+                    <span class="btn-label">Users</span>
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </aside>
+        <div class="main-area">Main content area</div>
+      </div>
+    </section>
+
+  </main>
+</body>
+</html>

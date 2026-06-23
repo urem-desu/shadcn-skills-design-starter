@@ -209,6 +209,20 @@
   /* Sheet: one seam — side panel size on the blocking axis (360px for left/right width,
      top/bottom height; no scale token at 360). */
   --sheet-side-size:360px;                                    /* side panel width (left/right) or height (top/bottom) */
+
+  /* Sidebar: two seams — expanded panel width (240px) and collapsed icon-rail width
+     (48px). Both are bare-px values with no scale token equivalent. Everything else
+     (surface-card, border-default, text-primary/secondary, action-secondary hover,
+     interactive-selected-*, control-md item height, space-3/space-2/space-1 gaps)
+     maps to existing semantic/primitive tokens. */
+  --sidebar-w:240px;                                          /* expanded sidebar width */
+  --sidebar-collapsed-w:48px;                                 /* collapsed icon-rail width */
+
+  /* Slider: two seams — track height (4px; same value as space-1 but used as a visual
+     bar dimension, not layout spacing — named distinctly to clarify intent) and thumb
+     size (16px; same value as space-4 but used as a UI control size, not spacing). */
+  --slider-track-h:4px;                                       /* slider track height */
+  --slider-thumb-size:16px;                                   /* slider thumb diameter */
 }
 
 /* ---- Dark mode: SEMANTIC overrides only -------------------------------- */
