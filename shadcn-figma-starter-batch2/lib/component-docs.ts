@@ -381,6 +381,11 @@ const aspectRatio: ComponentDoc = {
 
 const avatar: ComponentDoc = {
   slug: "avatar",
+  variants: [
+    { name: 'size="sm"', description: "Compact avatar at --control-sm — dense lists, table rows, and comment threads." },
+    { name: 'size="md" (default)', description: "Standard avatar at --control-md — cards, menus, and most inline uses." },
+    { name: 'size="lg"', description: "Prominent avatar at --control-lg — profile headers and account screens." },
+  ],
   anatomy: `┌───────────────────┐
 │  ┌─────────────┐   │  ← consumer (stacked group uses negative margin + ring)
 │  │  img (fade) │   │  ← Avatar (position: relative; border-radius: full)
@@ -538,6 +543,12 @@ const breadcrumb: ComponentDoc = {
     "BreadcrumbPage — <span aria-current=\"page\"> current location indicator",
     "BreadcrumbSeparator — decorative <li aria-hidden>; defaults to ChevronRight",
     "BreadcrumbEllipsis — collapses a deep path; wrap in a DropdownMenu trigger",
+  ],
+  props: [
+    { prop: "asChild", type: "boolean", default: "false", description: "On BreadcrumbLink: render the passed child (e.g. a router Link) instead of an <a>, merging props via Slot." },
+    { prop: "href", type: "string", description: "On BreadcrumbLink: destination URL when rendering the default <a>. Omit when using asChild." },
+    { prop: "children", type: "ReactNode", description: "On BreadcrumbSeparator: custom separator content; defaults to a ChevronRight icon when omitted." },
+    { prop: "className", type: "string", description: "Tailwind overrides on any part — Breadcrumb, List, Item, Link, Page, Separator, Ellipsis. All other native props spread to the underlying element." },
   ],
   states: [
     { state: "Trail link — default", description: "text.secondary color (gray.600 / gray.400)." },
@@ -718,6 +729,10 @@ import Link from "next/link"
 
 const buttonGroup: ComponentDoc = {
   slug: "button-group",
+  variants: [
+    { name: 'orientation="horizontal" (default)', description: "Buttons sit in a row sharing one joined border; the outer radius lands on the first and last item." },
+    { name: 'orientation="vertical"', description: "Buttons stack in a column; the radius moves to the top and bottom of the strip. Use in narrow rails." },
+  ],
   anatomy: `┌──────────────────────────────────────────────────────┐
 │  [Button]  │  [Button]  │  [Button size="icon"]        │  ← ButtonGroup (role="group")
 └──────────────────────────────────────────────────────┘
@@ -803,6 +818,11 @@ import { ChevronDown } from "lucide-react"
 
 const calendar: ComponentDoc = {
   slug: "calendar",
+  variants: [
+    { name: 'captionLayout="label" (default)', description: "Month and year render as a static caption flanked by previous/next chevrons." },
+    { name: 'captionLayout="dropdown"', description: "Month and year become selects for fast jumps across ranges — the layout Date Picker uses." },
+    { name: "mode (single | range | multiple)", description: "Selection model forwarded to DayPicker: a single date, a start–end range, or an arbitrary set." },
+  ],
   anatomy: `┌─────────────────────────────────────┐  ← Calendar root (bg: surface.card, padding: 12px)
 │  [<]   June 2025    [>]              │  ← month nav + caption (prev/next: Button ghost icon)
 │                                       │    caption: 14px/500
@@ -1007,6 +1027,10 @@ import { MoreHorizontal } from "lucide-react"
 
 const carousel: ComponentDoc = {
   slug: "carousel",
+  variants: [
+    { name: 'orientation="horizontal" (default)', description: "Slides advance along the x-axis; Previous/Next controls sit at the left and right edges." },
+    { name: 'orientation="vertical"', description: "Slides advance along the y-axis; controls rotate to top/bottom and the track needs a fixed height." },
+  ],
   anatomy: `┌────────────────────────────────────────────────────────┐
 │  Carousel (role="region" aria-roledescription="carousel")│
 │                                                          │
@@ -1195,7 +1219,7 @@ const checkbox: ComponentDoc = {
 └──────────────────────────────┘
 
   ┌────┐  ← Checkbox (16px square)
-  │ ✓  │     real <input type="checkbox"> (transparent, handles keyboard + a11y)
+  │ x  │     real <input type="checkbox"> (transparent, handles keyboard + a11y)
   └────┘     drawn .box overlay (pointer-events:none, shows the visual)
              check + dash live in one <svg>; toggled by :checked / :indeterminate
   border: 1.5px · radius: --radius-sm (4px)
@@ -1378,7 +1402,7 @@ const combobox: ComponentDoc = {
 │  ┌─────────────────────────────────┐    │    shadow.lg · radius.md · border.default
 │  │  Search…                        │    │  ← Command search input
 │  └─────────────────────────────────┘    │
-│  Option A                           ✓   │  ← selected item (check icon, interactive.selected-*)
+│  Option A                           *   │  ← selected item (check icon, interactive.selected-*)
 │  Option B                               │  ← list item (Command item)
 │  Option C (disabled)                    │    hover: interactive.selected-bg
 │                                         │    disabled: opacity.5
@@ -2019,6 +2043,12 @@ import { Label } from "@/design-system/label/label"
 
 const drawer: ComponentDoc = {
   slug: "drawer",
+  variants: [
+    { name: 'direction="bottom" (default)', description: "Rises from the bottom with a drag handle; max-height 80vh — the canonical mobile sheet." },
+    { name: 'direction="top"', description: "Drops from the top with rounded bottom corners; no drag handle." },
+    { name: 'direction="left"', description: "Slides from the left at 3/4 width; no drag handle." },
+    { name: 'direction="right"', description: "Slides from the right at 3/4 width; no drag handle." },
+  ],
   anatomy: `┌─ scrim (rgba(0,0,0,0.3)) ────────────────────────────────┐
 │                                                           │
 │  ┌─ DrawerContent (slides up from bottom) ─────────────┐  │
@@ -3701,6 +3731,10 @@ import { Label } from "@/design-system/label/label"
 
 const scrollArea: ComponentDoc = {
   slug: "scroll-area",
+  variants: [
+    { name: 'orientation="vertical" (default)', description: "Vertical scrollbar for tall content; the thumb sits on the right edge." },
+    { name: 'orientation="horizontal"', description: "Horizontal scrollbar for wide content (code blocks, tables); the thumb runs along the bottom." },
+  ],
   anatomy: `+------------------------------------------+  <- ScrollArea root (overflow:hidden)
 |  Item 1                                  |    |
 |  Item 2                                  |    |  <- ScrollAreaViewport (overflow:scroll)
@@ -3858,6 +3892,10 @@ import { Label } from "@/design-system/label/label"
 
 const separator: ComponentDoc = {
   slug: "separator",
+  variants: [
+    { name: 'orientation="horizontal" (default)', description: "1px full-width rule (h-px w-full) dividing stacked content." },
+    { name: 'orientation="vertical"', description: "1px full-height rule (h-full w-px) dividing inline items; the parent needs a defined height." },
+  ],
   anatomy: `Horizontal (h-px w-full)            Vertical (h-full w-px)
 
   Section one                       Home │ Docs │ API
@@ -3920,6 +3958,12 @@ const separator: ComponentDoc = {
 
 const sheet: ComponentDoc = {
   slug: "sheet",
+  variants: [
+    { name: 'side="right" (default)', description: "Panel slides from the right edge at --sheet-side-size width — the standard detail/settings drawer." },
+    { name: 'side="left"', description: "Slides from the left edge at --sheet-side-size; common for navigation." },
+    { name: 'side="top"', description: "Drops from the top, full width — global banners and command surfaces." },
+    { name: 'side="bottom"', description: "Rises from the bottom, full width — mobile-style action sheets." },
+  ],
   anatomy: `        scrim (--scrim)            ┌──────────────────────┐
   ┌───────────────────────┐ slide   │  Edit profile      X │  ← SheetHeader + SheetClose
   │                       │  in →    │  Make changes here.  │  ← SheetTitle / SheetDescription
@@ -4019,6 +4063,11 @@ import { Button } from "@/design-system/button/button"
 
 const sidebar: ComponentDoc = {
   slug: "sidebar",
+  variants: [
+    { name: 'side="left" (default)', description: "Rail anchored to the start edge; page content sits to its right." },
+    { name: 'side="right"', description: "Rail anchored to the end edge — secondary or contextual panels." },
+    { name: "collapsible (expanded | icon rail)", description: "Toggles between --sidebar-w and --sidebar-collapsed-w; the icon rail keeps glyphs visible when collapsed." },
+  ],
   anatomy: `┌────────────┐                ┌──┐
 │ =  Acme    │ ← Header       │= │ ← collapsed rail
 │            │   + Trigger    │  │   (--sidebar-collapsed-w 48px)
@@ -4780,6 +4829,12 @@ const [pressed, setPressed] = React.useState(false)
 
 const toggleGroup: ComponentDoc = {
   slug: "toggle-group",
+  variants: [
+    { name: 'variant="default"', description: "Joined pill strip — items share a single --border-default outline (the kit default)." },
+    { name: 'variant="outline"', description: "Each item carries its own outline — standalone toggle buttons rather than a joined strip." },
+    { name: "size (sm | md | lg)", description: "Per-item control height via toggleVariants: --control-sm / --control-md / --control-lg. Default md." },
+    { name: "type (single | multiple)", description: "single: one item active at a time (radio-like). multiple: independent on/off per item." },
+  ],
   anatomy: `┌─────┬─────┬─────┐
 │  L  │  C  │  R  │  ← items share one --border-default frame (overflow-hidden)
 └─────┴─────┴─────┘     1px --border-default dividers; last item none
