@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Navigation Menu - states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  /* === Nav Menu seams ===================================================== */
+  :root {
+    --nav-viewport-w: 400px;
+    --nav-indicator-size: 8px;
+  }
+
+  /* === Nav trigger / link (mirrors navigation-menu.tsx) ================== */
+  .nav-trigger,.nav-link{
+    display:inline-flex;height:var(--control-sm);align-items:center;justify-content:center;
+    gap:var(--space-1);border-radius:var(--radius-md);
+    padding:var(--space-2) var(--space-3);
+    font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);
+    color:var(--text-primary);background:transparent;
+    border:0;cursor:pointer;font-family:inherit;outline:none;
+    transition:background var(--duration-fast) var(--ease-out),color var(--duration-fast) var(--ease-out);
+    user-select:none;text-decoration:none;
+  }
+  .nav-trigger:hover,.nav-link:hover,.nav-trigger.s-hover,.nav-link.s-hover{background:var(--action-secondary)}
+  .nav-trigger.s-open,.nav-trigger[aria-expanded="true"]{background:var(--action-secondary)}
+  .nav-trigger.s-active,.nav-link.s-active{
+    background:var(--interactive-selected-bg);color:var(--interactive-selected-text)
+  }
+  .nav-trigger:focus-visible,.nav-link:focus-visible{box-shadow:var(--focus-ring)}
+  .nav-trigger .chev{
+    width:var(--icon-sm);height:var(--icon-sm);stroke:var(--text-secondary);fill:none;stroke-width:2;
+    transition:transform var(--duration-base) var(--ease-out);
+  }
+  .nav-trigger.s-open .chev{transform:rotate(180deg)}
+
+  /* === Nav strip ========================================================== */
+  .nav-list{display:flex;list-none;align-items:center;gap:var(--space-1);margin:0;padding:0}
+
+  /* === Viewport panel ===================================================== */
+  .nav-viewport{
+    position:absolute;left:0;top:calc(100% + var(--space-1-5));
+    width:var(--nav-viewport-w);overflow:hidden;
+    border-radius:var(--radius-lg);border:1px solid var(--border-default);
+    background:var(--surface-card);box-shadow:var(--shadow-lg);
+  }
+  .nav-content{padding:var(--space-4)}
+  .nav-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-2)}
+  .nav-item-link{
+    display:block;padding:var(--space-3);border-radius:var(--radius-md);
+    text-decoration:none;color:var(--text-primary);
+    transition:background var(--duration-fast) var(--ease-out);
+  }
+  .nav-item-link:hover{background:var(--action-secondary)}
+  .nav-item-title{font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);color:var(--text-primary)}
+  .nav-item-desc{font-size:var(--font-size-xs);color:var(--text-secondary);margin-top:var(--space-0-5)}
+
+  /* === Harness chrome ===================================================== */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);font-family:Inter,system-ui,sans-serif;padding:32px} /* ds-allow-hardcode: harness chrome */
+  .stack{display:flex;flex-direction:column;gap:48px;max-inline-size:680px;margin:0 auto} /* ds-allow-hardcode: harness chrome */
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0 0 8px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+  .nav-wrap{position:relative}
+</style>
+</head>
+<body>
+  <main class="stack">
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <symbol id="i-chev-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    </svg>
+
+    <!-- 1. Nav strip — resting -->
+    <section>
+      <p class="grp-label">Strip — resting (all triggers closed)</p>
+      <nav aria-label="Main navigation">
+        <ul class="nav-list" role="menubar">
+          <li role="none">
+            <button class="nav-trigger" role="menuitem" aria-haspopup="menu" aria-expanded="false">
+              Getting Started <svg class="chev" aria-hidden="true"><use href="#i-chev-down"/></svg>
+            </button>
+          </li>
+          <li role="none">
+            <button class="nav-trigger" role="menuitem" aria-haspopup="menu" aria-expanded="false">
+              Components <svg class="chev" aria-hidden="true"><use href="#i-chev-down"/></svg>
+            </button>
+          </li>
+          <li role="none">
+            <a class="nav-link" href="#" role="menuitem">Documentation</a>
+          </li>
+          <li role="none">
+            <a class="nav-link s-active" href="#" role="menuitem" aria-current="page">Pricing</a>
+          </li>
+        </ul>
+      </nav>
+    </section>
+
+    <!-- 2. Trigger open + viewport with grid content -->
+    <section>
+      <p class="grp-label">Getting Started — open with mega-menu panel</p>
+      <div class="nav-wrap">
+        <nav aria-label="Main navigation">
+          <ul class="nav-list" role="menubar">
+            <li role="none">
+              <button class="nav-trigger s-open" role="menuitem" aria-haspopup="menu" aria-expanded="true">
+                Getting Started <svg class="chev" aria-hidden="true"><use href="#i-chev-down"/></svg>
+              </button>
+            </li>
+            <li role="none">
+              <button class="nav-trigger" role="menuitem" aria-haspopup="menu" aria-expanded="false">
+                Components <svg class="chev" aria-hidden="true"><use href="#i-chev-down"/></svg>
+              </button>
+            </li>
+            <li role="none"><a class="nav-link" href="#" role="menuitem">Documentation</a></li>
+          </ul>
+        </nav>
+        <div class="nav-viewport" role="region" aria-label="Getting Started menu">
+          <div class="nav-content nav-grid">
+            <a class="nav-item-link" href="#">
+              <div class="nav-item-title">Introduction</div>
+              <div class="nav-item-desc">What is this design system?</div>
+            </a>
+            <a class="nav-item-link" href="#">
+              <div class="nav-item-title">Installation</div>
+              <div class="nav-item-desc">Install dependencies and set up tokens.</div>
+            </a>
+            <a class="nav-item-link" href="#">
+              <div class="nav-item-title">Theming</div>
+              <div class="nav-item-desc">Customize the token layer for your brand.</div>
+            </a>
+            <a class="nav-item-link" href="#">
+              <div class="nav-item-title">Dark Mode</div>
+              <div class="nav-item-desc">Enable light/dark with next-themes.</div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Hover state on trigger -->
+    <section>
+      <p class="grp-label">Trigger hover state</p>
+      <nav aria-label="Main navigation">
+        <ul class="nav-list" role="menubar">
+          <li role="none">
+            <button class="nav-trigger" role="menuitem">Getting Started <svg class="chev" aria-hidden="true"><use href="#i-chev-down"/></svg></button>
+          </li>
+          <li role="none">
+            <button class="nav-trigger s-hover" role="menuitem">Components <svg class="chev" aria-hidden="true"><use href="#i-chev-down"/></svg></button>
+          </li>
+          <li role="none"><a class="nav-link" href="#" role="menuitem">Documentation</a></li>
+        </ul>
+      </nav>
+    </section>
+
+    <!-- 4. Dark mode -->
+    <section data-theme="dark" style="background:var(--surface-page);padding:24px;border-radius:var(--radius-lg)">
+      <p class="grp-label">Dark mode — strip resting</p>
+      <nav aria-label="Main navigation dark">
+        <ul class="nav-list" role="menubar">
+          <li role="none">
+            <button class="nav-trigger s-open" role="menuitem" aria-expanded="true">
+              Getting Started <svg class="chev" aria-hidden="true"><use href="#i-chev-down"/></svg>
+            </button>
+          </li>
+          <li role="none">
+            <button class="nav-trigger" role="menuitem">Components <svg class="chev" aria-hidden="true"><use href="#i-chev-down"/></svg></button>
+          </li>
+          <li role="none">
+            <a class="nav-link s-active" href="#" role="menuitem" aria-current="page">Pricing</a>
+          </li>
+        </ul>
+      </nav>
+    </section>
+
+  </main>
+</body>
+</html>

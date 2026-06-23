@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Native Select - states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  /* === Native Select (mirrors native-select.tsx) ========================== */
+  .native-select-wrap{position:relative;width:100%}
+  .native-select{
+    display:flex;height:var(--control-md);width:100%;
+    appearance:none;-webkit-appearance:none;
+    border-radius:var(--field-radius);border:1px solid var(--field-border);
+    background:var(--field-bg);padding-inline:var(--space-3) var(--space-9);
+    font-size:var(--font-size-sm);color:var(--field-text);font-family:inherit;
+    transition:border-color var(--duration-fast) var(--ease-out),
+               box-shadow var(--duration-fast) var(--ease-out);
+    cursor:pointer;outline:none;
+  }
+  .native-select:hover{border-color:var(--field-border-hover)}
+  .native-select:focus-visible{border-color:var(--field-border-focus);box-shadow:var(--field-focus-ring)}
+  .native-select:disabled{background:var(--field-bg-disabled);opacity:.5;cursor:not-allowed}
+  .native-select-wrap svg{
+    position:absolute;right:var(--space-3);top:50%;transform:translateY(-50%);
+    width:var(--icon-sm);height:var(--icon-sm);pointer-events:none;
+    stroke:var(--text-secondary);fill:none;stroke-width:2;
+  }
+
+  /* === Field ============================================================== */
+  .field{display:flex;flex-direction:column;gap:var(--space-1-5)}
+  .field-label{font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);color:var(--text-primary)}
+  .field-error{font-size:var(--font-size-xs);color:var(--text-destructive);margin:0}
+
+  /* === Harness chrome ===================================================== */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);font-family:Inter,system-ui,sans-serif;padding:32px} /* ds-allow-hardcode: harness chrome */
+  .stack{display:flex;flex-direction:column;gap:32px;max-inline-size:480px;margin:0 auto} /* ds-allow-hardcode: harness chrome */
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0 0 8px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+</style>
+</head>
+<body>
+  <main class="stack">
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <symbol id="i-chev-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    </svg>
+
+    <!-- 1. Default (unselected) -->
+    <section>
+      <p class="grp-label">Default — placeholder selected</p>
+      <div class="native-select-wrap">
+        <select class="native-select" aria-label="Country">
+          <option value="" disabled selected>Select a country</option>
+          <option value="us">United States</option>
+          <option value="gb">United Kingdom</option>
+          <option value="ca">Canada</option>
+          <option value="au">Australia</option>
+        </select>
+        <svg aria-hidden="true"><use href="#i-chev-down"/></svg>
+      </div>
+    </section>
+
+    <!-- 2. Value selected -->
+    <section>
+      <p class="grp-label">Value selected</p>
+      <div class="native-select-wrap">
+        <select class="native-select" aria-label="Country">
+          <option value="" disabled>Select a country</option>
+          <option value="us" selected>United States</option>
+          <option value="gb">United Kingdom</option>
+          <option value="ca">Canada</option>
+        </select>
+        <svg aria-hidden="true"><use href="#i-chev-down"/></svg>
+      </div>
+    </section>
+
+    <!-- 3. Focus state (click to see) -->
+    <section>
+      <p class="grp-label">Focus state (click to focus)</p>
+      <div class="native-select-wrap">
+        <select class="native-select" aria-label="Category" autofocus>
+          <option value="" disabled selected>Select a category</option>
+          <option value="design">Design</option>
+          <option value="engineering">Engineering</option>
+          <option value="product">Product</option>
+        </select>
+        <svg aria-hidden="true"><use href="#i-chev-down"/></svg>
+      </div>
+    </section>
+
+    <!-- 4. Optgroup -->
+    <section>
+      <p class="grp-label">With optgroup</p>
+      <div class="native-select-wrap">
+        <select class="native-select" aria-label="Timezone">
+          <option value="" disabled selected>Select timezone</option>
+          <optgroup label="Americas">
+            <option value="et">Eastern Time (ET)</option>
+            <option value="ct">Central Time (CT)</option>
+            <option value="pt">Pacific Time (PT)</option>
+          </optgroup>
+          <optgroup label="Europe">
+            <option value="gmt">Greenwich Mean Time (GMT)</option>
+            <option value="cet">Central European Time (CET)</option>
+          </optgroup>
+        </select>
+        <svg aria-hidden="true"><use href="#i-chev-down"/></svg>
+      </div>
+    </section>
+
+    <!-- 5. In Field with label -->
+    <section>
+      <p class="grp-label">In Field — label + select</p>
+      <div class="field">
+        <label class="field-label" for="ns-country">Country</label>
+        <div class="native-select-wrap">
+          <select class="native-select" id="ns-country">
+            <option value="" disabled selected>Select a country</option>
+            <option value="us">United States</option>
+            <option value="gb">United Kingdom</option>
+          </select>
+          <svg aria-hidden="true"><use href="#i-chev-down"/></svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. Disabled -->
+    <section>
+      <p class="grp-label">Disabled</p>
+      <div class="native-select-wrap">
+        <select class="native-select" disabled aria-label="Region (locked)">
+          <option value="us" selected>United States</option>
+        </select>
+        <svg aria-hidden="true"><use href="#i-chev-down"/></svg>
+      </div>
+    </section>
+
+    <!-- 7. Dark mode -->
+    <section data-theme="dark" style="background:var(--surface-page);padding:24px;border-radius:var(--radius-lg)">
+      <p class="grp-label">Dark mode</p>
+      <div class="field">
+        <label class="field-label" for="ns-dark">Country</label>
+        <div class="native-select-wrap">
+          <select class="native-select" id="ns-dark">
+            <option value="" disabled selected>Select a country</option>
+            <option value="us">United States</option>
+            <option value="gb">United Kingdom</option>
+          </select>
+          <svg aria-hidden="true"><use href="#i-chev-down"/></svg>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</body>
+</html>

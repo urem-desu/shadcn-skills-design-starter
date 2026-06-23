@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Popover - states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  /* === Popover seam ======================================================= */
+  :root { --popover-w: 320px; }
+
+  /* === Popover panel (mirrors popover.tsx) ================================ */
+  .popover{
+    width:var(--popover-w);overflow:hidden;
+    border-radius:var(--radius-lg);border:1px solid var(--border-default);
+    background:var(--surface-card);padding:var(--space-4);
+    color:var(--text-primary);box-shadow:var(--shadow-lg);
+  }
+  .popover-title{font-size:var(--font-size-sm);font-weight:var(--font-weight-semibold);margin:0 0 var(--space-1)}
+  .popover-desc{font-size:var(--font-size-sm);color:var(--text-secondary);margin:0 0 var(--space-3)}
+
+  /* === Trigger button (outline variant) =================================== */
+  .btn-outline{
+    display:inline-flex;align-items:center;justify-content:center;
+    height:var(--control-sm);padding:0 var(--space-3);
+    border-radius:var(--button-radius);border:1px solid var(--button-outline-border);
+    background:var(--button-outline-bg);color:var(--button-outline-text);
+    font-size:var(--font-size-sm);font-weight:var(--button-font-weight);
+    cursor:pointer;font-family:inherit;
+    transition:background var(--duration-fast) var(--ease-out);
+  }
+  .btn-outline:hover{background:var(--button-outline-bg-hover)}
+  .btn-outline:focus-visible{outline:none;box-shadow:var(--button-focus-ring)}
+
+  /* === Field + Input (for form popover demo) ============================== */
+  .field{display:flex;flex-direction:column;gap:var(--space-1-5)}
+  .field-label{font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);color:var(--text-primary)}
+  .input{
+    height:var(--control-sm);width:100%;
+    border-radius:var(--field-radius);border:1px solid var(--field-border);
+    background:var(--field-bg);padding:0 var(--space-3);
+    font-size:var(--font-size-sm);color:var(--field-text);font-family:inherit;outline:none;
+  }
+  .input:focus-visible{border-color:var(--field-border-focus);box-shadow:var(--field-focus-ring)}
+
+  /* === Harness chrome ===================================================== */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);font-family:Inter,system-ui,sans-serif;padding:32px} /* ds-allow-hardcode: harness chrome */
+  .stack{display:flex;flex-direction:column;gap:32px;max-inline-size:680px;margin:0 auto} /* ds-allow-hardcode: harness chrome */
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0 0 8px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+  .row{display:flex;gap:var(--space-6);flex-wrap:wrap;align-items:flex-start}
+</style>
+</head>
+<body>
+  <main class="stack">
+
+    <!-- 1. Trigger (closed) -->
+    <section>
+      <p class="grp-label">Trigger — closed</p>
+      <button class="btn-outline" type="button" aria-haspopup="dialog" aria-expanded="false">
+        Open popover
+      </button>
+    </section>
+
+    <!-- 2. Open — basic info popover -->
+    <section>
+      <p class="grp-label">Open — basic info popover</p>
+      <div class="row">
+        <div class="popover" role="dialog" aria-modal="true" aria-label="Info">
+          <p class="popover-title">About this feature</p>
+          <p class="popover-desc">
+            This setting controls how notifications are delivered to your device. Changes take effect immediately.
+          </p>
+          <button class="btn-outline" type="button" style="font-size:var(--font-size-xs)">Learn more</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Open — form popover (settings) -->
+    <section>
+      <p class="grp-label">Open — settings form popover</p>
+      <div class="row">
+        <div class="popover" role="dialog" aria-modal="true" aria-label="Display settings">
+          <div style="display:flex;flex-direction:column;gap:var(--space-3)">
+            <p class="popover-title" style="margin:0">Display settings</p>
+            <div class="field">
+              <label class="field-label" for="po-name">Display name</label>
+              <input class="input" id="po-name" type="text" placeholder="Your name" />
+            </div>
+            <div class="field">
+              <label class="field-label" for="po-username">Username</label>
+              <input class="input" id="po-username" type="text" placeholder="@handle" />
+            </div>
+            <button class="btn-outline" style="align-self:flex-end;font-size:var(--font-size-xs)" type="button">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Open — narrow (date picker trigger context) -->
+    <section>
+      <p class="grp-label">Open — narrow variant (e.g. date picker trigger)</p>
+      <div class="row">
+        <div class="popover" role="dialog" aria-modal="true" aria-label="Pick date" style="width:auto;min-width:200px">
+          <p class="popover-desc" style="font-size:var(--font-size-xs)">Calendar would render here (Date Picker #20 uses this pattern).</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Dark mode -->
+    <section data-theme="dark" style="background:var(--surface-page);padding:24px;border-radius:var(--radius-lg)">
+      <p class="grp-label">Dark mode — open</p>
+      <div class="popover" role="dialog" aria-modal="true" aria-label="Info dark">
+        <p class="popover-title">About this feature</p>
+        <p class="popover-desc">This setting controls how notifications are delivered to your device.</p>
+        <button class="btn-outline" type="button" style="font-size:var(--font-size-xs)">Learn more</button>
+      </div>
+    </section>
+
+  </main>
+</body>
+</html>
