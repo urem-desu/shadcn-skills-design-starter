@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Field - states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  /* === Field (mirrors field.tsx) ========================================== */
+  .field{display:flex;flex-direction:column;gap:var(--space-1-5)}
+  .field-label{
+    font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);
+    line-height:var(--line-tight);color:var(--text-primary);
+  }
+  .field-label .req{margin-inline-start:var(--space-0-5);color:var(--text-destructive)}
+  .field-hint{font-size:var(--font-size-xs);line-height:var(--line-normal);color:var(--text-secondary);margin:0}
+  .field-error{font-size:var(--font-size-xs);line-height:var(--line-normal);color:var(--text-destructive);margin:0}
+
+  /* === Input (mirrors input.tsx) ========================================== */
+  .input{
+    display:flex;height:var(--control-md);width:100%;
+    border-radius:var(--field-radius);border:1px solid var(--field-border);
+    background:var(--field-bg);padding:0 var(--space-3);
+    font-size:var(--font-size-sm);color:var(--field-text);font-family:inherit;outline:none;
+  }
+  .input::placeholder{color:var(--field-placeholder)}
+  .input:hover{border-color:var(--field-border-hover)}
+  .input:focus-visible{border-color:var(--field-border-focus);box-shadow:var(--field-focus-ring)}
+  .input:disabled{background:var(--field-bg-disabled);cursor:not-allowed;opacity:.5}
+  .input--error{border-color:var(--field-border-error)}
+  .input--error:focus-visible{box-shadow:var(--field-focus-ring-error)}
+
+  /* === Harness chrome ===================================================== */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);font-family:Inter,system-ui,sans-serif;padding:32px} /* ds-allow-hardcode: harness chrome */
+  .stack{display:flex;flex-direction:column;gap:32px;max-inline-size:480px;margin:0 auto} /* ds-allow-hardcode: harness chrome */
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0 0 8px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+</style>
+</head>
+<body>
+  <main class="stack">
+
+    <!-- 1. Default — label + input + hint -->
+    <section>
+      <p class="grp-label">Default — label + input + hint</p>
+      <div class="field">
+        <label class="field-label" for="f-email">Email address</label>
+        <input class="input" id="f-email" type="email" placeholder="you@example.com" />
+        <p class="field-hint" id="f-email-desc">We will never share your email.</p>
+      </div>
+    </section>
+
+    <!-- 2. Required -->
+    <section>
+      <p class="grp-label">Required field</p>
+      <div class="field">
+        <label class="field-label" for="f-username">
+          Username <span class="req" aria-hidden="true">*</span>
+        </label>
+        <input class="input" id="f-username" type="text" placeholder="acme" aria-required="true" />
+      </div>
+    </section>
+
+    <!-- 3. Error state (error replaces hint) -->
+    <section>
+      <p class="grp-label">Error state</p>
+      <div class="field">
+        <label class="field-label" for="f-password">
+          Password <span class="req" aria-hidden="true">*</span>
+        </label>
+        <input
+          class="input input--error"
+          id="f-password"
+          type="password"
+          value="short"
+          aria-required="true"
+          aria-invalid="true"
+          aria-describedby="f-password-error"
+        />
+        <p class="field-error" id="f-password-error" role="alert">Password must be at least 8 characters.</p>
+      </div>
+    </section>
+
+    <!-- 4. Disabled -->
+    <section>
+      <p class="grp-label">Disabled</p>
+      <div class="field">
+        <label class="field-label" for="f-disabled">API key</label>
+        <input class="input" id="f-disabled" type="text" value="sk-••••••••••••••••" disabled />
+        <p class="field-hint">Contact support to rotate your API key.</p>
+      </div>
+    </section>
+
+    <!-- 5. No label (control carries aria-label) -->
+    <section>
+      <p class="grp-label">No label — hint only</p>
+      <div class="field">
+        <input class="input" type="search" placeholder="Search..." aria-label="Search" />
+        <p class="field-hint">Search by name, email, or ID.</p>
+      </div>
+    </section>
+
+    <!-- 6. Dark mode -->
+    <section data-theme="dark" style="background:var(--surface-page);padding:24px;border-radius:var(--radius-lg)">
+      <p class="grp-label">Dark mode</p>
+      <div class="field">
+        <label class="field-label" for="f-dark-email">Email address</label>
+        <input class="input" id="f-dark-email" type="email" placeholder="you@example.com" />
+        <p class="field-hint">We will never share your email.</p>
+      </div>
+      <div class="field" style="margin-top:var(--space-4)">
+        <label class="field-label" for="f-dark-pw">
+          Password <span class="req" aria-hidden="true">*</span>
+        </label>
+        <input class="input input--error" id="f-dark-pw" type="password" value="short" aria-invalid="true" aria-describedby="f-dark-pw-err" />
+        <p class="field-error" id="f-dark-pw-err" role="alert">Password must be at least 8 characters.</p>
+      </div>
+    </section>
+
+  </main>
+</body>
+</html>

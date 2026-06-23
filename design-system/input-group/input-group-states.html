@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Input Group - states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  /* === Input Group (mirrors input-group.tsx) ============================== */
+  .ig{
+    display:flex;height:var(--control-md);width:100%;align-items:stretch;overflow:hidden;
+    border-radius:var(--field-radius);border:1px solid var(--field-border);
+    background:var(--field-bg);
+    transition:border-color var(--duration-fast) var(--ease-out),
+               box-shadow var(--duration-fast) var(--ease-out);
+  }
+  .ig:focus-within{border-color:var(--field-border-focus);box-shadow:var(--field-focus-ring)}
+  .ig--error{border-color:var(--field-border-error)}
+  .ig--error:focus-within{box-shadow:var(--field-focus-ring-error)}
+  .ig.disabled,.ig:has(input:disabled){opacity:.5;cursor:not-allowed}
+
+  .ig-addon{
+    display:flex;flex:none;align-items:center;justify-content:center;
+    padding:0 var(--space-3);background:var(--surface-sunken);
+    border-right:1px solid var(--field-border);
+    font-size:var(--font-size-sm);line-height:var(--line-tight);color:var(--text-secondary);
+  }
+  .ig-addon svg{width:var(--icon-sm);height:var(--icon-sm);stroke:currentColor;fill:none;stroke-width:2;flex:none}
+  .ig-addon:last-child{border-right:0;border-left:1px solid var(--field-border)}
+
+  .ig-input{
+    flex:1;min-width:0;background:transparent;padding:0 var(--space-3);
+    font-size:var(--font-size-sm);color:var(--field-text);
+    border:0;outline:none;font-family:inherit;
+  }
+  .ig-input::placeholder{color:var(--field-placeholder)}
+  .ig-input:disabled{cursor:not-allowed}
+
+  /* Addon button variant */
+  .ig-btn{
+    display:flex;flex:none;align-items:center;justify-content:center;
+    padding:0 var(--space-3);background:var(--action-secondary);
+    border-left:1px solid var(--field-border);
+    font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);
+    color:var(--text-primary);cursor:pointer;border-top:0;border-right:0;border-bottom:0;
+    font-family:inherit;
+  }
+  .ig-btn:hover{background:var(--action-secondary-hover)}
+  .ig-btn:focus-visible{outline:2px solid var(--border-focus);outline-offset:-2px}
+
+  /* === Field ============================================================== */
+  .field{display:flex;flex-direction:column;gap:var(--space-1-5)}
+  .field-label{font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);color:var(--text-primary)}
+  .field-hint{font-size:var(--font-size-xs);color:var(--text-secondary);margin:0}
+  .field-error{font-size:var(--font-size-xs);color:var(--text-destructive);margin:0}
+
+  /* === Harness chrome ===================================================== */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);font-family:Inter,system-ui,sans-serif;padding:32px} /* ds-allow-hardcode: harness chrome */
+  .stack{display:flex;flex-direction:column;gap:32px;max-inline-size:480px;margin:0 auto} /* ds-allow-hardcode: harness chrome */
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0 0 8px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+</style>
+</head>
+<body>
+  <main class="stack">
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+      <symbol id="i-dollar" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></symbol>
+      <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></symbol>
+      <symbol id="i-mail" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></symbol>
+    </svg>
+
+    <!-- 1. Prefix icon -->
+    <section>
+      <p class="grp-label">Prefix icon — search</p>
+      <div class="ig" role="group" aria-label="Search field">
+        <div class="ig-addon" aria-hidden="true"><svg><use href="#i-search"/></svg></div>
+        <input class="ig-input" type="search" placeholder="Search…" aria-label="Search" />
+      </div>
+    </section>
+
+    <!-- 2. Prefix text -->
+    <section>
+      <p class="grp-label">Prefix text — URL</p>
+      <div class="ig" role="group">
+        <div class="ig-addon">https://</div>
+        <input class="ig-input" type="text" placeholder="example.com" aria-label="Website URL" />
+      </div>
+    </section>
+
+    <!-- 3. Prefix icon + suffix text (currency) -->
+    <section>
+      <p class="grp-label">Prefix icon + suffix text — currency</p>
+      <div class="ig" role="group">
+        <div class="ig-addon" aria-hidden="true"><svg><use href="#i-dollar"/></svg></div>
+        <input class="ig-input" type="number" placeholder="0.00" aria-label="Amount in USD" />
+        <div class="ig-addon">USD</div>
+      </div>
+    </section>
+
+    <!-- 4. Suffix button -->
+    <section>
+      <p class="grp-label">Suffix action button — copy</p>
+      <div class="ig" role="group">
+        <input class="ig-input" type="text" value="sk-••••••••••••••••" aria-label="API key" readonly />
+        <button class="ig-btn" type="button" aria-label="Copy API key">Copy</button>
+      </div>
+    </section>
+
+    <!-- 5. Focus state -->
+    <section>
+      <p class="grp-label">Focus state (click inside)</p>
+      <div class="ig" role="group" aria-label="Email field">
+        <div class="ig-addon" aria-hidden="true"><svg><use href="#i-mail"/></svg></div>
+        <input class="ig-input" type="email" placeholder="you@example.com" aria-label="Email address" autofocus />
+      </div>
+    </section>
+
+    <!-- 6. Error state -->
+    <section>
+      <p class="grp-label">Error state</p>
+      <div class="field">
+        <label class="field-label" for="ig-url">Website</label>
+        <div class="ig ig--error" role="group">
+          <div class="ig-addon" aria-hidden="true"><svg><use href="#i-globe"/></svg></div>
+          <input class="ig-input" id="ig-url" type="url" value="not-a-url" aria-invalid="true" aria-describedby="ig-url-err" />
+        </div>
+        <p class="field-error" id="ig-url-err" role="alert">Enter a valid URL starting with https://</p>
+      </div>
+    </section>
+
+    <!-- 7. Disabled -->
+    <section>
+      <p class="grp-label">Disabled</p>
+      <div class="ig" role="group" aria-label="API key (disabled)">
+        <div class="ig-addon" aria-hidden="true"><svg><use href="#i-mail"/></svg></div>
+        <input class="ig-input" type="text" value="readonly@company.com" disabled aria-label="Email (locked)" />
+      </div>
+    </section>
+
+    <!-- 8. Dark mode -->
+    <section data-theme="dark" style="background:var(--surface-page);padding:24px;border-radius:var(--radius-lg)">
+      <p class="grp-label">Dark mode</p>
+      <div style="display:flex;flex-direction:column;gap:var(--space-4)">
+        <div class="ig" role="group" aria-label="Search dark">
+          <div class="ig-addon" aria-hidden="true"><svg><use href="#i-search"/></svg></div>
+          <input class="ig-input" type="search" placeholder="Search…" aria-label="Search" />
+        </div>
+        <div class="ig" role="group">
+          <div class="ig-addon" aria-hidden="true"><svg><use href="#i-dollar"/></svg></div>
+          <input class="ig-input" type="number" placeholder="0.00" aria-label="Amount" />
+          <div class="ig-addon">USD</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</body>
+</html>

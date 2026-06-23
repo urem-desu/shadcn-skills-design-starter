@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Empty - states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  /* === Empty component (mirrors empty.tsx) ================================ */
+  .empty{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:var(--space-4);padding:var(--space-9) var(--space-6);text-align:center;
+  }
+  .empty-icon{
+    display:flex;width:var(--icon-lg);height:var(--icon-lg);
+    align-items:center;justify-content:center;color:var(--text-tertiary);
+  }
+  .empty-icon svg{width:var(--icon-lg);height:var(--icon-lg);stroke:currentColor;fill:none;stroke-width:2}
+  .empty-body{display:flex;flex-direction:column;gap:var(--space-1)}
+  .empty-title{
+    font-size:var(--font-size-base);font-weight:var(--font-weight-semibold);
+    line-height:var(--line-tight);color:var(--text-primary);margin:0;
+  }
+  .empty-desc{
+    /* ds-allow-hardcode: 280px is unavoidable – no spacing-scale token matches */
+    max-width:280px;font-size:var(--font-size-sm);line-height:var(--line-normal);
+    color:var(--text-secondary);margin:0;
+  }
+  .empty-actions{display:flex;align-items:center;gap:var(--space-2)}
+
+  /* === Reusable button (matches button.tsx outline variant) =============== */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);
+    border-radius:var(--button-radius);font-weight:var(--button-font-weight);
+    font-size:var(--font-size-sm);font-family:inherit;cursor:pointer;
+    border:1px solid var(--button-outline-border);
+    background:var(--button-outline-bg);color:var(--button-outline-text);
+    padding:0 var(--space-3);height:var(--control-sm);
+    transition:background var(--duration-fast) var(--ease-out);
+    text-decoration:none;
+  }
+  .btn:hover{background:var(--button-outline-bg-hover)}
+  .btn:active{background:var(--button-outline-bg-active)}
+  .btn:focus-visible{outline:none;box-shadow:var(--button-focus-ring)}
+  .btn-primary{
+    border-color:transparent;
+    background:var(--button-primary-bg);color:var(--button-primary-text);
+  }
+  .btn-primary:hover{background:var(--button-primary-bg-hover)}
+
+  /* === Panel wrapper ====================================================== */
+  .panel{
+    border-radius:var(--radius-lg);border:1px solid var(--border-default);
+    background:var(--surface-card);
+  }
+
+  /* === Harness chrome ===================================================== */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);font-family:Inter,system-ui,sans-serif;padding:32px} /* ds-allow-hardcode: harness chrome */
+  .stack{display:flex;flex-direction:column;gap:32px;max-inline-size:680px;margin:0 auto} /* ds-allow-hardcode: harness chrome */
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0 0 8px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+</style>
+</head>
+<body>
+  <main class="stack">
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <symbol id="i-inbox" viewBox="0 0 24 24"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></symbol>
+      <symbol id="i-file" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><polyline points="14 2 14 8 20 8"/></symbol>
+      <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+    </svg>
+
+    <!-- 1. Title only (minimal) -->
+    <section>
+      <p class="grp-label">Minimal — title only</p>
+      <div class="empty" role="status">
+        <div class="empty-body">
+          <p class="empty-title">No results found</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Icon + title + description -->
+    <section>
+      <p class="grp-label">With icon and description</p>
+      <div class="empty" role="status">
+        <div class="empty-icon" aria-hidden="true">
+          <svg><use href="#i-inbox"/></svg>
+        </div>
+        <div class="empty-body">
+          <p class="empty-title">No messages yet</p>
+          <p class="empty-desc">When you receive a message, it will appear here.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Full — icon + title + description + action -->
+    <section>
+      <p class="grp-label">Full — icon + title + description + action</p>
+      <div class="empty" role="status">
+        <div class="empty-icon" aria-hidden="true">
+          <svg><use href="#i-inbox"/></svg>
+        </div>
+        <div class="empty-body">
+          <p class="empty-title">No messages yet</p>
+          <p class="empty-desc">Start a conversation to see messages here.</p>
+        </div>
+        <div class="empty-actions">
+          <button class="btn btn-primary" type="button">Compose</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Inside a panel (card context) -->
+    <section>
+      <p class="grp-label">Inside a panel — search empty state</p>
+      <div class="panel">
+        <div class="empty" role="status">
+          <div class="empty-icon" aria-hidden="true">
+            <svg><use href="#i-search"/></svg>
+          </div>
+          <div class="empty-body">
+            <p class="empty-title">No results</p>
+            <p class="empty-desc">Try adjusting your search or filter to find what you are looking for.</p>
+          </div>
+          <div class="empty-actions">
+            <button class="btn" type="button">Clear filters</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Without icon (file context) -->
+    <section>
+      <p class="grp-label">No icon — files empty state</p>
+      <div class="empty" role="status">
+        <div class="empty-body">
+          <p class="empty-title">No files uploaded</p>
+          <p class="empty-desc">Upload a file to get started.</p>
+        </div>
+        <div class="empty-actions">
+          <button class="btn btn-primary" type="button">Upload file</button>
+          <button class="btn" type="button">Learn more</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. Dark mode -->
+    <section data-theme="dark" style="background:var(--surface-page);padding:24px;border-radius:var(--radius-lg)">
+      <p class="grp-label">Dark mode</p>
+      <div class="panel">
+        <div class="empty" role="status">
+          <div class="empty-icon" aria-hidden="true">
+            <svg><use href="#i-inbox"/></svg>
+          </div>
+          <div class="empty-body">
+            <p class="empty-title">No messages yet</p>
+            <p class="empty-desc">When you receive a message, it will appear here.</p>
+          </div>
+          <div class="empty-actions">
+            <button class="btn btn-primary" type="button">Compose</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</body>
+</html>

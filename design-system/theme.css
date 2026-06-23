@@ -153,6 +153,10 @@
      selection treatment, shortcut chip) maps to semantic/primitive tokens. */
   --command-list-max-h:300px;                                 /* shadcn max-h-[300px] */
 
+  /* Hover Card: hybrid - Radix portal card (surface-card, border-default, shadow-lg,
+     radius-lg, space-4, text-primary). One seam: card width (320px, no scale match). */
+  --hover-card-w:320px;                                        /* Figma card width */
+
   /* Data Table: hybrid - zero color/geometry tokens (Table surface maps to
      surface-card / border-default / text-primary / surface-sunken row-hover /
      action-secondary selected-row; toolbar + pagination reuse the Button + Input
