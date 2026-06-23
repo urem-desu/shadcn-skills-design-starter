@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Separator - states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  /* === Separator (mirrors separator.tsx) ================================== */
+  .separator{
+    background:var(--border-default);
+    flex-shrink:0;
+  }
+  .separator[aria-orientation="horizontal"],
+  .separator:not([aria-orientation]){
+    height:1px;width:100%; /* ds-allow-hardcode: 1px border — no scale token */
+  }
+  .separator[aria-orientation="vertical"]{
+    height:100%;width:1px; /* ds-allow-hardcode: 1px border — no scale token */
+  }
+
+  /* === Harness chrome ===================================================== */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);font-family:Inter,system-ui,sans-serif;padding:32px} /* ds-allow-hardcode: harness chrome */
+  .stack{display:flex;flex-direction:column;gap:40px;max-inline-size:480px;margin:0 auto} /* ds-allow-hardcode: harness chrome */
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0 0 12px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+  .body-text{font-size:var(--font-size-sm);color:var(--text-secondary);line-height:var(--line-normal)}
+</style>
+</head>
+<body>
+  <main class="stack">
+
+    <!-- 1. Horizontal (decorative, default) -->
+    <section>
+      <p class="grp-label">Horizontal — decorative (default)</p>
+      <div style="display:flex;flex-direction:column;gap:var(--space-4)">
+        <p class="body-text">Content above the separator.</p>
+        <div class="separator" role="none"></div>
+        <p class="body-text">Content below the separator.</p>
+      </div>
+    </section>
+
+    <!-- 2. Horizontal — semantic -->
+    <section>
+      <p class="grp-label">Horizontal — semantic (role="separator")</p>
+      <div style="display:flex;flex-direction:column;gap:var(--space-4)">
+        <p class="body-text">End of main navigation.</p>
+        <div class="separator" role="separator" aria-orientation="horizontal"></div>
+        <p class="body-text">Secondary navigation begins.</p>
+      </div>
+    </section>
+
+    <!-- 3. Vertical -->
+    <section>
+      <p class="grp-label">Vertical — inline between items</p>
+      <div style="display:flex;align-items:center;gap:var(--space-4);height:20px"> <!-- ds-allow-hardcode: harness height -->
+        <span style="font-size:var(--font-size-sm);color:var(--text-primary)">Home</span>
+        <div class="separator" role="separator" aria-orientation="vertical" style="height:100%"></div>
+        <span style="font-size:var(--font-size-sm);color:var(--text-primary)">Docs</span>
+        <div class="separator" role="separator" aria-orientation="vertical" style="height:100%"></div>
+        <span style="font-size:var(--font-size-sm);color:var(--text-primary)">API</span>
+        <div class="separator" role="separator" aria-orientation="vertical" style="height:100%"></div>
+        <span style="font-size:var(--font-size-sm);color:var(--text-primary)">Blog</span>
+      </div>
+    </section>
+
+    <!-- 4. Multiple stacked sections -->
+    <section>
+      <p class="grp-label">Multiple sections</p>
+      <div style="display:flex;flex-direction:column;gap:var(--space-3)">
+        <span style="font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);color:var(--text-primary)">Profile</span>
+        <p class="body-text">Manage your account settings and preferences.</p>
+        <div class="separator" role="none"></div>
+        <span style="font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);color:var(--text-primary)">Appearance</span>
+        <p class="body-text">Customize the appearance of the app.</p>
+        <div class="separator" role="none"></div>
+        <span style="font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);color:var(--text-primary)">Notifications</span>
+        <p class="body-text">Configure how you receive notifications.</p>
+      </div>
+    </section>
+
+    <!-- 5. Dark mode -->
+    <section data-theme="dark" style="background:var(--surface-page);padding:24px;border-radius:var(--radius-lg)">
+      <p class="grp-label">Dark mode</p>
+      <div style="display:flex;flex-direction:column;gap:var(--space-4)">
+        <p class="body-text">Content above the separator.</p>
+        <div class="separator" role="none"></div>
+        <p class="body-text">Content below the separator.</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:var(--space-4);height:20px;margin-top:var(--space-6)"> <!-- ds-allow-hardcode: harness height -->
+        <span style="font-size:var(--font-size-sm);color:var(--text-primary)">Home</span>
+        <div class="separator" role="separator" aria-orientation="vertical" style="height:100%"></div>
+        <span style="font-size:var(--font-size-sm);color:var(--text-primary)">Docs</span>
+        <div class="separator" role="separator" aria-orientation="vertical" style="height:100%"></div>
+        <span style="font-size:var(--font-size-sm);color:var(--text-primary)">API</span>
+      </div>
+    </section>
+
+  </main>
+</body>
+</html>

@@ -194,6 +194,21 @@
      the centered content max-width (shadcn max-w-sm). */
   --drawer-handle-w:100px;                                    /* shadcn handle w-[100px] */
   --drawer-content-max-w:384px;                               /* shadcn max-w-sm */
+
+  /* Progress: two seams — track height (8px, between space-1=4px and space-2=8px
+     but intended as a visual bar, not a control) and track radius (aliased to
+     radius-full for pill ends). */
+  --progress-h:8px;                                           /* track height — no space token */
+  --progress-radius:var(--radius-full);                       /* pill-shaped track ends */
+
+  /* Scroll Area: one seam — the scrollbar thumb track width (10px; between space-2=8
+     and space-2-5=10px but the latter is a spacing token, not a scrollbar-width token;
+     naming clarifies intent). */
+  --scrollbar-size:10px;                                      /* custom scrollbar track width/height */
+
+  /* Sheet: one seam — side panel size on the blocking axis (360px for left/right width,
+     top/bottom height; no scale token at 360). */
+  --sheet-side-size:360px;                                    /* side panel width (left/right) or height (top/bottom) */
 }
 
 /* ---- Dark mode: SEMANTIC overrides only -------------------------------- */

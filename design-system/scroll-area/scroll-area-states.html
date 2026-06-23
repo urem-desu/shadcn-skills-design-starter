@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Scroll Area - states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  /* === Scroll Area seam =================================================== */
+  :root { --scrollbar-size: 10px; }
+
+  /* === ScrollArea (mirrors scroll-area.tsx) ================================ */
+  .scroll-area{
+    position:relative;overflow:hidden;
+    border-radius:var(--radius-md);border:1px solid var(--border-default);
+  }
+  .scroll-viewport{
+    height:100%;width:100%;overflow:auto;border-radius:inherit;
+    scrollbar-width:none; /* hide native scrollbar — Radix shows custom one */
+  }
+  .scroll-viewport::-webkit-scrollbar{display:none}
+
+  /* Custom scrollbar (always visible for harness demo) */
+  .scroll-area::after{
+    content:"";
+    position:absolute;top:0;right:0;bottom:0;
+    width:var(--scrollbar-size);
+    border-radius:var(--radius-full);
+  }
+
+  /* Simulated Radix thumb */
+  .scroll-thumb-track{
+    position:absolute;top:0;right:0;width:var(--scrollbar-size);height:100%;
+    display:flex;flex-direction:column;padding:1px;
+  }
+  .scroll-thumb{
+    border-radius:var(--radius-full);background:var(--border-strong);
+    min-height:30px;flex:none; /* ds-allow-hardcode: min thumb size */
+  }
+
+  /* === Items in scroll areas ============================================== */
+  .scroll-content{padding:var(--space-4)}
+  .scroll-item{
+    padding:var(--space-2-5) 0;
+    border-bottom:1px solid var(--border-default);
+    font-size:var(--font-size-sm);color:var(--text-primary);
+  }
+  .scroll-item:last-child{border-bottom:0}
+  .scroll-tag{
+    display:inline-flex;align-items:center;padding:0 var(--space-2-5);
+    height:var(--control-sm);border-radius:var(--radius-full);
+    border:1px solid var(--border-default);background:var(--surface-card);
+    font-size:var(--font-size-sm);color:var(--text-primary);white-space:nowrap;
+  }
+
+  /* === Harness chrome ===================================================== */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);font-family:Inter,system-ui,sans-serif;padding:32px} /* ds-allow-hardcode: harness chrome */
+  .stack{display:flex;flex-direction:column;gap:32px;max-inline-size:480px;margin:0 auto} /* ds-allow-hardcode: harness chrome */
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0 0 8px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+</style>
+</head>
+<body>
+  <main class="stack">
+
+    <!-- 1. Vertical scroll — tags list -->
+    <section>
+      <p class="grp-label">Vertical scroll — list (h-48)</p>
+      <div class="scroll-area" style="height:192px;position:relative"> <!-- ds-allow-hardcode: harness height -->
+        <div class="scroll-viewport" tabindex="0" role="region" aria-label="Scrollable list">
+          <div class="scroll-content">
+            <div class="scroll-item">Accordion</div>
+            <div class="scroll-item">Alert</div>
+            <div class="scroll-item">Alert Dialog</div>
+            <div class="scroll-item">Aspect Ratio</div>
+            <div class="scroll-item">Avatar</div>
+            <div class="scroll-item">Badge</div>
+            <div class="scroll-item">Breadcrumb</div>
+            <div class="scroll-item">Button</div>
+            <div class="scroll-item">Calendar</div>
+            <div class="scroll-item">Card</div>
+            <div class="scroll-item">Carousel</div>
+            <div class="scroll-item">Chart</div>
+          </div>
+        </div>
+        <div class="scroll-thumb-track" aria-hidden="true">
+          <div class="scroll-thumb" style="height:40%;margin-top:0%"></div> <!-- ds-allow-hardcode: harness demo % -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Scrolled to middle -->
+    <section>
+      <p class="grp-label">Scrolled to middle — thumb repositioned</p>
+      <div class="scroll-area" style="height:192px;position:relative"> <!-- ds-allow-hardcode: harness height -->
+        <div class="scroll-viewport" tabindex="0" role="region" aria-label="Scrollable list">
+          <div class="scroll-content">
+            <div class="scroll-item">Checkbox</div>
+            <div class="scroll-item">Collapsible</div>
+            <div class="scroll-item">Combobox</div>
+            <div class="scroll-item">Command</div>
+            <div class="scroll-item">Context Menu</div>
+            <div class="scroll-item">Data Table</div>
+            <div class="scroll-item">Date Picker</div>
+            <div class="scroll-item">Dialog</div>
+            <div class="scroll-item">Drawer</div>
+            <div class="scroll-item">Dropdown Menu</div>
+            <div class="scroll-item">Empty</div>
+            <div class="scroll-item">Field</div>
+          </div>
+        </div>
+        <div class="scroll-thumb-track" aria-hidden="true">
+          <div class="scroll-thumb" style="height:40%;margin-top:30%"></div> <!-- ds-allow-hardcode: harness demo % -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Horizontal scroll — tag pills -->
+    <section>
+      <p class="grp-label">Horizontal scroll — tag pills</p>
+      <div style="position:relative;overflow:hidden;border-radius:var(--radius-md);border:1px solid var(--border-default)">
+        <div style="overflow-x:auto;scrollbar-width:none;padding:var(--space-3)" tabindex="0" role="region" aria-label="Scrollable tags">
+          <div style="display:flex;gap:var(--space-2);width:max-content">
+            <span class="scroll-tag">Accordion</span>
+            <span class="scroll-tag">Alert</span>
+            <span class="scroll-tag">Avatar</span>
+            <span class="scroll-tag">Badge</span>
+            <span class="scroll-tag">Button</span>
+            <span class="scroll-tag">Calendar</span>
+            <span class="scroll-tag">Chart</span>
+            <span class="scroll-tag">Checkbox</span>
+            <span class="scroll-tag">Combobox</span>
+            <span class="scroll-tag">Command</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Dark mode -->
+    <section data-theme="dark" style="background:var(--surface-page);padding:24px;border-radius:var(--radius-lg)">
+      <p class="grp-label">Dark mode — vertical scroll</p>
+      <div class="scroll-area" style="height:160px;position:relative"> <!-- ds-allow-hardcode: harness height -->
+        <div class="scroll-viewport" tabindex="0" role="region" aria-label="Scrollable list dark">
+          <div class="scroll-content">
+            <div class="scroll-item">Accordion</div>
+            <div class="scroll-item">Alert</div>
+            <div class="scroll-item">Avatar</div>
+            <div class="scroll-item">Badge</div>
+            <div class="scroll-item">Button</div>
+            <div class="scroll-item">Calendar</div>
+            <div class="scroll-item">Chart</div>
+            <div class="scroll-item">Checkbox</div>
+          </div>
+        </div>
+        <div class="scroll-thumb-track" aria-hidden="true">
+          <div class="scroll-thumb" style="height:50%;margin-top:0%"></div> <!-- ds-allow-hardcode: harness demo % -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+</body>
+</html>

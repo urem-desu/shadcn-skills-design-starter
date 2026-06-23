@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sheet - states harness</title>
+<link rel="stylesheet" href="../theme.css" />
+<style>
+  /* === Sheet seam ========================================================= */
+  :root { --sheet-side-size: 360px; }
+
+  /* === Scrim ============================================================== */
+  .sheet-overlay{
+    position:fixed;inset:0;z-index:50;background:var(--scrim);
+  }
+
+  /* === Sheet panel base =================================================== */
+  .sheet{
+    position:fixed;z-index:50;
+    display:flex;flex-direction:column;gap:var(--space-4);
+    background:var(--surface-card);padding:var(--space-6);
+    box-shadow:var(--shadow-lg);
+  }
+  /* Sides */
+  .sheet--right{
+    inset-block:0;inset-inline-end:0;
+    width:var(--sheet-side-size);height:100%;
+    border-inline-start:1px solid var(--border-default);
+  }
+  .sheet--left{
+    inset-block:0;inset-inline-start:0;
+    width:var(--sheet-side-size);height:100%;
+    border-inline-end:1px solid var(--border-default);
+  }
+  .sheet--top{
+    inset-inline:0;inset-block-start:0;
+    height:var(--sheet-side-size);width:100%;
+    border-block-end:1px solid var(--border-default);
+  }
+  .sheet--bottom{
+    inset-inline:0;inset-block-end:0;
+    height:var(--sheet-side-size);width:100%;
+    border-block-start:1px solid var(--border-default);
+  }
+
+  /* Close button */
+  .sheet-close{
+    position:absolute;inset-block-start:var(--space-4);inset-inline-end:var(--space-4);
+    display:flex;align-items:center;justify-content:center;
+    width:var(--icon-md);height:var(--icon-md);
+    border-radius:var(--radius-sm);border:none;background:transparent;
+    color:var(--text-secondary);cursor:pointer;
+    transition:background var(--duration-fast) var(--ease-out),
+               color var(--duration-fast) var(--ease-out);
+  }
+  .sheet-close:hover{background:var(--action-secondary);color:var(--text-primary)}
+  .sheet-close:focus-visible{outline:none;box-shadow:var(--focus-ring)}
+  .sheet-close svg{width:var(--icon-sm);height:var(--icon-sm)}
+
+  /* Header / title / description */
+  .sheet-header{display:flex;flex-direction:column;gap:var(--space-1-5)}
+  .sheet-title{
+    font-size:var(--font-size-lg);font-weight:var(--font-weight-semibold);
+    color:var(--text-primary);margin:0;
+  }
+  .sheet-desc{font-size:var(--font-size-sm);color:var(--text-secondary);margin:0}
+
+  /* Footer */
+  .sheet-footer{
+    display:flex;flex-direction:column-reverse;gap:var(--space-2);
+    margin-top:auto;
+  }
+  @media (min-width:640px){
+    .sheet-footer{flex-direction:row;justify-content:flex-end}
+  }
+
+  /* Simulated form field */
+  .mock-field{display:flex;flex-direction:column;gap:var(--space-1-5)}
+  .mock-label{font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);color:var(--text-primary)}
+  .mock-input{
+    height:var(--control-md);padding:0 var(--space-3);
+    border-radius:var(--radius-md);border:1px solid var(--field-border);
+    background:var(--surface-card);color:var(--text-primary);
+    font-size:var(--font-size-sm);outline:none;width:100%;
+  }
+  .mock-input:focus{border-color:var(--action-primary);box-shadow:var(--focus-ring)}
+
+  /* Simulated button */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;
+    height:var(--control-md);padding:0 var(--space-4);
+    border-radius:var(--radius-md);font-size:var(--font-size-sm);
+    font-weight:var(--font-weight-medium);cursor:pointer;border:none;
+    transition:background var(--duration-fast) var(--ease-out);
+  }
+  .btn--primary{background:var(--action-primary);color:var(--action-primary-text)}
+  .btn--primary:hover{background:var(--action-primary-hover)}
+  .btn--outline{
+    background:transparent;color:var(--text-primary);
+    border:1px solid var(--border-default);
+  }
+  .btn--outline:hover{background:var(--action-secondary)}
+
+  /* === Harness layout: static mock of open panel ========================= */
+  .harness{
+    position:relative;height:420px;overflow:hidden; /* ds-allow-hardcode: harness height */
+    border:1px solid var(--border-default);border-radius:var(--radius-lg);
+    background:var(--surface-page);
+  }
+  /* "page content" behind sheet */
+  .page-bg{
+    padding:var(--space-6);
+    font-size:var(--font-size-sm);color:var(--text-tertiary);
+  }
+
+  /* === Harness chrome ===================================================== */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-page);color:var(--text-primary);font-family:Inter,system-ui,sans-serif;padding:32px} /* ds-allow-hardcode: harness chrome */
+  .stack{display:flex;flex-direction:column;gap:40px;max-inline-size:680px;margin:0 auto} /* ds-allow-hardcode: harness chrome */
+  .grp-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin:0 0 12px}
+  [data-theme="dark"] .grp-label{color:var(--gray-400)}
+</style>
+</head>
+<body>
+  <main class="stack">
+
+    <!-- 1. Right sheet (default) -->
+    <section>
+      <p class="grp-label">Right — Edit profile</p>
+      <div class="harness">
+        <div class="page-bg">Page content (obscured by scrim when sheet is open)</div>
+        <div class="sheet-overlay" aria-hidden="true"></div>
+        <div
+          class="sheet sheet--right"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="sheet-title-1"
+          aria-describedby="sheet-desc-1"
+        >
+          <div class="sheet-header">
+            <h2 class="sheet-title" id="sheet-title-1">Edit profile</h2>
+            <p class="sheet-desc" id="sheet-desc-1">
+              Make changes to your profile here. Click save when done.
+            </p>
+          </div>
+          <div class="mock-field">
+            <label class="mock-label" for="name-1">Name</label>
+            <input class="mock-input" id="name-1" value="Yuri Jumnongjit" />
+          </div>
+          <div class="mock-field">
+            <label class="mock-label" for="bio-1">Bio</label>
+            <input class="mock-input" id="bio-1" placeholder="Tell us about yourself" />
+          </div>
+          <div class="sheet-footer">
+            <button class="btn btn--outline">Cancel</button>
+            <button class="btn btn--primary">Save changes</button>
+          </div>
+          <button class="sheet-close" aria-label="Close">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 6 6 18M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Left sheet — navigation -->
+    <section>
+      <p class="grp-label">Left — Navigation panel</p>
+      <div class="harness">
+        <div class="page-bg">Page content behind scrim</div>
+        <div class="sheet-overlay" aria-hidden="true"></div>
+        <div
+          class="sheet sheet--left"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="sheet-title-2"
+        >
+          <div class="sheet-header">
+            <h2 class="sheet-title" id="sheet-title-2">Navigation</h2>
+          </div>
+          <nav aria-label="Main navigation" style="display:flex;flex-direction:column;gap:var(--space-1)">
+            <a href="#" style="padding:var(--space-2) var(--space-3);border-radius:var(--radius-md);font-size:var(--font-size-sm);color:var(--text-primary);text-decoration:none;background:var(--action-secondary)">Dashboard</a>
+            <a href="#" style="padding:var(--space-2) var(--space-3);border-radius:var(--radius-md);font-size:var(--font-size-sm);color:var(--text-secondary);text-decoration:none">Settings</a>
+            <a href="#" style="padding:var(--space-2) var(--space-3);border-radius:var(--radius-md);font-size:var(--font-size-sm);color:var(--text-secondary);text-decoration:none">Billing</a>
+          </nav>
+          <button class="sheet-close" aria-label="Close">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 6 6 18M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Bottom sheet -->
+    <section>
+      <p class="grp-label">Bottom — Action sheet</p>
+      <div class="harness">
+        <div class="page-bg">Page content</div>
+        <div class="sheet-overlay" aria-hidden="true"></div>
+        <div
+          class="sheet sheet--bottom"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="sheet-title-3"
+        >
+          <div class="sheet-header">
+            <h2 class="sheet-title" id="sheet-title-3">Share document</h2>
+          </div>
+          <p style="font-size:var(--font-size-sm);color:var(--text-secondary);margin:0">
+            Choose how you want to share this document with others.
+          </p>
+          <div class="sheet-footer">
+            <button class="btn btn--outline">Cancel</button>
+            <button class="btn btn--primary">Copy link</button>
+          </div>
+          <button class="sheet-close" aria-label="Close">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 6 6 18M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Close button focus state -->
+    <section>
+      <p class="grp-label">Close button — focus state</p>
+      <div class="harness" style="height:200px"> <!-- ds-allow-hardcode: harness height -->
+        <div class="sheet-overlay" aria-hidden="true"></div>
+        <div class="sheet sheet--right" role="dialog" aria-modal="true" aria-labelledby="sheet-title-4">
+          <div class="sheet-header">
+            <h2 class="sheet-title" id="sheet-title-4">Panel title</h2>
+          </div>
+          <button class="sheet-close" aria-label="Close" style="box-shadow:var(--focus-ring)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 6 6 18M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Dark mode -->
+    <section data-theme="dark">
+      <p class="grp-label">Dark mode — right sheet</p>
+      <div class="harness">
+        <div class="page-bg">Page content</div>
+        <div class="sheet-overlay" aria-hidden="true"></div>
+        <div
+          class="sheet sheet--right"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="sheet-title-5"
+          aria-describedby="sheet-desc-5"
+        >
+          <div class="sheet-header">
+            <h2 class="sheet-title" id="sheet-title-5">Edit profile</h2>
+            <p class="sheet-desc" id="sheet-desc-5">Make changes to your profile here.</p>
+          </div>
+          <div class="mock-field">
+            <label class="mock-label" for="name-5">Name</label>
+            <input class="mock-input" id="name-5" value="Yuri Jumnongjit" />
+          </div>
+          <div class="sheet-footer">
+            <button class="btn btn--outline">Cancel</button>
+            <button class="btn btn--primary">Save changes</button>
+          </div>
+          <button class="sheet-close" aria-label="Close">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 6 6 18M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</body>
+</html>
