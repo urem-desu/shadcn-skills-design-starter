@@ -3779,6 +3779,1139 @@ Horizontal scroll: add <ScrollBar orientation="horizontal" /> inside ScrollArea.
 </ScrollArea>`,
 }
 
+// ─── Batch 6: Select → Tooltip ───────────────────────────────────────────────
+
+const select: ComponentDoc = {
+  slug: "select",
+  anatomy: `┌─────────────────────────────────────────┐
+│  Select a fruit                       v  │  ← native <select>, custom chevron overlay
+└─────────────────────────────────────────┘
+  height: --control-md · pl: --space-3
+  pr: icon-sm + space-3×2 (clears the chevron)
+  chevron: --icon-sm, --text-secondary, pointer-events:none`,
+  slots: [
+    "Select — the native <select> element, styled as a field",
+    "ChevronDown — decorative icon overlaid at the inline-end (aria-hidden, no pointer events)",
+    "option / optgroup — supplied as children; disabled options supported",
+  ],
+  props: [
+    { prop: "error", type: "boolean", default: "false", description: "Sets aria-invalid and switches the border to --field-border-error. Pair with an aria-describedby message." },
+    { prop: "value / defaultValue", type: "string", description: "Controlled / uncontrolled selected value — standard <select> semantics." },
+    { prop: "disabled", type: "boolean", default: "false", description: "Renders at 50% opacity with --field-bg-disabled and no pointer events." },
+    { prop: "…SelectHTMLAttributes", type: "—", description: "All native select attributes pass through (name, required, onChange, etc.); size is omitted to avoid the field-size clash." },
+  ],
+  states: [
+    { state: "Default", description: "--field-border on --field-bg; chevron in --text-secondary." },
+    { state: "Hover", description: "Border brightens to --field-border-hover." },
+    { state: "Focus-visible", description: "Border becomes --field-border-focus plus the --field-focus-ring." },
+    { state: "Disabled", description: "opacity:0.5, --field-bg-disabled, cursor:not-allowed." },
+    { state: "Error", description: "aria-invalid=true → --field-border-error; render the message in an aria-describedby element." },
+  ],
+  do: [
+    "Always pair with a <Label htmlFor> — native selects need a programmatic label.",
+    "Use a disabled placeholder option (value=\"\") when there is no sensible default.",
+    "Prefer this native control for short option lists — it gives free keyboard type-ahead and native mobile pickers.",
+    "Group long lists with <optgroup> to keep them scannable.",
+  ],
+  dont: [
+    "Don't reach for a custom listbox when a native select will do — you lose the platform picker and accessibility for free.",
+    "Don't convey the error with color alone — include an aria-describedby message string.",
+    "Don't set a fixed pixel width that can't shrink; the control is full-width up to --select-trigger-max-w.",
+  ],
+  a11y: [
+    "Native <select> carries full keyboard support (type-ahead, arrow keys, Enter/Escape) and platform pickers with no extra code.",
+    "error sets aria-invalid; link the message with aria-describedby so it is announced.",
+    "The chevron is aria-hidden — selection state is conveyed by the native control, not the icon.",
+    "measure_render: 9/9 text AA · axe_audit: 0 · verify_states: pass · verify_responsive: no overflow.",
+  ],
+  tokens: [
+    { property: "Background", token: "--field-bg", light: "white", dark: "gray.950" },
+    { property: "Background (disabled)", token: "--field-bg-disabled", light: "gray.100", dark: "gray.800" },
+    { property: "Border", token: "--field-border", light: "gray.300", dark: "gray.700" },
+    { property: "Border (hover)", token: "--field-border-hover", light: "gray.400", dark: "gray.600" },
+    { property: "Border (focus)", token: "--field-border-focus", light: "blue.500", dark: "blue.400" },
+    { property: "Border (error)", token: "--field-border-error", light: "red.500", dark: "red.400" },
+    { property: "Text", token: "--field-text", light: "gray.900", dark: "gray.50" },
+    { property: "Chevron", token: "--text-secondary", light: "gray.600", dark: "gray.400" },
+    { property: "Height", token: "--control-md", light: "40px", dark: "—" },
+    { property: "Radius", token: "--field-radius", light: "6px", dark: "—" },
+    { property: "Focus ring", token: "--field-focus-ring", light: "double ring", dark: "—" },
+  ],
+  usage: `import { Select } from "@/design-system/select/select"
+import { Label } from "@/design-system/label/label"
+
+<Label htmlFor="fruit">Fruit</Label>
+<Select id="fruit" name="fruit" defaultValue="">
+  <option value="" disabled>Select a fruit</option>
+  <option value="apple">Apple</option>
+  <option value="banana">Banana</option>
+  <optgroup label="Citrus">
+    <option value="orange">Orange</option>
+    <option value="lemon" disabled>Lemon (out of stock)</option>
+  </optgroup>
+</Select>
+
+// Error state
+<Select error aria-describedby="fruit-err"><option>…</option></Select>
+<p id="fruit-err">Please choose a fruit.</p>`,
+}
+
+const separator: ComponentDoc = {
+  slug: "separator",
+  anatomy: `Horizontal (h-px w-full)            Vertical (h-full w-px)
+
+  Section one                       Home │ Docs │ API
+  ────────────────────────               ↑
+  Section two                       1px rule, full parent height
+  ↑
+  1px rule, full container width · color: --border-default`,
+  slots: [
+    "Separator — a single Radix Separator.Root element (no children)",
+  ],
+  props: [
+    { prop: "orientation", type: '"horizontal" | "vertical"', default: '"horizontal"', description: "Horizontal renders h-px w-full; vertical renders h-full w-px (needs a sized flex parent)." },
+    { prop: "decorative", type: "boolean", default: "true", description: "true → role=\"none\" (screen readers skip it). false → role=\"separator\" with aria-orientation." },
+  ],
+  states: [
+    { state: "Horizontal", description: "h-px w-full — sits between stacked elements." },
+    { state: "Vertical", description: "h-full w-px — sits between inline elements in a flex row." },
+    { state: "Dark", description: "--border-default flips to dark gray automatically." },
+  ],
+  do: [
+    "Keep it decorative (the default) when the visual line is purely cosmetic.",
+    "Set decorative={false} only when the divide carries real meaning for assistive tech (e.g. end of a navigation group).",
+    "Give a vertical separator a sized flex parent (e.g. an h-5 row) so h-full has something to fill.",
+  ],
+  dont: [
+    "Don't use a Separator to add spacing — that's the job of gap / margin tokens.",
+    "Don't hand-set a hex color; the rule reads --border-default and flips for dark mode on its own.",
+  ],
+  a11y: [
+    "Decorative (default): Radix renders role=\"none\", so screen readers ignore the element entirely.",
+    "Semantic (decorative={false}): announced as \"separator\" with the correct aria-orientation.",
+    "axe_audit: 0 violations · verify_responsive: no overflow @ 280/320/414px.",
+  ],
+  tokens: [
+    { property: "Line color", token: "--border-default", light: "gray.200", dark: "gray.700" },
+    { property: "Horizontal thickness", token: "h-px (1px)", light: "1px", dark: "—" },
+    { property: "Vertical thickness", token: "w-px (1px)", light: "1px", dark: "—" },
+  ],
+  usage: `import { Separator } from "@/design-system/separator/separator"
+
+// Horizontal (between sections)
+<div className="flex flex-col gap-[var(--space-4)]">
+  <p>Section one content</p>
+  <Separator />
+  <p>Section two content</p>
+</div>
+
+// Vertical (inline)
+<div className="flex h-5 items-center gap-[var(--space-4)]">
+  <span>Home</span>
+  <Separator orientation="vertical" />
+  <span>Docs</span>
+  <Separator orientation="vertical" />
+  <span>API</span>
+</div>
+
+// Semantic landmark
+<Separator decorative={false} aria-label="End of navigation" />`,
+}
+
+const sheet: ComponentDoc = {
+  slug: "sheet",
+  anatomy: `        scrim (--scrim)            ┌──────────────────────┐
+  ┌───────────────────────┐ slide   │  Edit profile      X │  ← SheetHeader + SheetClose
+  │                       │  in →    │  Make changes here.  │  ← SheetTitle / SheetDescription
+  │   page content        │          │                      │
+  │   (inert, behind)     │          │  [ form fields ]     │
+  │                       │          │                      │
+  │                       │          │          [ Save ]    │  ← SheetFooter
+  └───────────────────────┘          └──────────────────────┘
+                                       side="right" (default)
+  panel: --sheet-side-size (360px) · padding --space-6 · shadow-lg`,
+  slots: [
+    "Sheet — Radix Dialog root (open state)",
+    "SheetTrigger — opens the sheet (use asChild to wrap your own button)",
+    "SheetContent — the sliding panel; side picks the edge",
+    "SheetHeader / SheetFooter — stacked title block / action row",
+    "SheetTitle / SheetDescription — labelled + described for the dialog",
+    "SheetClose — dismiss control (built-in X is always rendered top-end)",
+    "SheetOverlay / SheetPortal — scrim + portal (rendered by SheetContent)",
+  ],
+  props: [
+    { prop: "side", type: '"top" | "right" | "bottom" | "left"', default: '"right"', description: "Edge the panel slides from. left/right use --sheet-side-size as width; top/bottom as height." },
+    { prop: "open / defaultOpen", type: "boolean", description: "Controlled / uncontrolled open state — standard Radix Dialog props on the root." },
+    { prop: "onOpenChange", type: "(open: boolean) => void", description: "Fired on open and close (trigger, Escape, scrim, or close button)." },
+    { prop: "modal", type: "boolean", default: "true", description: "When true the background is inert and the scrim blocks interaction." },
+  ],
+  states: [
+    { state: "Closed", description: "Panel off-screen; no scrim." },
+    { state: "Opening", description: "Panel slides in and scrim fades in over --duration-base with --ease-in-out." },
+    { state: "Open", description: "Panel visible; focus trapped; scrim blocks the background." },
+    { state: "Closing", description: "Panel slides out via data-[state=closed]:slide-out-to-<side>." },
+    { state: "Close — hover", description: "X button background → --action-secondary, text → --text-primary." },
+    { state: "Close — focus", description: "Focus ring via --focus-ring." },
+  ],
+  do: [
+    "Use a Sheet for complementary content — filters, settings, a nav drawer — that should not pull the user fully out of context.",
+    "Always include a SheetTitle (even visually hidden) so the dialog is labelled.",
+    "Use side=\"left\" for navigation drawers and side=\"right\" for detail/edit panels.",
+    "Put the primary action in SheetFooter; it stacks on mobile and right-aligns on sm+.",
+  ],
+  dont: [
+    "Don't use a Sheet for a blocking confirmation — that's Alert Dialog.",
+    "Don't nest Sheets; stack flows in one panel or use a wizard pattern instead.",
+    "Don't override --sheet-side-size with a width that can't shrink on small screens.",
+  ],
+  a11y: [
+    "Radix Dialog: role=\"dialog\", aria-modal=\"true\", aria-labelledby wired to SheetTitle and aria-describedby to SheetDescription.",
+    "Focus is trapped inside the panel; Tab cycles within; Escape closes; focus returns to the trigger on close.",
+    "The built-in close button carries an sr-only \"Close\" label; the X glyph is aria-hidden.",
+    "axe_audit: 0 · verify_focustrap: Tab stays inside, Escape closes, focus returns · verify_responsive: no overflow.",
+  ],
+  tokens: [
+    { property: "Overlay (scrim)", token: "--scrim", light: "rgba(0,0,0,.3)", dark: "rgba(0,0,0,.3)" },
+    { property: "Panel background", token: "--surface-card", light: "white", dark: "gray.950" },
+    { property: "Panel padding", token: "--space-6", light: "24px", dark: "—" },
+    { property: "Panel gap", token: "--space-4", light: "16px", dark: "—" },
+    { property: "Panel shadow", token: "--shadow-lg", light: "4-layer", dark: "—" },
+    { property: "Side size", token: "--sheet-side-size", light: "360px", dark: "—" },
+    { property: "Edge border", token: "--border-default", light: "gray.200", dark: "gray.700" },
+    { property: "Transition", token: "--duration-base / --ease-in-out", light: "200ms", dark: "—" },
+    { property: "Title size / weight", token: "--font-size-lg / --font-weight-semibold", light: "18px / 600", dark: "—" },
+    { property: "Description", token: "--font-size-sm + --text-secondary", light: "14px / gray.500", dark: "gray.400" },
+    { property: "Close hover bg", token: "--action-secondary", light: "gray.100", dark: "gray.800" },
+  ],
+  usage: `import {
+  Sheet, SheetContent, SheetDescription, SheetFooter,
+  SheetHeader, SheetTitle, SheetTrigger,
+} from "@/design-system/sheet/sheet"
+import { Button } from "@/design-system/button/button"
+
+<Sheet>
+  <SheetTrigger asChild>
+    <Button variant="outline">Open settings</Button>
+  </SheetTrigger>
+  <SheetContent>
+    <SheetHeader>
+      <SheetTitle>Edit profile</SheetTitle>
+      <SheetDescription>Make changes to your profile here. Click save when done.</SheetDescription>
+    </SheetHeader>
+    {/* form fields ... */}
+    <SheetFooter>
+      <Button type="submit">Save changes</Button>
+    </SheetFooter>
+  </SheetContent>
+</Sheet>
+
+// Left-side navigation drawer
+<Sheet>
+  <SheetTrigger asChild>
+    <Button variant="ghost" size="icon" aria-label="Open menu"><MenuIcon /></Button>
+  </SheetTrigger>
+  <SheetContent side="left">
+    <SheetTitle>Navigation</SheetTitle>
+    {/* nav links ... */}
+  </SheetContent>
+</Sheet>`,
+}
+
+const sidebar: ComponentDoc = {
+  slug: "sidebar",
+  anatomy: `┌────────────┐                ┌──┐
+│ =  Acme    │ ← Header       │= │ ← collapsed rail
+│            │   + Trigger    │  │   (--sidebar-collapsed-w 48px)
+│ NAVIGATION │ ← GroupLabel   │  │
+│ ▸ Dashboard│ ← MenuButton   │▸ │   labels hidden, title tooltip
+│ ▸ Users    │   (active)     │▸ │
+│ ▸ Settings │                │▸ │
+│ ──────────  │ ← Separator    │  │
+│ Footer     │ ← Footer       │  │
+└────────────┘                └──┘
+  expanded: --sidebar-w (240px) · transition --duration-base / --ease-in-out`,
+  slots: [
+    "SidebarProvider — required root; owns open/collapsed context",
+    "Sidebar — the panel (side=\"left\" | \"right\")",
+    "SidebarHeader / SidebarContent / SidebarFooter — structural sections",
+    "SidebarGroup / SidebarGroupLabel / SidebarGroupContent — content groups",
+    "SidebarMenu / SidebarMenuItem / SidebarMenuButton — the nav items",
+    "SidebarSeparator / SidebarTrigger — divider + collapse toggle",
+    "useSidebar() — read/set open state from any descendant",
+  ],
+  props: [
+    { prop: "defaultOpen", type: "boolean", default: "true", description: "On SidebarProvider: initial open (expanded) state for the uncontrolled case." },
+    { prop: "open / onOpenChange", type: "boolean / (v) => void", description: "On SidebarProvider: controlled open state and change handler." },
+    { prop: "collapsible", type: "boolean", default: "true", description: "On SidebarProvider: whether the trigger can collapse the rail to icon width." },
+    { prop: "side", type: '"left" | "right"', default: '"left"', description: "On Sidebar: which edge the panel docks to." },
+    { prop: "isActive", type: "boolean", default: "false", description: "On SidebarMenuButton: marks the current-page item (selected styling + aria-current)." },
+    { prop: "tooltip", type: "string", description: "On SidebarMenuButton: native title shown when the sidebar is collapsed." },
+    { prop: "size", type: '"sm" | "md"', default: '"md"', description: "On SidebarMenuButton: item height." },
+  ],
+  states: [
+    { state: "Expanded", description: "Full --sidebar-w panel; group labels and item text visible." },
+    { state: "Collapsed", description: "Icon-width rail (--sidebar-collapsed-w); group labels hidden, item text hidden, title tooltip exposed." },
+    { state: "Item — hover", description: "--action-secondary background." },
+    { state: "Item — active", description: "--interactive-selected-bg background + --interactive-selected-text, aria-current=\"page\"." },
+    { state: "Item — focus", description: "Double focus ring (--focus-ring)." },
+    { state: "Item — disabled", description: "opacity:0.5, no pointer events." },
+  ],
+  do: [
+    "Wrap the whole layout in SidebarProvider — the panel and trigger share its context.",
+    "Give every SidebarMenuButton a tooltip so the collapsed rail stays usable.",
+    "Mark the current route with isActive so it gets aria-current and selected styling.",
+    "Group related links under a SidebarGroupLabel for scannability.",
+  ],
+  dont: [
+    "Don't render a Sidebar outside SidebarProvider — useSidebar() will have no context.",
+    "Don't put long labels in the collapsed rail; rely on the tooltip instead.",
+    "Don't hardcode 240px / 48px — those live in the --sidebar-w / --sidebar-collapsed-w seams.",
+  ],
+  a11y: [
+    "SidebarTrigger uses aria-expanded to announce collapsed vs expanded.",
+    "The active menu item receives aria-current=\"page\".",
+    "When collapsed, SidebarMenuButton exposes a native title tooltip so icon-only items remain identifiable.",
+    "axe_audit: 0 violations · verify_responsive: no overflow @ 280/320/414px.",
+  ],
+  tokens: [
+    { property: "Panel background", token: "--surface-card", light: "white", dark: "gray.950" },
+    { property: "Panel border", token: "--border-default", light: "gray.200", dark: "gray.700" },
+    { property: "Expanded width", token: "--sidebar-w", light: "240px", dark: "—" },
+    { property: "Collapsed width", token: "--sidebar-collapsed-w", light: "48px", dark: "—" },
+    { property: "Item text", token: "--text-primary", light: "gray.900", dark: "gray.50" },
+    { property: "Item hover bg", token: "--action-secondary", light: "gray.100", dark: "gray.800" },
+    { property: "Item active bg", token: "--interactive-selected-bg", light: "blue.50", dark: "blue.950" },
+    { property: "Item active text", token: "--interactive-selected-text", light: "blue.700", dark: "blue.300" },
+    { property: "Group label", token: "--text-tertiary", light: "gray.400", dark: "gray.500" },
+    { property: "Transition", token: "--duration-base / --ease-in-out", light: "200ms", dark: "—" },
+  ],
+  usage: `import {
+  Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent,
+  SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem,
+  SidebarProvider, SidebarTrigger,
+} from "@/design-system/sidebar/sidebar"
+import { LayoutDashboard, Settings, Users } from "lucide-react"
+
+const navItems = [
+  { icon: LayoutDashboard, label: "Dashboard", href: "/" },
+  { icon: Users, label: "Users", href: "/users" },
+  { icon: Settings, label: "Settings", href: "/settings" },
+]
+
+<SidebarProvider>
+  <Sidebar>
+    <SidebarHeader><SidebarTrigger /></SidebarHeader>
+    <SidebarContent>
+      <SidebarGroup>
+        <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+        <SidebarGroupContent>
+          <SidebarMenu>
+            {navItems.map((item) => (
+              <SidebarMenuItem key={item.href}>
+                <SidebarMenuButton tooltip={item.label} isActive={currentPath === item.href}>
+                  <item.icon className="size-[var(--icon-sm)]" aria-hidden="true" />
+                  <span>{item.label}</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarGroupContent>
+      </SidebarGroup>
+    </SidebarContent>
+  </Sidebar>
+  <main className="flex-1 overflow-auto">{children}</main>
+</SidebarProvider>`,
+}
+
+const skeleton: ComponentDoc = {
+  slug: "skeleton",
+  anatomy: `┌──────┐  ┌──────────────────────────┐
+│ ●●●● │  │ ████████████████         │  ← shape comes entirely from className
+│ ●●●● │  │ ████████                 │
+└──────┘  └──────────────────────────┘
+  size-12 rounded-full      h-4 w-48 / h-4 w-32
+  bg: --surface-sunken · animate-pulse (opacity 100% → 50%)`,
+  slots: [
+    "Skeleton — a single <div>; height, width and radius are all supplied by the caller via className",
+  ],
+  props: [
+    { prop: "className", type: "string", description: "Carries the shape: height, width, and border-radius. The component owns only the background and pulse animation." },
+    { prop: "…HTMLAttributes", type: "—", description: "Standard div attributes pass through. aria-hidden=\"true\" is hardwired." },
+  ],
+  states: [
+    { state: "Default", description: "Pulsing opacity from 100% to 50% via Tailwind animate-pulse." },
+    { state: "Reduced motion", description: "prefers-reduced-motion: reduce halts the animation — becomes a static tinted block." },
+    { state: "Dark", description: "--surface-sunken flips to gray.800." },
+  ],
+  do: [
+    "Match the skeleton's size to the real content it stands in for, so there is no layout shift on load.",
+    "Compose multiple Skeletons (avatar circle + text lines) to mirror the final layout.",
+    "Set aria-busy=\"true\" on the surrounding container so the loading state is announced.",
+  ],
+  dont: [
+    "Don't leave a Skeleton on screen indefinitely — it implies content is still arriving.",
+    "Don't give it its own aria-label; it is intentionally aria-hidden.",
+    "Don't animate color or add a custom shimmer hex; the pulse and --surface-sunken handle it.",
+  ],
+  a11y: [
+    "aria-hidden=\"true\" is hardwired so screen readers never announce placeholder shapes.",
+    "Put aria-busy=\"true\" on the loading container to announce the loading state to assistive tech.",
+    "animate-pulse respects prefers-reduced-motion and stops for users who opt out.",
+    "axe_audit: 0 violations · verify_responsive: no overflow @ 280/320/414px.",
+  ],
+  tokens: [
+    { property: "Background", token: "--surface-sunken", light: "gray.100", dark: "gray.800" },
+    { property: "Default radius", token: "--radius-md", light: "6px", dark: "—" },
+    { property: "Animation", token: "animate-pulse", light: "opacity keyframe", dark: "—" },
+  ],
+  usage: `import { Skeleton } from "@/design-system/skeleton/skeleton"
+
+// Avatar + text lines
+<div className="flex items-center gap-[var(--space-4)]" aria-busy="true">
+  <Skeleton className="size-12 rounded-full" />
+  <div className="flex flex-col gap-[var(--space-2)]">
+    <Skeleton className="h-4 w-48" />
+    <Skeleton className="h-4 w-32" />
+  </div>
+</div>
+
+// Card skeleton
+<div className="flex flex-col gap-[var(--space-3)] rounded-[var(--radius-lg)] border border-[var(--border-default)] p-[var(--space-4)]">
+  <Skeleton className="h-40 w-full rounded-[var(--radius-md)]" />
+  <Skeleton className="h-4 w-3/4" />
+  <Skeleton className="h-4 w-1/2" />
+</div>`,
+}
+
+const slider: ComponentDoc = {
+  slug: "slider",
+  anatomy: `        ●───────────────────────────  ← Thumb (--slider-thumb-size 16px)
+  ████████████░░░░░░░░░░░░░░░░░░░░░░░░
+  ↑ Range (--action-primary)  ↑ Track (--action-secondary, --slider-track-h 4px)
+
+  range [20 ●━━━━━━━━━━━● 80]  ← two thumbs for a min/max range`,
+  slots: [
+    "Slider — Radix Slider.Root; flex row, holds the track and thumb(s)",
+    "Track — the full rail (--action-secondary, --slider-track-h tall, radius-full)",
+    "Range — the filled portion from min to the current value (--action-primary)",
+    "Thumb — one draggable handle per value (radius-full, 2px primary border)",
+  ],
+  props: [
+    { prop: "value / defaultValue", type: "number[]", description: "Controlled / uncontrolled thumb positions. One entry = single thumb; two = a range." },
+    { prop: "min", type: "number", default: "0", description: "Lowest selectable value." },
+    { prop: "max", type: "number", default: "100", description: "Highest selectable value." },
+    { prop: "step", type: "number", default: "1", description: "Increment per arrow key / drag tick." },
+    { prop: "onValueChange", type: "(value: number[]) => void", description: "Fired continuously as the thumb moves." },
+    { prop: "disabled", type: "boolean", default: "false", description: "Renders at 50% opacity with no pointer events." },
+    { prop: "orientation", type: '"horizontal" | "vertical"', default: '"horizontal"', description: "Axis of travel (Radix prop)." },
+  ],
+  states: [
+    { state: "Default", description: "Track with the range fill from min to the current value." },
+    { state: "Hover", description: "Thumb shadow elevates from --shadow-sm to --shadow-md." },
+    { state: "Focus-visible", description: "Thumb gains the double --focus-ring." },
+    { state: "Dragging", description: "Radix captures the pointer; the range fill tracks in real time." },
+    { state: "Disabled", description: "opacity:0.5, pointer-events:none." },
+  ],
+  do: [
+    "Give the slider an accessible name — aria-label or aria-labelledby on a visible label.",
+    "Show the current value next to the control when the exact number matters.",
+    "Use a two-entry value array for min/max range selection (e.g. a price filter).",
+    "Pick a step that matches the precision users actually need.",
+  ],
+  dont: [
+    "Don't use a slider when a precise value is required and hard to hit — offer a number input too.",
+    "Don't hardcode the 4px track or 16px thumb; they live in the --slider-track-h / --slider-thumb-size seams.",
+    "Don't omit the label — a slider with no name is unusable for screen reader users.",
+  ],
+  a11y: [
+    "Radix renders role=\"slider\" with aria-valuenow / aria-valuemin / aria-valuemax derived from value/min/max.",
+    "Keyboard: Arrow keys step by step; Page Up/Down step by 10×; Home/End jump to min/max.",
+    "Provide aria-label or aria-labelledby; add aria-valuetext when a formatted value (e.g. \"$80\") reads better than the raw number.",
+    "axe_audit: 0 violations · verify_responsive: no overflow @ 280/320/414px.",
+  ],
+  tokens: [
+    { property: "Track background", token: "--action-secondary", light: "gray.100", dark: "gray.800" },
+    { property: "Range fill", token: "--action-primary", light: "blue.600", dark: "blue.500" },
+    { property: "Track height", token: "--slider-track-h", light: "4px", dark: "—" },
+    { property: "Thumb size", token: "--slider-thumb-size", light: "16px", dark: "—" },
+    { property: "Thumb border", token: "--action-primary (2px)", light: "blue.600", dark: "blue.500" },
+    { property: "Thumb background", token: "--surface-card", light: "white", dark: "gray.950" },
+    { property: "Thumb shadow (rest / hover)", token: "--shadow-sm / --shadow-md", light: "sm / md", dark: "—" },
+    { property: "Focus ring", token: "--focus-ring", light: "double ring", dark: "—" },
+  ],
+  usage: `import { Slider } from "@/design-system/slider/slider"
+
+// Basic 0–100
+<Slider defaultValue={[50]} min={0} max={100} step={1} aria-label="Volume" />
+
+// With visible label + live value
+const [volume, setVolume] = React.useState([50])
+<div className="flex flex-col gap-[var(--space-2)]">
+  <div className="flex justify-between">
+    <label id="volume-label" className="text-sm font-medium">Volume</label>
+    <span className="text-sm text-[var(--text-secondary)]">{volume[0]}</span>
+  </div>
+  <Slider value={volume} onValueChange={setVolume} min={0} max={100} aria-labelledby="volume-label" />
+</div>
+
+// Range (two thumbs)
+<Slider defaultValue={[20, 80]} min={0} max={100} step={5} aria-label="Price range" />`,
+}
+
+const sonner: ComponentDoc = {
+  slug: "sonner",
+  anatomy: `┌───────────────────────────────────────┐
+│  Profile updated              [ Undo ] │  ← title + actionButton
+│  Your changes have been saved.         │  ← description (--text-secondary)
+└───────────────────────────────────────┘
+  bg --surface-card · border --border-default · shadow-lg · radius-lg
+  type accents the border: success/error/warning/info`,
+  slots: [
+    "Toaster — the provider; mount once at the root layout",
+    "toast(...) — imperative API from \"sonner\" to raise toasts from anywhere",
+    "actionButton / cancelButton — optional buttons inside a toast",
+    "description — secondary line under the title",
+  ],
+  props: [
+    { prop: "position", type: '"top-left" | "top-center" | … | "bottom-right"', default: '"bottom-right"', description: "Corner the stack anchors to (Toaster prop)." },
+    { prop: "theme", type: '"light" | "dark" | "system"', default: '"system"', description: "Pass through to match the page's data-theme." },
+    { prop: "richColors", type: "boolean", default: "false", description: "Use saturated per-type backgrounds instead of the bordered style." },
+    { prop: "closeButton", type: "boolean", default: "false", description: "Render a dismiss control on each toast." },
+    { prop: "duration", type: "number", default: "4000", description: "Auto-dismiss time in ms (per toast or global)." },
+  ],
+  variants: [
+    { name: "Default — toast(msg)", description: "Neutral card: --surface-card, --border-default, --text-primary." },
+    { name: "Success — toast.success", description: "Green highlight (border-green-300)." },
+    { name: "Error — toast.error", description: "Destructive text (--text-destructive) + border-red-300; raised as role=\"alert\"." },
+    { name: "Warning — toast.warning", description: "Amber text + border-amber-300." },
+    { name: "Info — toast.info", description: "Link-blue text + border-blue-200." },
+    { name: "Promise — toast.promise", description: "Loading → success/error lifecycle from a promise." },
+  ],
+  states: [
+    { state: "Default", description: "Neutral card with border-default and text-primary." },
+    { state: "With action", description: "Primary actionButton on the inline-end (e.g. Undo)." },
+    { state: "Loading", description: "Spinner + description while a promise is pending." },
+    { state: "Stacked", description: "Multiple toasts collapse into an expandable stack." },
+  ],
+  do: [
+    "Mount <Toaster /> exactly once, at the root layout.",
+    "Match the toast type to the message: success / error / warning / info.",
+    "Offer an Undo action for reversible, destructive operations instead of a confirm dialog.",
+    "Keep messages to one line; put detail in the description.",
+  ],
+  dont: [
+    "Don't render more than one Toaster — duplicates create competing stacks.",
+    "Don't put critical, must-read information only in a toast; it auto-dismisses.",
+    "Don't recolor toasts with raw hex — the type classNames already map to semantic tokens.",
+  ],
+  a11y: [
+    "Sonner renders toasts in a role=\"region\" landmark labelled \"Notifications\".",
+    "Each toast uses role=\"status\" (default) or role=\"alert\" (error/warning) for the right live-region priority.",
+    "Action buttons are real <button>s — keyboard reachable and focusable while the toast is visible.",
+    "axe_audit: 0 violations (Sonner manages the ARIA internally).",
+  ],
+  tokens: [
+    { property: "Container background", token: "--surface-card", light: "white", dark: "gray.950" },
+    { property: "Container border", token: "--border-default", light: "gray.200", dark: "gray.700" },
+    { property: "Container shadow / radius", token: "--shadow-lg / --radius-lg", light: "4-layer / 8px", dark: "—" },
+    { property: "Title text", token: "--text-primary", light: "gray.900", dark: "gray.50" },
+    { property: "Description", token: "--text-secondary", light: "gray.500", dark: "gray.400" },
+    { property: "Action button", token: "--action-primary + --action-primary-text", light: "blue / white", dark: "—" },
+    { property: "Success / Error border", token: "--green-300 / --red-300", light: "green / red", dark: "—" },
+    { property: "Warning / Info", token: "--amber-700 / --text-link", light: "amber / blue", dark: "—" },
+  ],
+  usage: `// 1. Mount once at the root layout
+import { Toaster } from "@/design-system/sonner/sonner"
+
+export default function RootLayout({ children }) {
+  return (
+    <html><body>{children}<Toaster /></body></html>
+  )
+}
+
+// 2. Raise toasts from anywhere
+import { toast } from "sonner"
+
+toast.success("Profile updated")
+toast.error("Could not save changes")
+
+// With an Undo action
+toast("File deleted", {
+  action: { label: "Undo", onClick: () => restoreFile() },
+})
+
+// From a promise
+toast.promise(saveProfile(), {
+  loading: "Saving…", success: "Saved", error: "Failed to save",
+})`,
+}
+
+const spinner: ComponentDoc = {
+  slug: "spinner",
+  anatomy: `   ╭──╮
+  ╭╯  ╰╮      ← indicator arc (currentColor) over a 25%-opacity track ring
+  │    │        rotates 360° / 1s linear (animate-spin)
+  ╰╮  ╭╯
+   ╰──╯
+  size: --icon-sm 16 · --icon-md 20 · --icon-lg 24 · color inherits currentColor`,
+  slots: [
+    "Spinner — a single inline <svg> (track ring + quarter-arc indicator)",
+  ],
+  props: [
+    { prop: "size", type: '"sm" | "md" | "lg"', default: '"md"', description: "Maps to --icon-sm (16) / --icon-md (20) / --icon-lg (24)." },
+    { prop: "aria-label", type: "string", default: '"Loading"', description: "Override for a context-specific announcement (e.g. \"Saving changes\")." },
+    { prop: "className", type: "string", description: "Tint via a text-color utility — the arc inherits currentColor." },
+    { prop: "…SVGAttributes", type: "—", description: "Standard SVG attributes pass through." },
+  ],
+  states: [
+    { state: "Default", description: "Continuous 360° rotation at 1s linear." },
+    { state: "Reduced motion", description: "prefers-reduced-motion: reduce halts the spin — shows a static arc." },
+    { state: "Color", description: "Inherits currentColor; wrap in a text-color class (e.g. text-[var(--action-primary)]) to tint." },
+  ],
+  do: [
+    "Pair the spinner with text (\"Saving…\") whenever space allows — motion alone is ambiguous.",
+    "Override aria-label to describe the specific operation underway.",
+    "Use size=\"sm\" inside buttons so the control height stays stable.",
+    "Let it inherit currentColor so it matches the surrounding text by default.",
+  ],
+  dont: [
+    "Don't use a spinner for progress you can measure — use Progress with a value instead.",
+    "Don't leave a spinner running with no eventual success or error resolution.",
+    "Don't wrap it in aria-hidden; its role=\"status\" is the accessible loading signal.",
+  ],
+  a11y: [
+    "role=\"status\" announces the spinner as a polite live region.",
+    "aria-label=\"Loading\" is hardwired and overridable for specific context.",
+    "The track ring is decorative and part of the same SVG, so it needs no separate aria-hidden.",
+    "animate-spin respects prefers-reduced-motion · axe_audit: 0 · verify_responsive: no overflow.",
+  ],
+  tokens: [
+    { property: "Size (sm / md / lg)", token: "--icon-sm / --icon-md / --icon-lg", light: "16 / 20 / 24px", dark: "—" },
+    { property: "Indicator arc", token: "currentColor", light: "inherits text color", dark: "—" },
+    { property: "Track ring", token: "currentColor @ 25% opacity", light: "—", dark: "—" },
+    { property: "Animation", token: "animate-spin", light: "360° / 1s linear", dark: "—" },
+  ],
+  usage: `import { Spinner } from "@/design-system/spinner/spinner"
+
+// Standalone
+<Spinner />
+
+// Inside a loading button
+<button disabled className="inline-flex items-center gap-[var(--space-2)]">
+  <Spinner size="sm" aria-label="Saving" />
+  <span>Saving…</span>
+</button>
+
+// Explicit color + label
+<Spinner size="lg" className="text-[var(--action-primary)]" aria-label="Loading dashboard" />`,
+}
+
+const switchDoc: ComponentDoc = {
+  slug: "switch",
+  anatomy: `  off                       on
+  ┌──────────┐              ┌──────────┐
+  │ ●        │              │        ● │  ← thumb slides over --duration-fast
+  └──────────┘              └──────────┘
+  track-off: --border-strong   track-on: --action-primary
+  track 36×20 (--switch-track-w/h) · thumb 16 (--switch-thumb-size)`,
+  slots: [
+    "Switch — native <input type=checkbox role=\"switch\"> (transparent, on top)",
+    "Track — drawn overlay; --border-strong off, --action-primary on (aria-hidden)",
+    "Thumb — drawn overlay that slides on toggle (aria-hidden)",
+  ],
+  props: [
+    { prop: "checked / defaultChecked", type: "boolean", description: "Controlled / uncontrolled on state — standard checkbox semantics." },
+    { prop: "onChange", type: "(e) => void", description: "Fired on toggle; read e.target.checked." },
+    { prop: "disabled", type: "boolean", default: "false", description: "Renders at 50% opacity with no pointer events." },
+    { prop: "aria-label / name", type: "string", description: "Provide a name via a paired <Label> or aria-label." },
+  ],
+  states: [
+    { state: "Off", description: "Track uses --border-strong (clears 3:1 non-text contrast); thumb at the start." },
+    { state: "On", description: "Track → --action-primary; thumb slides to the end." },
+    { state: "Focus-visible", description: "Track gains the double --focus-ring (peer-focus-visible)." },
+    { state: "Disabled", description: "opacity:0.5, cursor:not-allowed." },
+  ],
+  do: [
+    "Use a Switch for an instant on/off setting that takes effect immediately (no Save step).",
+    "Always give it a name — wrap with <Label> or set aria-label.",
+    "Keep the label stable; don't change it between on and off.",
+    "Reserve switches for binary state; use Checkbox for selection in a form you submit.",
+  ],
+  dont: [
+    "Don't use a Switch when the change only applies after a Save — use a Checkbox.",
+    "Don't rely on the faint --border-default for the off track; the off state uses --border-strong to meet 3:1.",
+    "Don't add a third \"indeterminate\" state — switches are strictly binary.",
+  ],
+  a11y: [
+    "Built on a native checkbox with role=\"switch\", so it is announced as a switch with on/off state; Space/Enter toggle.",
+    "Off-track contrast uses --border-strong (≈3.5:1 on page), not the decorative --border-default that fails 3:1.",
+    "Track and thumb overlays are aria-hidden + pointer-events:none; the real input handles all interaction.",
+    "measure_render: 8/8 text AA · axe_audit: 0 · verify_responsive: no overflow.",
+  ],
+  tokens: [
+    { property: "Track (off)", token: "--switch-track-off → --border-strong", light: "gray.500", dark: "gray.500" },
+    { property: "Track (on)", token: "--switch-track-on → --action-primary", light: "blue.600", dark: "blue.600" },
+    { property: "Thumb", token: "--switch-thumb", light: "white", dark: "white" },
+    { property: "Track width / height", token: "--switch-track-w / --switch-track-h", light: "36px / 20px", dark: "—" },
+    { property: "Thumb size", token: "--switch-thumb-size", light: "16px", dark: "—" },
+    { property: "Thumb offset", token: "--space-0-5", light: "2px", dark: "—" },
+    { property: "Focus ring", token: "--focus-ring", light: "double ring", dark: "—" },
+  ],
+  usage: `import { Switch } from "@/design-system/switch/switch"
+import { Label } from "@/design-system/label/label"
+
+// Labelled (wrap)
+<Label className="inline-flex items-center gap-[var(--space-2)]">
+  <Switch defaultChecked /> Airplane mode
+</Label>
+
+// Standalone with aria-label
+<Switch aria-label="Marketing emails" defaultChecked />
+
+// Disabled
+<Switch disabled />`,
+}
+
+const table: ComponentDoc = {
+  slug: "table",
+  anatomy: `┌─────────────────────────────────────────────┐
+│ Invoice   Status    Method        Amount     │  ← TableHeader (--text-secondary, 500)
+├─────────────────────────────────────────────┤  ← row divider (--border-default)
+│ INV-001   Paid      Card           $250.00    │  ← TableRow / TableCell (hover: surface-sunken)
+│ INV-002   Pending   Transfer       $150.00    │
+├─────────────────────────────────────────────┤
+│ Total                              $2,500.00  │  ← TableFooter (surface-sunken)
+└─────────────────────────────────────────────┘
+  wrapped in overflow-auto → horizontal scroll on narrow screens`,
+  slots: [
+    "Table — overflow-auto wrapper around <table>",
+    "TableHeader / TableBody / TableFooter — <thead> / <tbody> / <tfoot>",
+    "TableRow — <tr>; hover + data-[state=selected] styling",
+    "TableHead — <th> header cell · TableCell — <td> body cell",
+    "TableCaption — <caption> describing the table",
+  ],
+  props: [
+    { prop: "data-state", type: '"selected"', description: "On TableRow: applies --interactive-selected-bg for the selected state." },
+    { prop: "colSpan / rowSpan", type: "number", description: "Native cell spanning on TableHead / TableCell." },
+    { prop: "aria-sort", type: '"ascending" | "descending" | "none"', description: "Set on a sortable TableHead to announce sort direction." },
+    { prop: "…HTMLAttributes", type: "—", description: "Each sub-component forwards its native element's attributes." },
+  ],
+  states: [
+    { state: "Row hover", description: "--surface-sunken background." },
+    { state: "Row selected", description: "data-[state=selected] → --interactive-selected-bg." },
+    { state: "Footer", description: "--surface-sunken tint with a top border for totals." },
+    { state: "Dark", description: "Borders and surfaces flip via semantic dark overrides." },
+  ],
+  do: [
+    "Use this primitive for static, presentational tables; reach for Data Table when you need sorting, filtering, or pagination.",
+    "Always include a TableCaption (visually hidden if needed) describing the data.",
+    "Right-align numeric columns with text-right for easy scanning.",
+    "Let the built-in overflow-auto wrapper handle small screens rather than forcing a fixed width.",
+  ],
+  dont: [
+    "Don't use a Table for layout — it is for tabular data only.",
+    "Don't build sort/filter logic onto this primitive by hand; compose Data Table instead.",
+    "Don't drop the caption; screen reader users rely on it to understand the table's purpose.",
+  ],
+  a11y: [
+    "Semantic <table>/<thead>/<tbody>/<th>/<td> elements provide native table roles automatically.",
+    "Use <caption> (TableCaption) to describe the table to assistive tech.",
+    "For sortable columns set aria-sort=\"ascending\" / \"descending\" / \"none\" on the <th>.",
+    "axe_audit: 0 · verify_responsive: the horizontal scroll container prevents overflow @ 280/320/414px.",
+  ],
+  tokens: [
+    { property: "Row / header divider", token: "--border-default", light: "gray.200", dark: "gray.700" },
+    { property: "Header height", token: "--control-md", light: "40px", dark: "—" },
+    { property: "Header text", token: "--text-secondary", light: "gray.500", dark: "gray.400" },
+    { property: "Header weight", token: "--font-weight-medium", light: "500", dark: "—" },
+    { property: "Cell padding", token: "--space-4 (x) / --space-3 (y)", light: "16px / 12px", dark: "—" },
+    { property: "Cell text", token: "--text-primary", light: "gray.900", dark: "gray.50" },
+    { property: "Row hover", token: "--surface-sunken", light: "gray.50", dark: "gray.900" },
+    { property: "Row selected", token: "--interactive-selected-bg", light: "blue.50", dark: "blue.950" },
+    { property: "Footer background", token: "--surface-sunken", light: "gray.50", dark: "gray.900" },
+    { property: "Font size", token: "--font-size-sm", light: "14px", dark: "—" },
+  ],
+  usage: `import {
+  Table, TableBody, TableCaption, TableCell, TableFooter,
+  TableHead, TableHeader, TableRow,
+} from "@/design-system/table/table"
+
+<Table>
+  <TableCaption>Monthly invoices</TableCaption>
+  <TableHeader>
+    <TableRow>
+      <TableHead>Invoice</TableHead>
+      <TableHead>Status</TableHead>
+      <TableHead>Method</TableHead>
+      <TableHead className="text-right">Amount</TableHead>
+    </TableRow>
+  </TableHeader>
+  <TableBody>
+    {invoices.map((invoice) => (
+      <TableRow key={invoice.id}>
+        <TableCell className="font-medium">{invoice.id}</TableCell>
+        <TableCell>{invoice.status}</TableCell>
+        <TableCell>{invoice.method}</TableCell>
+        <TableCell className="text-right">{invoice.amount}</TableCell>
+      </TableRow>
+    ))}
+  </TableBody>
+  <TableFooter>
+    <TableRow>
+      <TableCell colSpan={3}>Total</TableCell>
+      <TableCell className="text-right">$2,500.00</TableCell>
+    </TableRow>
+  </TableFooter>
+</Table>`,
+}
+
+const tabs: ComponentDoc = {
+  slug: "tabs",
+  anatomy: `┌─────────────────────────────────────────┐
+│ ┌─────────┐  Password   Notifications    │  ← TabsList (--surface-sunken)
+│ │ Account │                               │     active trigger = --surface-card + shadow-sm
+│ └─────────┘                               │
+└─────────────────────────────────────────┘
+  ─────────────────────────────────────────  ← TabsContent (mt --space-2)
+  Account settings panel content.              only the active value's panel renders`,
+  slots: [
+    "Tabs — Radix root; owns the selected value",
+    "TabsList — the sunken container holding the triggers",
+    "TabsTrigger — one tab button; value must match a panel",
+    "TabsContent — the panel shown for the matching value",
+  ],
+  props: [
+    { prop: "defaultValue / value", type: "string", description: "Uncontrolled / controlled active tab (on Tabs)." },
+    { prop: "onValueChange", type: "(value: string) => void", description: "Fired when the active tab changes (on Tabs)." },
+    { prop: "orientation", type: '"horizontal" | "vertical"', default: '"horizontal"', description: "Arrow-key navigation axis (on Tabs)." },
+    { prop: "value", type: "string", description: "Required on TabsTrigger and TabsContent to pair a tab with its panel." },
+    { prop: "disabled", type: "boolean", default: "false", description: "On TabsTrigger: 50% opacity, no pointer events." },
+  ],
+  states: [
+    { state: "Active trigger", description: "--surface-card background + --shadow-sm + --text-primary." },
+    { state: "Inactive trigger (rest)", description: "Transparent background, --text-secondary." },
+    { state: "Inactive trigger (hover)", description: "Text fades up to --text-primary." },
+    { state: "Trigger focus-visible", description: "Double --focus-ring." },
+    { state: "Trigger disabled", description: "opacity:0.5, no pointer events." },
+    { state: "Content", description: "Visible only for the matching active value; Radix manages mounting." },
+  ],
+  do: [
+    "Keep tab labels short and parallel — they sit side by side in a fixed strip.",
+    "Pair every TabsTrigger value with a TabsContent of the same value.",
+    "Use tabs for switching views of the same context, not for sequential steps (use a stepper there).",
+    "Let Radix manage focus and selection; don't reimplement the keyboard model.",
+  ],
+  dont: [
+    "Don't put more tabs in a row than comfortably fit; consider a Select or scrollable strip instead.",
+    "Don't hide critical actions behind an inactive tab if users need them at all times.",
+    "Don't use tabs to page through a wizard — that hides progress and the back/next model.",
+  ],
+  a11y: [
+    "Implements the WAI-ARIA Tabs pattern: role=\"tablist\", role=\"tab\" triggers, role=\"tabpanel\" panels.",
+    "aria-selected and aria-controls / aria-labelledby are wired by Radix.",
+    "Keyboard: Arrow keys move between tabs; Enter/Space activate; Home/End jump to first/last.",
+    "axe_audit: 0 violations · verify_responsive: tabs wrap/scroll at narrow viewports.",
+  ],
+  tokens: [
+    { property: "List background", token: "--surface-sunken", light: "gray.100", dark: "gray.800" },
+    { property: "List height / radius", token: "--control-md / --radius-md", light: "40px / 6px", dark: "—" },
+    { property: "Active trigger bg", token: "--surface-card", light: "white", dark: "gray.950" },
+    { property: "Active trigger text", token: "--text-primary", light: "gray.900", dark: "gray.50" },
+    { property: "Active trigger shadow", token: "--shadow-sm", light: "sm", dark: "—" },
+    { property: "Inactive trigger text", token: "--text-secondary", light: "gray.500", dark: "gray.400" },
+    { property: "Trigger radius", token: "--radius-sm", light: "4px", dark: "—" },
+    { property: "Trigger font", token: "--font-size-sm / --font-weight-medium", light: "14px / 500", dark: "—" },
+    { property: "Focus ring", token: "--focus-ring", light: "double ring", dark: "—" },
+    { property: "Content offset", token: "--space-2", light: "8px", dark: "—" },
+  ],
+  usage: `import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/design-system/tabs/tabs"
+
+<Tabs defaultValue="account">
+  <TabsList>
+    <TabsTrigger value="account">Account</TabsTrigger>
+    <TabsTrigger value="password">Password</TabsTrigger>
+    <TabsTrigger value="notifications">Notifications</TabsTrigger>
+  </TabsList>
+  <TabsContent value="account">Account settings panel content.</TabsContent>
+  <TabsContent value="password">Password change form.</TabsContent>
+  <TabsContent value="notifications">Notification preferences.</TabsContent>
+</Tabs>`,
+}
+
+const textarea: ComponentDoc = {
+  slug: "textarea",
+  anatomy: `┌─────────────────────────────────────────┐
+│ Tell us a bit about yourself              │  ← placeholder (--field-placeholder)
+│                                           │     padding --space-3 (x) / --space-2 (y)
+│                                          ⤡│  ← vertical resize handle only
+└─────────────────────────────────────────┘
+  border --field-border · radius --field-radius · default rows={3} (grows, no fixed px)`,
+  slots: [
+    "Textarea — a single <textarea>; shares the --field-* token chain with Input",
+  ],
+  props: [
+    { prop: "error", type: "boolean", default: "false", description: "Sets aria-invalid → --field-border-error + the error focus ring." },
+    { prop: "rows", type: "number", default: "3", description: "Initial visible line count; no fixed px height, so it stays responsive." },
+    { prop: "value / defaultValue", type: "string", description: "Controlled / uncontrolled content." },
+    { prop: "disabled", type: "boolean", default: "false", description: "50% opacity, --field-bg-disabled, no pointer events." },
+    { prop: "…TextareaHTMLAttributes", type: "—", description: "All native textarea attributes pass through (placeholder, maxLength, onChange…)." },
+  ],
+  states: [
+    { state: "Default", description: "--field-border on --field-bg; placeholder in --field-placeholder." },
+    { state: "Hover", description: "Border brightens to --field-border-hover." },
+    { state: "Focus-visible", description: "Border --field-border-focus + --field-focus-ring." },
+    { state: "Disabled", description: "opacity:0.5, --field-bg-disabled, cursor:not-allowed." },
+    { state: "Error", description: "aria-invalid=true → --field-border-error + --field-focus-ring-error; render an aria-describedby message." },
+  ],
+  do: [
+    "Always pair with a <Label htmlFor> and link helper/error text via aria-describedby.",
+    "Set rows to a sensible starting height for the expected content length.",
+    "Allow vertical resize (the default) so users can expand for longer input.",
+    "Convey errors with the error prop plus a message — not color alone.",
+  ],
+  dont: [
+    "Don't fix a pixel height that can't grow; rows keeps it responsive.",
+    "Don't enable horizontal resize; it breaks line length and layout.",
+    "Don't use a Textarea for a single short value — use Input.",
+  ],
+  a11y: [
+    "Pair with <Label htmlFor>; expose helper/error via aria-describedby.",
+    "error drives aria-invalid so the visual state always matches the accessibility state.",
+    "Height is set via rows (no fixed px), so it reflows cleanly at 280/320/414px.",
+    "measure_render: 10/10 text AA · axe_audit: 0 · verify_states: pass.",
+  ],
+  tokens: [
+    { property: "Background", token: "--field-bg", light: "white", dark: "gray.950" },
+    { property: "Border", token: "--field-border", light: "gray.300", dark: "gray.700" },
+    { property: "Border (hover / focus / error)", token: "--field-border-hover / -focus / -error", light: "gray.400 / blue.500 / red.500", dark: "—" },
+    { property: "Text / placeholder", token: "--field-text / --field-placeholder", light: "gray.900 / gray.400", dark: "gray.50 / gray.500" },
+    { property: "Padding", token: "--space-3 (x) / --space-2 (y)", light: "12px / 8px", dark: "—" },
+    { property: "Line height", token: "--line-normal", light: "1.5", dark: "—" },
+    { property: "Radius", token: "--field-radius", light: "6px", dark: "—" },
+    { property: "Focus ring (default / error)", token: "--field-focus-ring / --field-focus-ring-error", light: "double ring", dark: "—" },
+  ],
+  usage: `import { Textarea } from "@/design-system/textarea/textarea"
+import { Label } from "@/design-system/label/label"
+
+<Label htmlFor="bio">Bio</Label>
+<Textarea id="bio" placeholder="Tell us a bit about yourself" aria-describedby="bio-h" />
+<p id="bio-h">You can @mention other users and organizations.</p>
+
+// Error state
+<Textarea error aria-describedby="msg-e" defaultValue="x" />
+<p id="msg-e">Message must be at least 10 characters.</p>`,
+}
+
+const toggle: ComponentDoc = {
+  slug: "toggle",
+  anatomy: `  off (rest)        on (data-state=on)
+  ┌─────────┐       ┌─────────┐
+  │   B     │       │   B     │  ← --interactive-selected-bg / -text
+  └─────────┘       └─────────┘
+  rest: --text-secondary · hover: --action-secondary bg
+  sizes: sm 32 / md 40 / lg 48 (--control-*) · radius-md`,
+  slots: [
+    "Toggle — a single Radix Toggle.Root pressable button (icon, text, or both)",
+  ],
+  props: [
+    { prop: "variant", type: '"default" | "outline"', default: '"default"', description: "default is ghost; outline adds a --border-default 1px border." },
+    { prop: "size", type: '"sm" | "md" | "lg"', default: '"md"', description: "Height --control-sm/md/lg (32/40/48) with matching padding and font size." },
+    { prop: "pressed", type: "boolean", description: "Controlled on/off state." },
+    { prop: "defaultPressed", type: "boolean", default: "false", description: "Uncontrolled initial state." },
+    { prop: "onPressedChange", type: "(pressed: boolean) => void", description: "Fired when the pressed state changes." },
+    { prop: "disabled", type: "boolean", default: "false", description: "50% opacity, no pointer events." },
+  ],
+  variants: [
+    { name: "default", description: "Ghost button — transparent until hovered or pressed." },
+    { name: "outline", description: "Adds a --border-default border; same hover/on coloring." },
+  ],
+  states: [
+    { state: "Default (off)", description: "Transparent background, --text-secondary." },
+    { state: "Hover (off)", description: "--action-secondary background, --text-primary." },
+    { state: "Pressed / on", description: "data-[state=on] → --interactive-selected-bg + --interactive-selected-text." },
+    { state: "Focus-visible", description: "Double --focus-ring." },
+    { state: "Disabled", description: "opacity:0.5, no pointer events." },
+  ],
+  do: [
+    "Give icon-only toggles an aria-label describing what they toggle.",
+    "Use Toggle for a single independent on/off control (e.g. Bold in a toolbar).",
+    "Use the controlled pressed / onPressedChange pair when the state lives in your app.",
+    "Match size to surrounding controls so the toolbar height stays even.",
+  ],
+  dont: [
+    "Don't use a Toggle when only one of several options can be on — use Toggle Group with type=\"single\".",
+    "Don't rely on color alone to show the on state; the selected background plus aria-pressed both carry it.",
+    "Don't use a Toggle for an immediate-effect setting that reads better as a Switch.",
+  ],
+  a11y: [
+    "Radix Toggle renders role=\"button\" with aria-pressed=\"true\" / \"false\".",
+    "Keyboard: Enter / Space toggles the pressed state.",
+    "Icon-only toggles need an explicit aria-label.",
+    "axe_audit: 0 violations · verify_responsive: no overflow @ 280/320/414px.",
+  ],
+  tokens: [
+    { property: "Text (rest)", token: "--text-secondary", light: "gray.500", dark: "gray.400" },
+    { property: "Hover background", token: "--action-secondary", light: "gray.100", dark: "gray.800" },
+    { property: "Hover text", token: "--text-primary", light: "gray.900", dark: "gray.50" },
+    { property: "On background", token: "--interactive-selected-bg", light: "blue.50", dark: "blue.950" },
+    { property: "On text", token: "--interactive-selected-text", light: "blue.700", dark: "blue.300" },
+    { property: "Radius", token: "--radius-md", light: "6px", dark: "—" },
+    { property: "Heights (sm/md/lg)", token: "--control-sm / -md / -lg", light: "32 / 40 / 48px", dark: "—" },
+    { property: "Outline border", token: "--border-default", light: "gray.200", dark: "gray.700" },
+    { property: "Focus ring", token: "--focus-ring", light: "double ring", dark: "—" },
+  ],
+  usage: `import { Toggle } from "@/design-system/toggle/toggle"
+import { Bold } from "lucide-react"
+
+// Icon-only
+<Toggle aria-label="Toggle bold">
+  <Bold className="size-[var(--icon-sm)]" />
+</Toggle>
+
+// With text + outline variant
+<Toggle variant="outline" size="sm">Subscribe</Toggle>
+
+// Controlled
+const [pressed, setPressed] = React.useState(false)
+<Toggle pressed={pressed} onPressedChange={setPressed}>
+  {pressed ? "On" : "Off"}
+</Toggle>`,
+}
+
+const toggleGroup: ComponentDoc = {
+  slug: "toggle-group",
+  anatomy: `┌─────┬─────┬─────┐
+│  L  │  C  │  R  │  ← items share one --border-default frame (overflow-hidden)
+└─────┴─────┴─────┘     1px --border-default dividers; last item none
+  item on = --interactive-selected-bg/-text (via toggleVariants)
+  type="single" (one active) | type="multiple" (any number active)`,
+  slots: [
+    "ToggleGroup — Radix root; single- or multiple-select container with one shared border",
+    "ToggleGroupItem — one button in the strip; value identifies it (re-uses toggleVariants)",
+  ],
+  props: [
+    { prop: "type", type: '"single" | "multiple"', description: "single = at most one active; multiple = any number active." },
+    { prop: "value / defaultValue", type: "string | string[]", description: "Controlled / uncontrolled selection (string for single, string[] for multiple)." },
+    { prop: "onValueChange", type: "(value) => void", description: "Fired when the selection changes." },
+    { prop: "variant", type: '"default" | "outline"', default: '"default"', description: "Shared with items via context; inherited from toggleVariants." },
+    { prop: "size", type: '"sm" | "md" | "lg"', default: '"md"', description: "Shared item height, propagated through context." },
+    { prop: "value (item)", type: "string", description: "Required on ToggleGroupItem to identify the button." },
+  ],
+  states: [
+    { state: "Item off (rest)", description: "Transparent background, --text-secondary." },
+    { state: "Item off (hover)", description: "--action-secondary background, --text-primary." },
+    { state: "Item on", description: "--interactive-selected-bg + --interactive-selected-text." },
+    { state: "Item focus-visible", description: "Double --focus-ring." },
+    { state: "Item disabled", description: "opacity:0.5, no pointer events." },
+  ],
+  do: [
+    "Give the group an aria-label describing the set (e.g. \"Text alignment\").",
+    "Use type=\"single\" for mutually exclusive options (alignment) and type=\"multiple\" for independent ones (bold/italic).",
+    "Keep all items the same size; the group propagates size through context.",
+    "Label icon-only items individually with aria-label.",
+  ],
+  dont: [
+    "Don't mix sizes within one group — it breaks the joined-strip alignment.",
+    "Don't use a single-select group when options aren't mutually exclusive; choose multiple.",
+    "Don't hand-add per-item borders; the group frame and dividers come from tokens.",
+  ],
+  a11y: [
+    "Radix ToggleGroup renders role=\"group\" with an aria-label on the container.",
+    "Each item is role=\"button\" with aria-pressed.",
+    "Keyboard: Tab enters the group; Arrow keys move between items.",
+    "axe_audit: 0 violations · verify_responsive: no overflow @ 280/320/414px.",
+  ],
+  tokens: [
+    { property: "Group / divider border", token: "--border-default", light: "gray.200", dark: "gray.700" },
+    { property: "Group radius", token: "--radius-md", light: "6px", dark: "—" },
+    { property: "Item off text", token: "--text-secondary", light: "gray.500", dark: "gray.400" },
+    { property: "Item hover bg", token: "--action-secondary", light: "gray.100", dark: "gray.800" },
+    { property: "Item on bg", token: "--interactive-selected-bg", light: "blue.50", dark: "blue.950" },
+    { property: "Item on text", token: "--interactive-selected-text", light: "blue.700", dark: "blue.300" },
+    { property: "Focus ring", token: "--focus-ring", light: "double ring", dark: "—" },
+  ],
+  usage: `import { ToggleGroup, ToggleGroupItem } from "@/design-system/toggle-group/toggle-group"
+import { AlignLeft, AlignCenter, AlignRight } from "lucide-react"
+
+// Single selection (alignment)
+<ToggleGroup type="single" aria-label="Text alignment">
+  <ToggleGroupItem value="left" aria-label="Left"><AlignLeft className="size-[var(--icon-sm)]" /></ToggleGroupItem>
+  <ToggleGroupItem value="center" aria-label="Center"><AlignCenter className="size-[var(--icon-sm)]" /></ToggleGroupItem>
+  <ToggleGroupItem value="right" aria-label="Right"><AlignRight className="size-[var(--icon-sm)]" /></ToggleGroupItem>
+</ToggleGroup>
+
+// Multiple selection (formatting)
+<ToggleGroup type="multiple" aria-label="Text formatting">
+  <ToggleGroupItem value="bold">Bold</ToggleGroupItem>
+  <ToggleGroupItem value="italic">Italic</ToggleGroupItem>
+  <ToggleGroupItem value="underline">Underline</ToggleGroupItem>
+</ToggleGroup>`,
+}
+
+const tooltip: ComponentDoc = {
+  slug: "tooltip",
+  anatomy: `        ┌──────────────────┐
+        │  Add to library  │  ← TooltipContent (--surface-inverse / --text-on-inverse)
+        └────────▽─────────┘     arrow fills --surface-inverse
+            [ Hover ]            ← TooltipTrigger (real <button>)
+  shows on hover AND keyboard focus · contrast ≈ 16:1 both themes`,
+  slots: [
+    "TooltipProvider — shared delay/skip timer (wrap the app once; Tooltip also self-provides)",
+    "Tooltip — root; default delayDuration 200ms",
+    "TooltipTrigger — the element the tip describes (asChild to wrap your own button)",
+    "TooltipContent — the bubble on the inverse surface, with an arrow",
+  ],
+  props: [
+    { prop: "delayDuration", type: "number", default: "200", description: "ms before the tip appears on hover (on Tooltip / Provider)." },
+    { prop: "sideOffset", type: "number", default: "8", description: "Gap in px between trigger and bubble (on TooltipContent)." },
+    { prop: "side / align", type: '"top" | "right" | "bottom" | "left" / …', description: "Preferred placement; Radix flips to stay in view." },
+    { prop: "asChild", type: "boolean", default: "false", description: "On TooltipTrigger: render your own focusable element instead of a wrapper." },
+  ],
+  states: [
+    { state: "Hidden (rest)", description: "No bubble; trigger shows its own resting style." },
+    { state: "Revealed", description: "Appears on hover AND keyboard focus of the trigger; fades in over --duration-fast." },
+    { state: "Trigger focus", description: "Trigger shows its focus ring; the tip opens for keyboard users too." },
+    { state: "Reduced motion", description: "Honors prefers-reduced-motion — the fade is dropped." },
+  ],
+  do: [
+    "Use tooltips for supplementary hints — an icon button's name, a brief clarification.",
+    "Keep the text to a few words; it is not a place for paragraphs.",
+    "Wrap the app in one TooltipProvider to share the open/skip delay across tips.",
+    "Make sure the trigger is itself focusable so keyboard users get the tip.",
+  ],
+  dont: [
+    "Don't put essential or interactive content in a tooltip — use a Popover for that.",
+    "Don't attach a tooltip to a non-focusable element; keyboard and screen reader users would never see it.",
+    "Don't rely on hover only; the tip must also appear on focus (Radix handles this).",
+  ],
+  a11y: [
+    "The trigger is a real <button>; Radix wires aria-describedby to the content's role=\"tooltip\", so screen reader users get the tip.",
+    "Appears on focus, not hover-only — keyboard and pointer users are both covered.",
+    "Not for essential or interactive content (use Popover); tooltips are advisory.",
+    "measure_render: 6/6 text AA (bubble measured open) · axe_audit: 0 · verify_states: pass · verify_responsive: no overflow.",
+  ],
+  tokens: [
+    { property: "Bubble background", token: "--surface-inverse", light: "gray.900", dark: "gray.50" },
+    { property: "Bubble text", token: "--text-on-inverse", light: "gray.50", dark: "gray.900" },
+    { property: "Radius", token: "--radius-md", light: "6px", dark: "—" },
+    { property: "Font size", token: "--font-size-xs", light: "12px", dark: "—" },
+    { property: "Padding", token: "--space-2-5 (x) / --space-1-5 (y)", light: "10px / 6px", dark: "—" },
+    { property: "Transition", token: "--duration-fast", light: "fade in", dark: "—" },
+  ],
+  usage: `import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/design-system/tooltip/tooltip"
+import { Button } from "@/design-system/button/button"
+import { Settings } from "lucide-react"
+
+<TooltipProvider>
+  <Tooltip>
+    <TooltipTrigger asChild>
+      <Button size="icon" aria-label="Settings"><Settings /></Button>
+    </TooltipTrigger>
+    <TooltipContent>Open settings</TooltipContent>
+  </Tooltip>
+</TooltipProvider>`,
+}
+
 // ─── Registry ─────────────────────────────────────────────────────────────────
 
 const docs: ComponentDoc[] = [
@@ -3822,6 +4955,21 @@ const docs: ComponentDoc[] = [
   progress,
   radioGroup,
   scrollArea,
+  select,
+  separator,
+  sheet,
+  sidebar,
+  skeleton,
+  slider,
+  sonner,
+  spinner,
+  switchDoc,
+  table,
+  tabs,
+  textarea,
+  toggle,
+  toggleGroup,
+  tooltip,
 ]
 
 const docsMap = new Map<string, ComponentDoc>(docs.map((d) => [d.slug, d]))
