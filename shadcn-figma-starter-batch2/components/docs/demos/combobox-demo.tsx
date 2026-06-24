@@ -49,6 +49,7 @@ function ComboboxBasic() {
           variant="outline"
           role="combobox"
           aria-expanded={open}
+          aria-label="Select framework"
           className="w-[200px] justify-between"
         >
           {value
@@ -229,6 +230,7 @@ function ComboboxForm() {
               variant="outline"
               role="combobox"
               aria-expanded={open}
+              aria-label="Select language"
               className="w-[200px] justify-between"
             >
               {value

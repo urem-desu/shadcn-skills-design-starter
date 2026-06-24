@@ -17,7 +17,7 @@ const meta = {
   argTypes: { value: { control: { type: "range", min: 0, max: 100, step: 1 } } },
   render: (args) => (
     <div className="w-72">
-      <Progress {...args} />
+      <Progress aria-label="Upload progress" {...args} />
     </div>
   ),
 } satisfies Meta<typeof Progress>
@@ -32,7 +32,7 @@ export const Steps: Story = {
   render: () => (
     <div className="grid w-72 gap-4">
       {[0, 25, 50, 75, 100].map((v) => (
-        <Progress key={v} value={v} />
+        <Progress key={v} value={v} aria-label={`Step at ${v} percent`} />
       ))}
     </div>
   ),

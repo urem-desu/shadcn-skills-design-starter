@@ -110,6 +110,7 @@ const columns: ColumnDef<Payment>[] = [
   {
     id: "actions",
     enableHiding: false,
+    header: () => <span className="sr-only">Actions</span>,
     cell: ({ row }) => {
       const payment = row.original
       return (

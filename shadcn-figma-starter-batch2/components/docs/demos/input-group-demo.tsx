@@ -84,7 +84,7 @@ function InputGroupRow() {
         </InputGroupAddon>
       </InputGroup>
       <InputGroup>
-        <InputGroupInput defaultValue="@shadcn" />
+        <InputGroupInput defaultValue="@shadcn" aria-label="Username" />
         <InputGroupAddon align="inline-end">
           <CircleCheck />
         </InputGroupAddon>
@@ -171,7 +171,7 @@ function ButtonRow() {
   return (
     <Row>
       <InputGroup>
-        <InputGroupInput defaultValue="https://x.com/shadcn" readOnly />
+        <InputGroupInput defaultValue="https://x.com/shadcn" readOnly aria-label="Profile URL" />
         <InputGroupAddon align="inline-end">
           <InputGroupButton size="icon-xs" aria-label="Copy">
             <Copy />
@@ -192,7 +192,7 @@ function ButtonRow() {
         </InputGroupAddon>
       </InputGroup>
       <InputGroup>
-        <InputGroupInput defaultValue="https://x.com/shadcn" readOnly />
+        <InputGroupInput defaultValue="https://x.com/shadcn" readOnly aria-label="Profile URL" />
         <InputGroupAddon align="inline-end">
           <InputGroupButton size="sm">Search</InputGroupButton>
         </InputGroupAddon>
@@ -342,6 +342,7 @@ function CodeEditorTextarea() {
         <InputGroupTextarea
           defaultValue="console.log('Hello, world!');"
           className="min-h-24 font-mono"
+          aria-label="Code editor"
         />
         <InputGroupAddon align="block-end" className="border-t">
           <InputGroupText>Line 1, Column 1</InputGroupText>
@@ -385,7 +386,7 @@ function ButtonGroupRow() {
         <InputGroupAddon>
           <InputGroupText>https://</InputGroupText>
         </InputGroupAddon>
-        <InputGroupInput />
+        <InputGroupInput aria-label="Website domain" />
         <InputGroupAddon align="inline-end">
           <InputGroupButton size="icon-xs" aria-label="Link">
             <Link2 />

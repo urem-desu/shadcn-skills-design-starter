@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite"
 
+import { axeIgnore } from "@/.storybook/a11y"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 
@@ -13,6 +14,12 @@ const meta: Meta<typeof ScrollArea> = {
         component: "Cross-browser custom scrollbars over native scrolling.",
       },
     },
+    // Scoped axe exception: the scrollable element is the Radix ScrollArea
+    // viewport, which is not focusable by default and is not reachable from story
+    // code (props go to the Root, not the Viewport). Making it keyboard focusable
+    // means editing the CLI-managed components/ui/scroll-area.tsx, which project
+    // rules keep CLI-owned, so scrollable-region-focusable is disabled here only.
+    a11y: axeIgnore("scrollable-region-focusable"),
   },
 }
 

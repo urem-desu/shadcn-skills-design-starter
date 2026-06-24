@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite"
 
+import { axeIgnore } from "@/.storybook/a11y"
 import {
   Command,
   CommandEmpty,
@@ -21,6 +22,10 @@ const meta: Meta<typeof Command> = {
           "A composable command menu (cmdk). Type to filter; arrow keys move; Enter selects.",
       },
     },
+    // Scoped axe exception: the role="listbox" / role="option" structure is
+    // rendered internally by the cmdk library and is not addressable from story
+    // or component code, so aria-required-children is disabled here only.
+    a11y: axeIgnore("aria-required-children"),
   },
 }
 

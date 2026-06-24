@@ -148,7 +148,7 @@ function AvatarItems() {
       <Item variant="outline">
         <ItemMedia>
           <Avatar>
-            <AvatarImage src="https://github.com/evilrabbit.png" />
+            <AvatarImage src="https://github.com/evilrabbit.png" alt="Evil Rabbit" />
             <AvatarFallback>ER</AvatarFallback>
           </Avatar>
         </ItemMedia>
@@ -166,15 +166,15 @@ function AvatarItems() {
         <ItemMedia>
           <AvatarGroup>
             <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" />
+              <AvatarImage src="https://github.com/shadcn.png" alt="shadcn" />
               <AvatarFallback>CN</AvatarFallback>
             </Avatar>
             <Avatar>
-              <AvatarImage src="https://github.com/maxleiter.png" />
+              <AvatarImage src="https://github.com/maxleiter.png" alt="Max Leiter" />
               <AvatarFallback>ML</AvatarFallback>
             </Avatar>
             <Avatar>
-              <AvatarImage src="https://github.com/evilrabbit.png" />
+              <AvatarImage src="https://github.com/evilrabbit.png" alt="Evil Rabbit" />
               <AvatarFallback>ER</AvatarFallback>
             </Avatar>
           </AvatarGroup>
@@ -236,7 +236,7 @@ function GroupItems() {
           <Item>
             <ItemMedia>
               <Avatar>
-                <AvatarImage src={p.img} />
+                <AvatarImage src={p.img} alt={p.user} />
                 <AvatarFallback>{p.fallback}</AvatarFallback>
               </Avatar>
             </ItemMedia>
@@ -324,7 +324,7 @@ function PeopleDropdown() {
             <Item size="sm" className="w-full">
               <ItemMedia>
                 <Avatar className="size-6">
-                  <AvatarImage src={p.img} />
+                  <AvatarImage src={p.img} alt={p.user} />
                   <AvatarFallback>{p.fallback}</AvatarFallback>
                 </Avatar>
               </ItemMedia>

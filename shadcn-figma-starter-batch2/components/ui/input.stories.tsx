@@ -51,10 +51,10 @@ export const States: Story = {
   parameters: { controls: { disable: true } },
   render: () => (
     <div className="grid w-72 gap-3">
-      <Input placeholder="Default" />
-      <Input placeholder="Focused (click me)" autoFocus />
-      <Input aria-invalid defaultValue="Invalid" />
-      <Input disabled placeholder="Disabled" />
+      <Input placeholder="Default" aria-label="Default input" />
+      <Input placeholder="Focused (click me)" autoFocus aria-label="Focused input" />
+      <Input aria-invalid defaultValue="Invalid" aria-label="Invalid input" />
+      <Input disabled placeholder="Disabled" aria-label="Disabled input" />
     </div>
   ),
 }

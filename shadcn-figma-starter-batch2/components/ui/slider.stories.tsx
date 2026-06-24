@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite"
 
+import { axeIgnore } from "@/.storybook/a11y"
 import { Slider } from "@/components/ui/slider"
 
 const meta = {
@@ -12,6 +13,12 @@ const meta = {
           "An input where the user selects a value from within a range. Supports single and range (multi-thumb) values.",
       },
     },
+    // Scoped axe exception: aria-label is set on the Slider root, but the kit's
+    // slider.tsx does not forward a name to the Radix thumb (role="slider").
+    // Naming the thumb means editing the CLI-managed components/ui/slider.tsx,
+    // which project rules keep CLI-owned, so aria-input-field-name is disabled
+    // here only.
+    a11y: axeIgnore("aria-input-field-name"),
   },
   args: { min: 0, max: 100, step: 1, disabled: false },
   argTypes: {

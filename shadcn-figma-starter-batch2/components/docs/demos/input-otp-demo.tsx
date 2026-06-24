@@ -14,7 +14,7 @@ import { Separator } from "@/components/ui/separator"
 
 function DefaultOTP() {
   return (
-    <InputOTP maxLength={6}>
+    <InputOTP maxLength={6} aria-label="One-time password">
       <InputOTPGroup>
         <InputOTPSlot index={0} />
         <InputOTPSlot index={1} />
@@ -32,7 +32,7 @@ function DefaultOTP() {
 
 function PatternOTP() {
   return (
-    <InputOTP maxLength={6} pattern={REGEXP_ONLY_DIGITS_AND_CHARS}>
+    <InputOTP maxLength={6} pattern={REGEXP_ONLY_DIGITS_AND_CHARS} aria-label="One-time password">
       <InputOTPGroup>
         <InputOTPSlot index={0} />
         <InputOTPSlot index={1} />
@@ -47,7 +47,7 @@ function PatternOTP() {
 
 function SeparatorOTP() {
   return (
-    <InputOTP maxLength={6}>
+    <InputOTP maxLength={6} aria-label="One-time password">
       <InputOTPGroup>
         <InputOTPSlot index={0} />
         <InputOTPSlot index={1} />
@@ -70,7 +70,7 @@ function ControlledOTP() {
   const [value, setValue] = React.useState("")
   return (
     <div className="flex flex-col items-center gap-2">
-      <InputOTP maxLength={6} value={value} onChange={setValue}>
+      <InputOTP maxLength={6} value={value} onChange={setValue} aria-label="One-time password">
         <InputOTPGroup>
           <InputOTPSlot index={0} />
           <InputOTPSlot index={1} />

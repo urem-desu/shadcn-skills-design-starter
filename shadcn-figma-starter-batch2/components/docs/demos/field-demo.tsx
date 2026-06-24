@@ -313,7 +313,7 @@ function ChoiceCardField() {
                 default.
               </FieldDescription>
             </FieldContent>
-            <RadioGroupItem value="kubernetes" id="field-env-k8s" />
+            <RadioGroupItem value="kubernetes" id="field-env-k8s" aria-label="Kubernetes" />
           </Field>
         </FieldLabel>
         <FieldLabel htmlFor="field-env-vm">
@@ -324,7 +324,7 @@ function ChoiceCardField() {
                 Access a VM configured cluster to run workloads. (Coming soon)
               </FieldDescription>
             </FieldContent>
-            <RadioGroupItem value="vm" id="field-env-vm" />
+            <RadioGroupItem value="vm" id="field-env-vm" aria-label="Virtual Machine" />
           </Field>
         </FieldLabel>
       </RadioGroup>
