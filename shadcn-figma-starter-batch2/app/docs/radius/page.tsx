@@ -29,7 +29,7 @@ export default function RadiusPage() {
 
       {/* Visual scale strip — all shapes in one row */}
       <section className="flex flex-col gap-3">
-        <p className="text-[0.6875rem] font-medium uppercase tracking-wider text-muted-foreground">
+        <p className="text-2xs font-medium uppercase tracking-wider text-muted-foreground">
           Scale — none to full
         </p>
         <div className="flex flex-wrap items-end gap-4 rounded-lg border border-border bg-card p-5">
@@ -62,19 +62,19 @@ export default function RadiusPage() {
 
       {/* Detailed reference table */}
       <section className="flex flex-col gap-3">
-        <p className="text-[0.6875rem] font-medium uppercase tracking-wider text-muted-foreground">
+        <p className="text-2xs font-medium uppercase tracking-wider text-muted-foreground">
           Reference
         </p>
         <div className="overflow-hidden rounded-lg border border-border">
           {/* Column headers */}
           <div className="grid grid-cols-[auto_auto_1fr] gap-4 border-b border-border bg-muted/40 px-4 py-2">
-            <span className="text-[0.6875rem] font-medium uppercase tracking-wider text-muted-foreground">
+            <span className="text-2xs font-medium uppercase tracking-wider text-muted-foreground">
               Utility
             </span>
-            <span className="text-[0.6875rem] font-medium uppercase tracking-wider text-muted-foreground">
+            <span className="text-2xs font-medium uppercase tracking-wider text-muted-foreground">
               Value
             </span>
-            <span className="text-[0.6875rem] font-medium uppercase tracking-wider text-muted-foreground">
+            <span className="text-2xs font-medium uppercase tracking-wider text-muted-foreground">
               Common usage
             </span>
           </div>

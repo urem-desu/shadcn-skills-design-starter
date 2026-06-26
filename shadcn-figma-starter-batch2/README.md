@@ -103,99 +103,44 @@ Open <http://localhost:3000> and replace `app/page.tsx` with your first screen f
 
 ## Component catalog
 
-55 components from the Figma kit are implemented, documented, and story-tested.
+55 components installed via the shadcn CLI and story-tested in Storybook.
 
-| # | Component | Category |
-|---|-----------|----------|
-| 1 | Accordion | Disclosure |
-| 2 | Alert | Feedback |
-| 3 | Alert Dialog | Overlay |
-| 4 | Aspect Ratio | Layout |
-| 5 | Avatar | Display |
-| 6 | Badge | Display |
-| 7 | Breadcrumb | Navigation |
-| 8 | Button | Action |
-| 9 | Button Group | Action |
-| 10 | Calendar | Input |
-| 11 | Card | Layout |
-| 12 | Carousel | Display |
-| 13 | Chart | Data viz |
-| 14 | Checkbox | Input |
-| 15 | Collapsible | Disclosure |
-| 16 | Combobox | Input |
-| 17 | Command | Navigation |
-| 18 | Context Menu | Navigation |
-| 19 | Data Table | Display |
-| 20 | Date Picker | Input |
-| 21 | Dialog | Overlay |
-| 22 | Drawer | Overlay |
-| 23 | Dropdown Menu | Navigation |
-| 24 | Empty | Feedback |
-| 25 | Field | Form |
-| 26 | Hover Card | Overlay |
-| 27 | Input | Input |
-| 28 | Input Group | Input |
-| 29 | Input OTP | Input |
-| 30 | Item | Display |
-| 31 | Kbd | Display |
-| 32 | Label | Form |
-| 33 | Menubar | Navigation |
-| 34 | Native Select | Input |
-| 35 | Navigation Menu | Navigation |
-| 36 | Pagination | Navigation |
-| 37 | Popover | Overlay |
-| 38 | Progress | Feedback |
-| 39 | Radio Group | Input |
-| 40 | Scroll Area | Layout |
-| 41 | Select | Input |
-| 42 | Separator | Layout |
-| 43 | Sheet | Overlay |
-| 44 | Sidebar | Navigation |
-| 45 | Skeleton | Feedback |
-| 46 | Slider | Input |
-| 47 | Sonner | Feedback |
-| 48 | Spinner | Feedback |
-| 49 | Switch | Input |
-| 50 | Table | Display |
-| 51 | Tabs | Navigation |
-| 52 | Textarea | Input |
-| 53 | Toggle | Input |
-| 54 | Toggle Group | Input |
-| 55 | Tooltip | Overlay |
-
-Each component has a Storybook story with variants, interaction tests, and axe accessibility checks.
+| Category | Components |
+|----------|------------|
+| Action | Button, Button Group |
+| Data viz | Chart |
+| Disclosure | Accordion, Collapsible |
+| Display | Avatar, Badge, Carousel, Data Table, Item, Kbd, Table |
+| Feedback | Alert, Empty, Progress, Skeleton, Sonner, Spinner |
+| Form | Field, Label |
+| Input | Calendar, Checkbox, Combobox, Date Picker, Input, Input Group, Input OTP, Native Select, Radio Group, Select, Slider, Switch, Textarea, Toggle, Toggle Group |
+| Layout | Aspect Ratio, Card, Scroll Area, Separator |
+| Navigation | Breadcrumb, Command, Context Menu, Dropdown Menu, Menubar, Navigation Menu, Pagination, Sidebar, Tabs |
+| Overlay | Alert Dialog, Dialog, Drawer, Hover Card, Popover, Sheet, Tooltip |
 
 ## Storybook
 
-Storybook ships with **55 component stories**, interaction play tests, and accessibility (axe) checks for every story.
-
-### Run
-
 ```bash
-npm run storybook        # dev server → http://localhost:6006
-npm run build-storybook  # static build → storybook-static/
-```
+# Start the dev server
+npm run storybook        # → http://localhost:6006
 
-### Test
-
-```bash
-npm run test             # all tests (55 story files + 2 unit test files)
+# Run all interaction + accessibility tests (headless)
+npm run test             # all 57 test files (55 stories + 2 unit)
 npm run test:coverage    # with V8 coverage report
-npm run test:a11y        # storybook project only (browser, Playwright)
+npm run test:a11y        # Storybook stories only (Playwright + axe)
+
+# Build a static snapshot
+npm run build-storybook
 ```
 
-Current coverage: **99.36% statements · 100% functions · 99.66% lines** across `components/ui`, `hooks`, and `lib`.
+Each story includes:
 
-### What's in each story
+- **Showcase** — the canonical rendered demo
+- **Variants** — all documented props and states
+- **Play function** — automated interaction tests (open/close, keyboard navigation, focus management)
+- **Axe check** — `@storybook/addon-a11y` runs after every story; violations fail the test
 
-- **Showcase** — the canonical demo matching the Figma design
-- **Variants** — all documented props/states exercised
-- **Play function** — automated interaction tests (open/close, keyboard nav, focus management)
-- **Axe check** — runs after every story via `@storybook/addon-a11y`; violations fail the test
-
-### Running component tests from the Storybook UI
-
-Click **"Run component tests"** in the Storybook toolbar. Tests run sequentially (one file at a time) so a single Chromium instance handles all 55 stories without hanging.
+Click **"Run component tests"** in the Storybook toolbar to run tests in the UI. Tests run sequentially so a single Chromium instance handles all 55 stories without hanging.
 
 ## How to use
 

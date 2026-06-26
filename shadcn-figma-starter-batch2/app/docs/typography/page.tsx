@@ -56,7 +56,7 @@ export default function TypographyPage() {
           <a
             key={label}
             href={`#type-${label.toLowerCase().replace(/\s+/g, "-")}`}
-            className="rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+            className="rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
             {label}
           </a>
@@ -79,7 +79,7 @@ export default function TypographyPage() {
                   </div>
                   <span className="font-mono text-xs text-muted-foreground">{String(f.value)}</span>
                 </div>
-                <span className="rounded-full border border-border bg-muted px-2 py-0.5 text-[0.6875rem] font-medium text-muted-foreground uppercase tracking-wide">
+                <span className="rounded-full border border-border bg-muted px-2 py-0.5 text-2xs font-medium text-muted-foreground uppercase tracking-wide">
                   {f.name}
                 </span>
               </div>

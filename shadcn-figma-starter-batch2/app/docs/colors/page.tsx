@@ -83,18 +83,23 @@ function PairPreviewStrip({
 
   return (
     <div className="flex flex-col gap-2 rounded-lg border border-border bg-muted/30 p-4">
-      <p className="text-[0.6875rem] font-medium uppercase tracking-wider text-muted-foreground">
+      <p className="text-2xs font-medium uppercase tracking-wider text-muted-foreground">
         Applied pairs — surface + foreground rendered
       </p>
       <div className="flex flex-wrap gap-3">
         {pairs.map(({ surface, fg }) => (
-          <div key={surface.name} className="flex flex-col gap-1.5">
-            {/* Pair label */}
-            <span className="font-mono text-[0.6rem] text-muted-foreground">
+          <div
+            key={surface.name}
+            className="flex flex-col gap-1.5"
+            role="group"
+            aria-label={`${surface.name} / ${fg.name} — light: ${surface.light}, dark: ${surface.dark}`}
+          >
+            {/* Pair label — visible, redundant with aria-label for AT */}
+            <span className="font-mono text-[0.6rem] text-muted-foreground" aria-hidden="true">
               {surface.name} / {fg.name}
             </span>
             {/* Light + Dark side by side */}
-            <div className="flex overflow-hidden rounded-md border border-border/60">
+            <div className="flex overflow-hidden rounded-md border border-border/60" aria-hidden="true">
               {/* Light mode */}
               <div
                 className="flex w-20 flex-col items-center justify-center gap-0.5 py-2.5"
@@ -135,7 +140,7 @@ function PairPreviewStrip({
               </div>
             </div>
             {/* Mode labels */}
-            <div className="flex justify-between px-0.5">
+            <div className="flex justify-between px-0.5" aria-hidden="true">
               <span className="flex items-center gap-0.5 text-[0.55rem] text-muted-foreground">
                 <Sun className="size-2" aria-hidden /> Light
               </span>
@@ -159,7 +164,7 @@ function ChartPaletteStrip({
 }) {
   return (
     <div className="flex flex-col gap-2 rounded-lg border border-border bg-muted/30 p-4">
-      <p className="text-[0.6875rem] font-medium uppercase tracking-wider text-muted-foreground">
+      <p className="text-2xs font-medium uppercase tracking-wider text-muted-foreground">
         Series palette — use in order
       </p>
       <div className="flex gap-0 overflow-hidden rounded-md border border-border/60">
@@ -170,13 +175,13 @@ function ChartPaletteStrip({
             style={{ backgroundColor: t.light }}
             title={`${t.name}: ${t.light}`}
           >
-            <span className="font-mono text-[0.5rem] font-bold text-white/80 select-none">
+            <span className="font-mono text-[0.5rem] font-bold text-white/80 select-none" aria-hidden="true">
               {i + 1}
             </span>
           </div>
         ))}
       </div>
-      <p className="text-[0.6875rem] text-muted-foreground">
+      <p className="text-2xs text-muted-foreground">
         All five chart colors share the same value in light and dark mode (fixed palette).
       </p>
     </div>
@@ -188,14 +193,14 @@ function ChartPaletteStrip({
 function TableColumnHeader() {
   return (
     <div className="grid grid-cols-1 gap-3 border-b border-border bg-muted/40 px-4 py-2 md:grid-cols-[minmax(0,1fr)_8rem_8rem] md:items-center">
-      <span className="text-[0.6875rem] font-medium uppercase tracking-wider text-muted-foreground">
+      <span className="text-2xs font-medium uppercase tracking-wider text-muted-foreground">
         Token
       </span>
-      <span className="hidden items-center gap-1 text-[0.6875rem] font-medium uppercase tracking-wider text-muted-foreground md:flex">
+      <span className="hidden items-center gap-1 text-2xs font-medium uppercase tracking-wider text-muted-foreground md:flex">
         <Sun className="size-3" aria-hidden />
         Light mode
       </span>
-      <span className="hidden items-center gap-1 text-[0.6875rem] font-medium uppercase tracking-wider text-muted-foreground md:flex">
+      <span className="hidden items-center gap-1 text-2xs font-medium uppercase tracking-wider text-muted-foreground md:flex">
         <Moon className="size-3" aria-hidden />
         Dark mode
       </span>
@@ -222,7 +227,7 @@ export default function ColorsPage() {
             <a
               key={group}
               href={`#group-${group.toLowerCase().replace(/\s+/g, "-")}`}
-              className="flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+              className="flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
               <span
                 className={`size-2 rounded-full ${meta?.accentClass ?? "bg-muted-foreground"}`}
@@ -249,17 +254,13 @@ export default function ColorsPage() {
             {/* Group header */}
             <div className="flex flex-col gap-1.5">
               <div className="flex items-center gap-2">
-                <span
-                  className={`h-4 w-1 rounded-full ${meta?.accentClass ?? "bg-muted-foreground"}`}
-                  aria-hidden
-                />
                 <h2 className="text-lg font-semibold text-foreground">{group}</h2>
-                <span className="rounded-full border border-border bg-muted px-2 py-0.5 text-[0.6875rem] font-medium text-muted-foreground">
+                <span className="rounded-full border border-border bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
                   {tokens.length} token{tokens.length !== 1 ? "s" : ""}
                 </span>
               </div>
               {meta?.description ? (
-                <p className="pl-3 text-sm text-muted-foreground">{meta.description}</p>
+                <p className="text-sm text-muted-foreground">{meta.description}</p>
               ) : null}
             </div>
 

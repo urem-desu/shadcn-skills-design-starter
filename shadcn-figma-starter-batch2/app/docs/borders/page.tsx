@@ -32,13 +32,13 @@ export default function BordersPage() {
         <div className="overflow-hidden rounded-lg border border-border">
           {/* Column header */}
           <div className="grid grid-cols-[auto_auto_1fr] gap-4 border-b border-border bg-muted/40 px-4 py-2">
-            <span className="text-[0.6875rem] font-medium uppercase tracking-wider text-muted-foreground">
+            <span className="text-2xs font-medium uppercase tracking-wider text-muted-foreground">
               Utility
             </span>
-            <span className="text-[0.6875rem] font-medium uppercase tracking-wider text-muted-foreground">
+            <span className="text-2xs font-medium uppercase tracking-wider text-muted-foreground">
               Value
             </span>
-            <span className="text-[0.6875rem] font-medium uppercase tracking-wider text-muted-foreground">
+            <span className="text-2xs font-medium uppercase tracking-wider text-muted-foreground">
               Preview
             </span>
           </div>
