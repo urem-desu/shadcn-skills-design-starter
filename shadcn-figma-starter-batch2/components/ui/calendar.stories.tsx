@@ -1,6 +1,7 @@
 import * as React from "react"
 import type { Meta, StoryObj } from "@storybook/nextjs-vite"
 
+import { axeIgnore } from "@/.storybook/a11y"
 import { Calendar } from "@/components/ui/calendar"
 
 const meta: Meta<typeof Calendar> = {
@@ -51,5 +52,17 @@ export const Range: Story = { render: () => <RangeCalendar /> }
 export const DropdownCaption: Story = {
   render: () => (
     <Calendar mode="single" captionLayout="dropdown" className="rounded-md border" />
+  ),
+}
+
+/** `showWeekNumber` renders the ISO week column. */
+export const WeekNumbers: Story = {
+  // Scoped axe exception: react-day-picker's WeekNumber custom cell (in the
+  // CLI-managed calendar.tsx) renders a <td scope="row" role="rowheader">, and
+  // `scope` is only valid on <th>. The fix lives in the kit component, which
+  // project rules keep CLI-owned, so scope-attr-valid is disabled here only.
+  parameters: { a11y: axeIgnore("scope-attr-valid") },
+  render: () => (
+    <Calendar mode="single" showWeekNumber className="rounded-md border" />
   ),
 }

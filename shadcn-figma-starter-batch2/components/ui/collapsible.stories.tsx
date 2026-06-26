@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite"
+import { expect, userEvent, within } from "storybook/test"
 import { ChevronsUpDown } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -42,6 +43,17 @@ export const Default: Story = {
       </CollapsibleContent>
     </Collapsible>
   ),
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement)
+    await step("Reveal the collapsed repositories", async () => {
+      const toggle = canvas.getByRole("button", { name: /toggle/i })
+      await expect(toggle).toHaveAttribute("aria-expanded", "false")
+      await expect(canvas.queryByText("@radix-ui/colors")).not.toBeInTheDocument()
+      await userEvent.click(toggle)
+      await expect(await canvas.findByText("@radix-ui/colors")).toBeVisible()
+      await expect(toggle).toHaveAttribute("aria-expanded", "true")
+    })
+  },
 }
 
 export const Open: Story = {

@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite"
+import { expect, userEvent, within } from "storybook/test"
 import { Check } from "lucide-react"
 
 import { Toggle } from "@/components/ui/toggle"
@@ -29,6 +30,17 @@ type Story = StoryObj<typeof meta>
 
 export const Playground: Story = {
   render: (args) => <Toggle aria-label="Toggle bold" {...args} />,
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement)
+    await step("Press the toggle, then release it", async () => {
+      const btn = canvas.getByRole("button", { name: /toggle bold/i })
+      await expect(btn).toHaveAttribute("aria-pressed", "false")
+      await userEvent.click(btn)
+      await expect(btn).toHaveAttribute("aria-pressed", "true")
+      await userEvent.click(btn)
+      await expect(btn).toHaveAttribute("aria-pressed", "false")
+    })
+  },
 }
 
 export const Variants: Story = {

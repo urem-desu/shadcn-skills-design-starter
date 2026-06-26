@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite"
+import { expect, userEvent, waitFor, within } from "storybook/test"
 
 import {
   Accordion,
@@ -40,6 +41,18 @@ export const Single: Story = {
       ))}
     </Accordion>
   ),
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement)
+    await step("Expand a section, then collapse it", async () => {
+      const trigger = canvas.getByRole("button", { name: /what is included/i })
+      await expect(trigger).toHaveAttribute("aria-expanded", "false")
+      await userEvent.click(trigger)
+      await waitFor(() => expect(trigger).toHaveAttribute("aria-expanded", "true"))
+      await expect(canvas.getByText(/everything in the pro plan/i)).toBeVisible()
+      await userEvent.click(trigger)
+      await waitFor(() => expect(trigger).toHaveAttribute("aria-expanded", "false"))
+    })
+  },
 }
 
 export const Multiple: Story = {

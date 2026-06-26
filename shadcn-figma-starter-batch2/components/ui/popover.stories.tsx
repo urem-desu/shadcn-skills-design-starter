@@ -1,11 +1,16 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite"
+import { expect, screen, userEvent, waitFor, within } from "storybook/test"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
   Popover,
+  PopoverAnchor,
   PopoverContent,
+  PopoverDescription,
+  PopoverHeader,
+  PopoverTitle,
   PopoverTrigger,
 } from "@/components/ui/popover"
 
@@ -42,4 +47,48 @@ export const Default: Story = {
       </PopoverContent>
     </Popover>
   ),
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement)
+    await step("Open the popover, then close it", async () => {
+      await userEvent.click(canvas.getByRole("button", { name: /open dimensions/i }))
+      await expect(await screen.findByText("Dimensions")).toBeInTheDocument()
+      await userEvent.keyboard("{Escape}")
+      await waitFor(() => expect(screen.queryByText("Dimensions")).not.toBeInTheDocument())
+    })
+  },
+}
+
+/**
+ * Uses `PopoverAnchor` to position the panel against a separate element (not the
+ * trigger), plus the `PopoverHeader` / `PopoverTitle` / `PopoverDescription` slots.
+ */
+export const WithAnchorAndHeader: Story = {
+  render: () => (
+    <Popover>
+      <PopoverAnchor className="rounded-md border px-3 py-2 text-sm">
+        Panel anchors to this box
+      </PopoverAnchor>
+      <div className="mt-2">
+        <PopoverTrigger asChild>
+          <Button variant="outline">Open details</Button>
+        </PopoverTrigger>
+      </div>
+      <PopoverContent>
+        <PopoverHeader>
+          <PopoverTitle>Dimensions</PopoverTitle>
+          <PopoverDescription>Set the layout dimensions for the layer.</PopoverDescription>
+        </PopoverHeader>
+      </PopoverContent>
+    </Popover>
+  ),
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement)
+    await step("Open the popover, then close it", async () => {
+      await userEvent.click(canvas.getByRole("button", { name: /open details/i }))
+      await expect(await screen.findByText("Dimensions")).toBeInTheDocument()
+      await expect(screen.getByText(/layout dimensions/i)).toBeInTheDocument()
+      await userEvent.keyboard("{Escape}")
+      await waitFor(() => expect(screen.queryByText("Dimensions")).not.toBeInTheDocument())
+    })
+  },
 }

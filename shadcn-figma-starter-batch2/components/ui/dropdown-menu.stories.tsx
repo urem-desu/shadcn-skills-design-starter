@@ -1,16 +1,21 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite"
+import { expect, screen, userEvent, waitFor, within } from "storybook/test"
 
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
@@ -51,6 +56,19 @@ export const Default: Story = {
       </DropdownMenuContent>
     </DropdownMenu>
   ),
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement)
+    await step("Open the menu, then close it", async () => {
+      await userEvent.click(canvas.getByRole("button", { name: /open menu/i }))
+      // Portalled content renders to document.body — assert via screen.
+      await expect(await screen.findByText("Profile")).toBeInTheDocument()
+      await expect(screen.getByText("Log out")).toBeInTheDocument()
+      // Close and wait for full unmount so the resting DOM is a11y-clean
+      // (an open Radix menu aria-hides the focusable trigger).
+      await userEvent.keyboard("{Escape}")
+      await waitFor(() => expect(screen.queryByRole("menu")).not.toBeInTheDocument())
+    })
+  },
 }
 
 export const WithCheckboxesAndRadio: Story = {
@@ -72,4 +90,52 @@ export const WithCheckboxesAndRadio: Story = {
       </DropdownMenuContent>
     </DropdownMenu>
   ),
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement)
+    await step("Open and verify checkbox + radio items render", async () => {
+      await userEvent.click(canvas.getByRole("button", { name: /view options/i }))
+      // Mounting the open menu exercises the checkbox/radio item branches.
+      await expect(
+        await screen.findByRole("menuitemcheckbox", { name: /activity bar/i }),
+      ).toBeInTheDocument()
+      await expect(screen.getByRole("menuitemradio", { name: /large/i })).toBeInTheDocument()
+      await userEvent.keyboard("{Escape}")
+      await waitFor(() => expect(screen.queryByRole("menu")).not.toBeInTheDocument())
+    })
+  },
+}
+
+/** A nested `Sub` menu inside a `Group`. */
+export const WithSubmenu: Story = {
+  render: () => (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline">Open menu</Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-56">
+        <DropdownMenuGroup>
+          <DropdownMenuItem>New file</DropdownMenuItem>
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>Invite users</DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+              <DropdownMenuItem>Email</DropdownMenuItem>
+              <DropdownMenuItem>Message</DropdownMenuItem>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  ),
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement)
+    await step("Open the menu, reveal the submenu, then close", async () => {
+      await userEvent.click(canvas.getByRole("button", { name: /open menu/i }))
+      // Hover the sub-trigger so the SubContent mounts.
+      await userEvent.hover(await screen.findByRole("menuitem", { name: /invite users/i }))
+      await expect(await screen.findByRole("menuitem", { name: "Email" })).toBeInTheDocument()
+      await userEvent.keyboard("{Escape}")
+      await userEvent.keyboard("{Escape}")
+      await waitFor(() => expect(screen.queryByRole("menu")).not.toBeInTheDocument())
+    })
+  },
 }

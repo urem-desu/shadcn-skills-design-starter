@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite"
+import { expect, userEvent, within } from "storybook/test"
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
@@ -42,6 +43,18 @@ export const Default: Story = {
       <Body />
     </Tabs>
   ),
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement)
+    await step("Switch from the Account tab to Password", async () => {
+      await expect(canvas.getByText(/make changes to your account/i)).toBeVisible()
+      await userEvent.click(canvas.getByRole("tab", { name: "Password" }))
+      await expect(await canvas.findByText(/change your password/i)).toBeVisible()
+      await expect(canvas.getByRole("tab", { name: "Password" })).toHaveAttribute(
+        "aria-selected",
+        "true",
+      )
+    })
+  },
 }
 
 /** `line` variant — underline indicator instead of the filled pill track. */

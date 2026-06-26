@@ -12,6 +12,9 @@
     "start": "next start",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "test": "vitest run --no-file-parallelism",
+    "test:coverage": "vitest run --coverage --no-file-parallelism",
+    "test:a11y": "vitest run --project storybook --no-file-parallelism",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },

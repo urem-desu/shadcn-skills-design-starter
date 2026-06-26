@@ -1,4 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite"
+import { TriangleAlert } from "lucide-react"
+import { expect, screen, userEvent, waitFor, within } from "storybook/test"
 
 import {
   AlertDialog,
@@ -8,6 +10,7 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
+  AlertDialogMedia,
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
@@ -39,6 +42,9 @@ export const Default: Story = {
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
+          <AlertDialogMedia>
+            <TriangleAlert />
+          </AlertDialogMedia>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
             This action cannot be undone. This will permanently delete your account
@@ -54,4 +60,14 @@ export const Default: Story = {
       </AlertDialogContent>
     </AlertDialog>
   ),
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement)
+    await step("Open the alert, then dismiss via Cancel", async () => {
+      await userEvent.click(canvas.getByRole("button", { name: /show dialog/i }))
+      await expect(await screen.findByRole("alertdialog")).toBeInTheDocument()
+      await expect(screen.getByText("Are you absolutely sure?")).toBeInTheDocument()
+      await userEvent.click(screen.getByRole("button", { name: /cancel/i }))
+      await waitFor(() => expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument())
+    })
+  },
 }

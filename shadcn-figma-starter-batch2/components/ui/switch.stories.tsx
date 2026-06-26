@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite"
+import { expect, userEvent, within } from "storybook/test"
 
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
@@ -31,6 +32,17 @@ export const Playground: Story = {
       <Label htmlFor="sw">Airplane mode</Label>
     </div>
   ),
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement)
+    await step("Toggle the switch on and off", async () => {
+      const sw = canvas.getByRole("switch", { name: /airplane mode/i })
+      await expect(sw).not.toBeChecked()
+      await userEvent.click(sw)
+      await expect(sw).toBeChecked()
+      await userEvent.click(sw)
+      await expect(sw).not.toBeChecked()
+    })
+  },
 }
 
 export const States: Story = {

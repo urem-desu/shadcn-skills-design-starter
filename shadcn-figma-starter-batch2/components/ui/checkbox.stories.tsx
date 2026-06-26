@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite"
+import { expect, userEvent, within } from "storybook/test"
 
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
@@ -32,6 +33,17 @@ export const Playground: Story = {
       <Label htmlFor="cb">Subscribe to updates</Label>
     </div>
   ),
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement)
+    await step("Toggle the checkbox on and off", async () => {
+      const box = canvas.getByRole("checkbox", { name: /subscribe to updates/i })
+      await expect(box).not.toBeChecked()
+      await userEvent.click(box)
+      await expect(box).toBeChecked()
+      await userEvent.click(box)
+      await expect(box).not.toBeChecked()
+    })
+  },
 }
 
 export const States: Story = {

@@ -1,7 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite"
 
 import { axeIgnore } from "@/.storybook/a11y"
-import { Item } from "@/components/ui/item"
+import {
+  Item,
+  ItemContent,
+  ItemDescription,
+  ItemFooter,
+  ItemTitle,
+} from "@/components/ui/item"
 import { ItemDemo } from "@/components/docs/demos/item-demo"
 
 const meta: Meta<typeof Item> = {
@@ -27,4 +33,17 @@ type Story = StoryObj<typeof Item>
 
 export const Showcase: Story = {
   render: () => <ItemDemo />,
+}
+
+/** An item with a `ItemFooter` beneath its content. */
+export const WithFooter: Story = {
+  render: () => (
+    <Item variant="outline" className="max-w-sm flex-col items-stretch">
+      <ItemContent>
+        <ItemTitle>Weekly report</ItemTitle>
+        <ItemDescription>Generated every Monday at 9am.</ItemDescription>
+      </ItemContent>
+      <ItemFooter>Last run 2 days ago</ItemFooter>
+    </Item>
+  ),
 }

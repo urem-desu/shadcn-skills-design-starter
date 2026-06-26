@@ -2,8 +2,10 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite"
 
 import {
   Avatar,
+  AvatarBadge,
   AvatarFallback,
   AvatarGroup,
+  AvatarGroupCount,
   AvatarImage,
 } from "@/components/ui/avatar"
 
@@ -70,6 +72,18 @@ export const Group: Story = {
           <AvatarFallback>{i}</AvatarFallback>
         </Avatar>
       ))}
+      <AvatarGroupCount>+5</AvatarGroupCount>
     </AvatarGroup>
+  ),
+}
+
+/** A `AvatarBadge` marks status in the corner (e.g. online). */
+export const WithBadge: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => (
+    <Avatar>
+      <AvatarFallback>AL</AvatarFallback>
+      <AvatarBadge aria-hidden />
+    </Avatar>
   ),
 }

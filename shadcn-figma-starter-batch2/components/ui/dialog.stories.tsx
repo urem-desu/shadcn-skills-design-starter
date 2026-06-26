@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite"
+import { expect, screen, userEvent, waitFor, within } from "storybook/test"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -69,6 +70,16 @@ export const Default: Story = {
       </DialogContent>
     </Dialog>
   ),
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement)
+    await step("Open the dialog, then close it", async () => {
+      await userEvent.click(canvas.getByRole("button", { name: /edit profile/i }))
+      await expect(await screen.findByRole("dialog")).toBeInTheDocument()
+      await expect(screen.getByText("Make changes to your profile here.", { exact: false })).toBeInTheDocument()
+      await userEvent.keyboard("{Escape}")
+      await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument())
+    })
+  },
 }
 
 /** Destructive confirmation — the confirm button keeps the destructive variant. */
@@ -95,4 +106,13 @@ export const DestructiveConfirm: Story = {
       </DialogContent>
     </Dialog>
   ),
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement)
+    await step("Open the destructive confirm, then cancel", async () => {
+      await userEvent.click(canvas.getByRole("button", { name: /delete project/i }))
+      await expect(await screen.findByRole("dialog")).toBeInTheDocument()
+      await userEvent.click(screen.getByRole("button", { name: /cancel/i }))
+      await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument())
+    })
+  },
 }

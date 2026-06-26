@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite"
 import {
   NavigationMenu,
   NavigationMenuContent,
+  NavigationMenuIndicator,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
@@ -46,6 +47,7 @@ export const Default: Story = {
         <NavigationMenuItem>
           <NavigationMenuLink href="#">Docs</NavigationMenuLink>
         </NavigationMenuItem>
+        <NavigationMenuIndicator />
       </NavigationMenuList>
     </NavigationMenu>
   ),

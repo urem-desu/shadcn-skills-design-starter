@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite"
+import { expect, userEvent, within } from "storybook/test"
 
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
@@ -36,6 +37,15 @@ export const Default: Story = {
       ))}
     </RadioGroup>
   ),
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement)
+    await step("Move the selection to another option", async () => {
+      await expect(canvas.getByRole("radio", { name: "comfortable" })).toBeChecked()
+      await userEvent.click(canvas.getByRole("radio", { name: "compact" }))
+      await expect(canvas.getByRole("radio", { name: "compact" })).toBeChecked()
+      await expect(canvas.getByRole("radio", { name: "comfortable" })).not.toBeChecked()
+    })
+  },
 }
 
 export const Disabled: Story = {
