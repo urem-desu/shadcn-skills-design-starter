@@ -32,6 +32,8 @@ This is **not** a component dump. It's a disciplined pipeline that turns a Figma
 - [Tech stack](#tech-stack)
 - [Prerequisites](#prerequisites)
 - [Quick start](#quick-start)
+- [Component catalog](#component-catalog)
+- [Storybook](#storybook)
 - [How to use](#how-to-use)
 - [Project structure](#project-structure)
 - [Design tokens](#design-tokens)
@@ -98,6 +100,102 @@ npm run dev
 ```
 
 Open <http://localhost:3000> and replace `app/page.tsx` with your first screen from Figma. Fonts (Inter / Geist Mono) and dark mode are already wired — no extra setup.
+
+## Component catalog
+
+55 components from the Figma kit are implemented, documented, and story-tested.
+
+| # | Component | Category |
+|---|-----------|----------|
+| 1 | Accordion | Disclosure |
+| 2 | Alert | Feedback |
+| 3 | Alert Dialog | Overlay |
+| 4 | Aspect Ratio | Layout |
+| 5 | Avatar | Display |
+| 6 | Badge | Display |
+| 7 | Breadcrumb | Navigation |
+| 8 | Button | Action |
+| 9 | Button Group | Action |
+| 10 | Calendar | Input |
+| 11 | Card | Layout |
+| 12 | Carousel | Display |
+| 13 | Chart | Data viz |
+| 14 | Checkbox | Input |
+| 15 | Collapsible | Disclosure |
+| 16 | Combobox | Input |
+| 17 | Command | Navigation |
+| 18 | Context Menu | Navigation |
+| 19 | Data Table | Display |
+| 20 | Date Picker | Input |
+| 21 | Dialog | Overlay |
+| 22 | Drawer | Overlay |
+| 23 | Dropdown Menu | Navigation |
+| 24 | Empty | Feedback |
+| 25 | Field | Form |
+| 26 | Hover Card | Overlay |
+| 27 | Input | Input |
+| 28 | Input Group | Input |
+| 29 | Input OTP | Input |
+| 30 | Item | Display |
+| 31 | Kbd | Display |
+| 32 | Label | Form |
+| 33 | Menubar | Navigation |
+| 34 | Native Select | Input |
+| 35 | Navigation Menu | Navigation |
+| 36 | Pagination | Navigation |
+| 37 | Popover | Overlay |
+| 38 | Progress | Feedback |
+| 39 | Radio Group | Input |
+| 40 | Scroll Area | Layout |
+| 41 | Select | Input |
+| 42 | Separator | Layout |
+| 43 | Sheet | Overlay |
+| 44 | Sidebar | Navigation |
+| 45 | Skeleton | Feedback |
+| 46 | Slider | Input |
+| 47 | Sonner | Feedback |
+| 48 | Spinner | Feedback |
+| 49 | Switch | Input |
+| 50 | Table | Display |
+| 51 | Tabs | Navigation |
+| 52 | Textarea | Input |
+| 53 | Toggle | Input |
+| 54 | Toggle Group | Input |
+| 55 | Tooltip | Overlay |
+
+Each component has a Storybook story with variants, interaction tests, and axe accessibility checks.
+
+## Storybook
+
+Storybook ships with **55 component stories**, interaction play tests, and accessibility (axe) checks for every story.
+
+### Run
+
+```bash
+npm run storybook        # dev server → http://localhost:6006
+npm run build-storybook  # static build → storybook-static/
+```
+
+### Test
+
+```bash
+npm run test             # all tests (55 story files + 2 unit test files)
+npm run test:coverage    # with V8 coverage report
+npm run test:a11y        # storybook project only (browser, Playwright)
+```
+
+Current coverage: **99.36% statements · 100% functions · 99.66% lines** across `components/ui`, `hooks`, and `lib`.
+
+### What's in each story
+
+- **Showcase** — the canonical demo matching the Figma design
+- **Variants** — all documented props/states exercised
+- **Play function** — automated interaction tests (open/close, keyboard nav, focus management)
+- **Axe check** — runs after every story via `@storybook/addon-a11y`; violations fail the test
+
+### Running component tests from the Storybook UI
+
+Click **"Run component tests"** in the Storybook toolbar. Tests run sequentially (one file at a time) so a single Chromium instance handles all 55 stories without hanging.
 
 ## How to use
 
@@ -288,6 +386,11 @@ The skill triggers automatically when working with shadcn components, Tailwind c
 | `npm run start` | Serve the production build |
 | `npm run lint` | Run ESLint (`eslint .`) |
 | `npm run lint:fix` | ESLint with `--fix` |
+| `npm run storybook` | Start Storybook (<http://localhost:6006>) |
+| `npm run build-storybook` | Static Storybook build |
+| `npm run test` | Run all tests (stories + unit) |
+| `npm run test:coverage` | Run all tests with V8 coverage report |
+| `npm run test:a11y` | Run Storybook stories in Playwright (axe + interactions) |
 | `npx shadcn@latest info --json` | Inspect project context — **run before any code change** |
 | `npx shadcn@latest search <q>` | Search the registry before building custom UI |
 | `npx shadcn@latest add <name>` | Add a component (`--dry-run` / `--diff` to preview) |
@@ -330,7 +433,7 @@ By design, to stay minimal — add when the design calls for it, not before:
 - No example components or pages — install via `npx shadcn@latest add`
 - No theme **toggle UI** — the `next-themes` provider is wired; add a `ModeToggle` when needed (see [Dark mode](#dark-mode))
 - No authentication, routing helpers, or middleware
-- No Storybook, testing setup, or CI config
+- No CI config (GitHub Actions workflow not included)
 - No `tailwind.config.ts` — Tailwind v4 uses `@theme inline` in `globals.css` only
 - No license file — add one before distributing
 
