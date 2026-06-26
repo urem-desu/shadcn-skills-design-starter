@@ -67,6 +67,12 @@ export const ErrorStates: Story = {
       </Field>
       {/* No children and no errors → FieldError renders nothing (its empty path). */}
       <FieldError errors={[]} />
+      {/* errors=undefined → exercises the errors?.length optional-chaining null path */}
+      <FieldError />
+      {/* undefined item → exercises the error?.message falsy branch in the list */}
+      <FieldError errors={[undefined, { message: "Second error." }]} />
+      {/* single undefined error → uniqueErrors.length==1 but [0]?.message is undefined */}
+      <FieldError errors={[undefined]} />
     </FieldGroup>
   ),
 }

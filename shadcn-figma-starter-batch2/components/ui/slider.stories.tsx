@@ -58,3 +58,21 @@ export const Stepped: Story = {
 }
 
 export const Disabled: Story = { args: { disabled: true } }
+
+export const Controlled: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => (
+    <div className="w-72">
+      <Slider value={[50]} min={0} max={100} onValueChange={() => {}} aria-label="Controlled" />
+    </div>
+  ),
+}
+
+export const MinMaxFallback: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => (
+    <div className="w-72">
+      <Slider min={10} max={90} aria-label="Min-max fallback" />
+    </div>
+  ),
+}

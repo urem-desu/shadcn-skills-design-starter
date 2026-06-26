@@ -1,7 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite"
 
+import { ScrollArea as ScrollAreaPrimitive } from "radix-ui"
+
 import { axeIgnore } from "@/.storybook/a11y"
-import { ScrollArea } from "@/components/ui/scroll-area"
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 
 const meta: Meta<typeof ScrollArea> = {
@@ -58,5 +60,25 @@ export const Horizontal: Story = {
         ))}
       </div>
     </ScrollArea>
+  ),
+}
+
+export const WithHorizontalBar: Story = {
+  render: () => (
+    <ScrollAreaPrimitive.Root className="w-80 overflow-hidden rounded-md border">
+      <ScrollAreaPrimitive.Viewport className="h-20 w-full">
+        <div className="flex gap-3 p-4 whitespace-nowrap">
+          {Array.from({ length: 12 }, (_, i) => (
+            <div
+              key={i}
+              className="flex size-16 shrink-0 items-center justify-center rounded-md bg-muted text-sm"
+            >
+              {i + 1}
+            </div>
+          ))}
+        </div>
+      </ScrollAreaPrimitive.Viewport>
+      <ScrollBar orientation="horizontal" />
+    </ScrollAreaPrimitive.Root>
   ),
 }

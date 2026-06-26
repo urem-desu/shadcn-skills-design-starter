@@ -1,5 +1,6 @@
 import * as React from "react"
 import type { Meta, StoryObj } from "@storybook/nextjs-vite"
+import { expect, waitFor, within } from "storybook/test"
 
 import { axeIgnore } from "@/.storybook/a11y"
 import { Calendar } from "@/components/ui/calendar"
@@ -46,7 +47,22 @@ function RangeCalendar() {
   )
 }
 
-export const Single: Story = { render: () => <SingleCalendar /> }
+export const Single: Story = {
+  render: () => <SingleCalendar />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const dayButton = canvas.getAllByRole("button").find(
+      (b) => (b as HTMLElement).dataset.day
+    ) as HTMLButtonElement | undefined
+    if (dayButton) {
+      // Direct DOM focus triggers react-day-picker's handleDayFocus →
+      // setFocused(day) → re-render → modifiers.focused=true on this cell →
+      // useEffect: `if (modifiers.focused) ref.current?.focus()` is exercised.
+      dayButton.focus()
+      await waitFor(() => expect(document.activeElement?.getAttribute("data-day")).toBeTruthy())
+    }
+  },
+}
 export const Range: Story = { render: () => <RangeCalendar /> }
 
 export const DropdownCaption: Story = {

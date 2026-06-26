@@ -62,6 +62,9 @@ export const Horizontal: Story = {
       await waitFor(() => expect(prev).toBeDisabled())
       await userEvent.keyboard("{ArrowRight}")
       await waitFor(() => expect(prev).toBeEnabled())
+      // A non-arrow key while the carousel is focused exercises the implicit
+      // "else" branch (key is neither ArrowLeft nor ArrowRight) in handleKeyDown.
+      await userEvent.keyboard("{Escape}")
       await userEvent.click(prev)
       await waitFor(() => expect(prev).toBeDisabled())
     })
@@ -128,6 +131,14 @@ export const OutsideProvider: Story = {
       <CarouselNext />
     </Catch>
   ),
+  beforeEach() {
+    const original = console.error
+    console.error = (...args: unknown[]) => {
+      if (typeof args[0] === "string" && args[0].includes("must be used within a <Carousel />")) return
+      original.apply(console, args)
+    }
+    return () => { console.error = original }
+  },
   play: async ({ canvasElement }) => {
     await expect(within(canvasElement).getByRole("alert")).toHaveTextContent(
       /must be used within a <Carousel \/>/i,
@@ -153,4 +164,42 @@ export const Vertical: Story = {
       <CarouselNext />
     </Carousel>
   ),
+}
+
+export const UnmountCleanup: Story = {
+  render: () => {
+    function HarnessWithUnmount() {
+      const [show, setShow] = React.useState(true)
+      return (
+        <div className="flex flex-col items-center gap-4">
+          {show && (
+            <Carousel className="w-64" opts={{ align: "start" }}>
+              <CarouselContent>
+                {Array.from({ length: 3 }, (_, i) => (
+                  <CarouselItem key={i}>
+                    <Card>
+                      <CardContent className="flex aspect-square items-center justify-center p-6 text-3xl font-semibold">
+                        {i + 1}
+                      </CardContent>
+                    </Card>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious />
+              <CarouselNext />
+            </Carousel>
+          )}
+          <button onClick={() => setShow(false)}>Unmount carousel</button>
+        </div>
+      )
+    }
+    return <HarnessWithUnmount />
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await userEvent.click(canvas.getByRole("button", { name: /unmount carousel/i }))
+    await waitFor(() =>
+      expect(canvas.queryByRole("region")).not.toBeInTheDocument(),
+    )
+  },
 }

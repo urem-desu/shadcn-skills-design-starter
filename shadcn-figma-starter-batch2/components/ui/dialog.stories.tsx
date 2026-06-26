@@ -82,6 +82,36 @@ export const Default: Story = {
   },
 }
 
+export const FooterWithClose: Story = {
+  render: () => (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline">Open</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Confirm</DialogTitle>
+          <DialogDescription>Are you sure?</DialogDescription>
+        </DialogHeader>
+        <DialogFooter showCloseButton>
+          <Button type="submit">Confirm</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  ),
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement)
+    await step("Open dialog with footer close button", async () => {
+      await userEvent.click(canvas.getByRole("button", { name: /open/i }))
+      await expect(await screen.findByRole("dialog")).toBeInTheDocument()
+      const closeBtns = screen.getAllByRole("button", { name: /close/i })
+      await expect(closeBtns.length).toBeGreaterThanOrEqual(1)
+      await userEvent.keyboard("{Escape}")
+      await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument())
+    })
+  },
+}
+
 /** Destructive confirmation — the confirm button keeps the destructive variant. */
 export const DestructiveConfirm: Story = {
   render: () => (

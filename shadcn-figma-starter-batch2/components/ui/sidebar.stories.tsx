@@ -489,6 +489,14 @@ export const OutsideProvider: Story = {
       </Catch>
     </div>
   ),
+  beforeEach() {
+    const original = console.error
+    console.error = (...args: unknown[]) => {
+      if (typeof args[0] === "string" && args[0].includes("must be used within a SidebarProvider")) return
+      original.apply(console, args)
+    }
+    return () => { console.error = original }
+  },
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement)
     await step("The hook throws and the boundary shows the message", async () => {

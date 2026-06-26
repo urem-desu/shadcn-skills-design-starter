@@ -131,6 +131,51 @@ class Catch extends React.Component<
   }
 }
 
+export const TooltipNameKeyVariants: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => (
+    <div className="flex flex-col gap-8">
+      <ChartContainer config={config} className="min-h-[200px] w-[440px]">
+        <BarChart accessibilityLayer data={data}>
+          <XAxis dataKey="month" tickLine={false} axisLine={false} />
+          <ChartTooltip
+            active
+            defaultIndex={0}
+            content={<ChartTooltipContent nameKey="name" />}
+          />
+          <Bar dataKey="desktop" fill="var(--color-desktop)" radius={4} />
+        </BarChart>
+      </ChartContainer>
+      <ChartContainer config={config} className="min-h-[200px] w-[440px]">
+        <BarChart accessibilityLayer data={data}>
+          <XAxis dataKey="month" tickLine={false} axisLine={false} />
+          <ChartTooltip
+            active
+            defaultIndex={1}
+            content={<ChartTooltipContent nameKey="month" />}
+          />
+          <Bar dataKey="mobile" fill="var(--color-mobile)" radius={4} />
+        </BarChart>
+      </ChartContainer>
+    </div>
+  ),
+}
+
+/** Config with no `color` or `theme` entries → `ChartStyle` returns null early (line 90). */
+export const LabelOnlyConfig: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => (
+    <ChartContainer
+      config={{ series: { label: "Series" } } satisfies ChartConfig}
+      className="h-40 w-full max-w-xs"
+    >
+      <BarChart data={[{ series: 1 }]}>
+        <Bar dataKey="series" />
+      </BarChart>
+    </ChartContainer>
+  ),
+}
+
 export const OutsideProvider: Story = {
   // ChartLegendContent calls the internal useChart hook first, which throws.
   render: () => (
@@ -138,6 +183,14 @@ export const OutsideProvider: Story = {
       <ChartLegendContent />
     </Catch>
   ),
+  beforeEach() {
+    const original = console.error
+    console.error = (...args: unknown[]) => {
+      if (typeof args[0] === "string" && args[0].includes("must be used within a <ChartContainer />")) return
+      original.apply(console, args)
+    }
+    return () => { console.error = original }
+  },
   play: async ({ canvasElement }) => {
     await expect(within(canvasElement).getByRole("alert")).toHaveTextContent(
       /must be used within a <ChartContainer \/>/i,

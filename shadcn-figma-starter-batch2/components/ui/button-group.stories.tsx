@@ -55,3 +55,16 @@ export const WithSeparatorAndText: Story = {
     </ButtonGroup>
   ),
 }
+
+export const AsChildText: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => (
+    <ButtonGroup>
+      <ButtonGroupText asChild>
+        <button type="button">Sort</button>
+      </ButtonGroupText>
+      <ButtonGroupSeparator />
+      <Button variant="outline">Newest</Button>
+    </ButtonGroup>
+  ),
+}

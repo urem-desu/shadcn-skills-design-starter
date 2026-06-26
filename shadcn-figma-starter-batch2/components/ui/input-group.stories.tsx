@@ -55,7 +55,7 @@ export const Alignments: Story = {
           <InputGroupText>Description</InputGroupText>
         </InputGroupAddon>
         <InputGroupTextarea placeholder="Tell us more…" aria-label="Description" />
-        <InputGroupAddon align="block-end">
+        <InputGroupAddon align="block-end" data-testid="block-end-addon">
           <InputGroupText>Markdown supported</InputGroupText>
         </InputGroupAddon>
       </InputGroup>
@@ -69,6 +69,9 @@ export const Alignments: Story = {
     })
     await step("Clicking a button addon keeps its own action (early return)", async () => {
       await userEvent.click(canvas.getByRole("button", { name: /clear search/i }))
+    })
+    await step("Clicking an addon next to a textarea exercises the null querySelector branch", async () => {
+      await userEvent.click(canvas.getByTestId("block-end-addon"))
     })
   },
 }

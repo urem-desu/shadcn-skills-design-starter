@@ -9,6 +9,7 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuPortal,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuSeparator,
@@ -35,6 +36,30 @@ const meta: Meta<typeof DropdownMenu> = {
 
 export default meta
 type Story = StoryObj<typeof DropdownMenu>
+
+export const WithExplicitPortal: Story = {
+  render: () => (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline">Options</Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuPortal>
+        <DropdownMenuContent>
+          <DropdownMenuItem>Open</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenuPortal>
+    </DropdownMenu>
+  ),
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement)
+    await step("Open and close", async () => {
+      await userEvent.click(canvas.getByRole("button", { name: /options/i }))
+      await expect(await screen.findByText("Open")).toBeInTheDocument()
+      await userEvent.keyboard("{Escape}")
+      await waitFor(() => expect(screen.queryByRole("menu")).not.toBeInTheDocument())
+    })
+  },
+}
 
 export const Default: Story = {
   render: () => (

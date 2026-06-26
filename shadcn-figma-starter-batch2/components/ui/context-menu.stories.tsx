@@ -8,6 +8,7 @@ import {
   ContextMenuGroup,
   ContextMenuItem,
   ContextMenuLabel,
+  ContextMenuPortal,
   ContextMenuRadioGroup,
   ContextMenuRadioItem,
   ContextMenuSeparator,
@@ -61,6 +62,30 @@ export const Default: Story = {
       await fireEvent.contextMenu(canvas.getByText("Right-click here"))
       await expect(await screen.findByText("Reload")).toBeInTheDocument()
       await expect(screen.getByText("Delete")).toBeInTheDocument()
+      await userEvent.keyboard("{Escape}")
+      await waitFor(() => expect(screen.queryByRole("menu")).not.toBeInTheDocument())
+    })
+  },
+}
+
+export const WithExplicitPortal: Story = {
+  render: () => (
+    <ContextMenu>
+      <ContextMenuTrigger className="flex h-40 w-72 items-center justify-center rounded-md border border-dashed text-sm text-muted-foreground">
+        Right-click here
+      </ContextMenuTrigger>
+      <ContextMenuPortal>
+        <ContextMenuContent className="w-52">
+          <ContextMenuItem>Open</ContextMenuItem>
+        </ContextMenuContent>
+      </ContextMenuPortal>
+    </ContextMenu>
+  ),
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement)
+    await step("Open and close", async () => {
+      await fireEvent.contextMenu(canvas.getByText("Right-click here"))
+      await expect(await screen.findByText("Open")).toBeInTheDocument()
       await userEvent.keyboard("{Escape}")
       await waitFor(() => expect(screen.queryByRole("menu")).not.toBeInTheDocument())
     })
