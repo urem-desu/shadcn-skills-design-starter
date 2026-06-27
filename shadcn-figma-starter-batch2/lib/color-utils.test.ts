@@ -45,6 +45,15 @@ describe("formatColor", () => {
     it("handles the blue-dominant hue branch", () => {
       expect(formatColor("#0000ff", "hsl", "blue", "500")).toBe("240 100% 50%")
     })
+
+    it("handles the red-dominant hue branch (gn >= bn, no wrap)", () => {
+      expect(formatColor("#ff0000", "hsl", "red", "500")).toBe("0 100% 50%")
+    })
+
+    it("handles the red-dominant hue branch with the +6 wrap (gn < bn)", () => {
+      // red is max but blue > green → the (gn < bn ? 6 : 0) wrap fires → hue near 360
+      expect(formatColor("#ff0080", "hsl", "red", "500")).toBe("330 100% 50%")
+    })
   })
 
   describe("oklch format", () => {
@@ -63,6 +72,24 @@ describe("formatColor", () => {
     it("exercises the low-channel linearization branch (dark color)", () => {
       const out = formatColor("#020202", "oklch", "neutral", "950")
       expect(out.split(" ")).toHaveLength(3)
+    })
+
+    it("wraps a negative hue angle into 0–360 (blue → atan2 < 0, wrap branch)", () => {
+      // Blue sits in the negative-b half of OKLab, so atan2 returns a negative
+      // angle that the `if (H < 0) H += 360` branch must wrap. Hue lands ~264.
+      const out = formatColor("#0000ff", "oklch", "blue", "500")
+      const hue = Number(out.split(" ")[2])
+      expect(hue).toBeGreaterThan(180)
+      expect(hue).toBeLessThanOrEqual(360)
+    })
+
+    it("leaves a non-negative hue unwrapped (red → atan2 >= 0, no-wrap branch)", () => {
+      // Red yields a small positive atan2 angle, so the `if (H < 0)` guard is
+      // false and the hue passes through unchanged — covers the other branch.
+      const out = formatColor("#ff0000", "oklch", "red", "500")
+      const hue = Number(out.split(" ")[2])
+      expect(hue).toBeGreaterThanOrEqual(0)
+      expect(hue).toBeLessThan(180)
     })
   })
 
